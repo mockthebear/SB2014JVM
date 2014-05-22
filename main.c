@@ -10,6 +10,7 @@
 #include <inttypes.h>
 #include "jclass.h"
 
+#define  UNIX                // WIN para Windows e UNIX para Unix
 
 
 //Le .class
@@ -157,7 +158,13 @@ void freeJClass(java_class *jclass){
 int main(int argc, char** argv) {
     //printf("System is %s-endian.\n", is_big_endian() ? "big" : "little");
     java_class * jclass;
-    jclass = readClassFile("/Users/gabriel/Desktop/HelloWorld.class");
+    #ifdef WIN
+    jclass = readClassFile("\\Users\-----\\Desktop\jvm\jvm\\HelloWorld.class");
+    #endif
+    #ifdef UNIX
+    jclass = readClassFile("/Users/--------/Desktop/jvm/jvm/HelloWorld.class");
+    #endif
+    
     printClassFileContent(jclass);
     freeJClass(jclass);
     return 0;
