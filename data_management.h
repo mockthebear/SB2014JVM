@@ -43,4 +43,12 @@ typedef uint8_t  u1;
 typedef uint16_t u2;
 typedef uint32_t u4;
 
+/*
+ Funções
+ */
+//void convertLittleBigEndianu2(u2 * mp);
+//void convertLittleBigEndianu4(u4 * mp);
+u1 readu1(FILE * fp);
+u2 readu2(FILE * fp);
+u4 readu4(FILE * fp);
 #endif

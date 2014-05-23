@@ -91,74 +91,114 @@ typedef struct methodinfo{
 typedef struct classinfo{
     u1 tag;
     u2 name_index;
-}CONSTANT_Class_info;
+}Class_info;
 
 //Representa field
 typedef struct fieldrefInfo{
     u1 tag;
     u2 class_index;
     u2 name_and_type_index;
-}CONSTANT_FieldRef_info;
+}FieldRef_info;
 
 //Representa field ou método sem indicar de quem
 typedef struct nameAndTypeInfo{
     u1 tag;
     u2 name_index;
     u2 descriptor_index;
-}CONSTANT_NameAndType_info;
+}NameAndType_info;
 
 //Representa string utf8
 typedef struct utf8Info{
     u1 tag;
     u2 length;
     u1 bytes[];//bytes[length];
-}utf8_info;
+}Utf8_info;
 
 //Representa médoto
 typedef struct methodRefInfo{
     u1 tag;
     u2 class_index; // -> utf8_info
     u2 name_and_type_index; // -> nameAndType_info
-}methodRef_info;
+}MethodRef_info;
 
 //Representa informação de um método
 typedef struct interfaceMethodRefInfo{
     u1 tag;
     u2 class_index; //-> utf8_info
     u2 name_and_type_index; //->nameAndType_info
-}interfaceMethodRef_info;
+}InterfaceMethodRef_info;
 
 //Representa Strings constantes
 typedef struct stringInfo{
     u1 tag;
     u2 string_index; //-> utf8_info
-}string_info;
+}String_info;
 
 //Inteiro de 4 bytes (int32)
 typedef struct integerInfo{
     u1 tag;
     u4 bytes;
-}integer_info;
+}Integer_info;
 
 //Ponto flutuante (float)
 typedef struct floatInfo{
     u1 tag;
     u4 bytes;
-}float_info;
+}Float_info;
 
 //Inteiro de 8 bytes (long 64)
 typedef struct longInfo{
     u1 tag;
     u4 high_bytes;
     u4 low_bytes;
-}long_info;
+}Long_info;
 
 //Ponto flutuante (double 64)
 typedef struct doubleInfo{
     u1 tag;
     u4 high_bytes;
     u4 low_bytes;
-}double_info;
+}Double_info;
+
+//Handle de método
+typedef struct methodHandle{
+    u1 tag;
+    u1 reference_kind;
+    u2 reference_index;
+}MethodHandle;
+
+//Tipo de método
+typedef struct methodType{
+    u1 tag;
+    u2 descriptor_index;
+}MethodType;
+
+//Invocação dinâmica
+typedef struct invokeDynamic{
+    u1 tag;
+    u2 bootstrap_method_attr_index;
+    u2 name_and_type_index;
+}InvokeDynamic;
+
+typedef struct constant_union{
+    union{
+        cp_info cpinfo;
+        Utf8_info utf8_;
+        Integer_info integer_;
+        Float_info float_;
+        Long_info long_;
+        Double_info double_;
+        Class_info class_;
+        String_info string_;
+        FieldRef_info fieldref_;
+        MethodRef_info methodref_;
+        InterfaceMethodRef_info interfaceref_;
+        NameAndType_info nametype_;
+        MethodHandle methodhandle_;
+        MethodType methodtype_;
+        InvokeDynamic invokedynamic_;
+    };
+}constantUnion;
 
 //Estrutura do .class
 typedef struct javaClass{
@@ -166,7 +206,7 @@ typedef struct javaClass{
     u2 minor_version;
     u2 major_version;
     u2 constant_pool_count;
-    cp_info *constant_pool;//constant_pool[constant_pool-1];
+    constantUnion *constant_pool;//constant_pool[constant_pool-1];
     u2 access_flags;
     u2 this_class;
     u2 super_class;
@@ -180,23 +220,7 @@ typedef struct javaClass{
     attribute_info attributes[];//attributes[attributes_count];
 } java_class;
 
-/*
- Structs e funções para pilha
- */
-//Estrutura de item para ser empilhado
-typedef struct stackItem{
-    void * stackedItem;
-    struct stackItem * previousItem;
-}StackItem;
-//Estrutura de pilha
-typedef struct stack{
-    StackItem * topItem;
-}Stack;
 
-/*
- Cabeçalhos de métodos públicos
- */
-void convertLittleBigEndianu2(u2 * tmp);
-void convertLittleBigEndianu4(u4 * tmp);
-
+//Funções
+void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp);
 #endif
