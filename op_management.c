@@ -717,8 +717,42 @@ void * op_table[256]={
     NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL,NULL, NULL, &impdep1, &impdep2
 };
+void * op_num_args_table[256]={
+    //Primeira família de instruções 0x0Xh
+    
+    //Segunda família de instruções 0x1Xh
+    
+    //Terceira família de instruções 0x2Xh
+    
+    //Quarta família de instruções 0x3Xh
+    
+    //Quinta família de instruções 0x4Xh
+    
+    //Sexta família de instruções 0x5Xh
+    
+    //Sétima família de instruções 0x6Xh
+    
+    //Oitava família de instruções 0x7Xh
+    
+    //Nona família de instruções 0x8Xh
+    
+    //Décima família de instruções 0x9Xh
+    
+    //Décima primeira família de instruções 0xAXh
+    
+    //Décima segunda família de instruções 0xBXh
+    
+    //Décima terceira família de instruções 0xCXh
+    
+    //Décima quarta família de instruções 0xDXh
+    
+    //Décima quinta família de instruções 0xEXh
+    
+    //Décima sexta família de instruções 0xFXh
+    
+};
 
 //Busca operação por opcode
-const u4 * get_op(u1 index){
+void * get_op(u1 index){
         return op_table[index];
 }
