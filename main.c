@@ -135,10 +135,11 @@ void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp)
 //Impressão de cp_info (constantes)
 char * printConstant(constantUnion *constant){
     char * buffer = (char*)calloc(100,sizeof(char));
-    uint64_t tempLong;
+    int64_t tempLong=0;
     switch (constant->cpinfo.tag) {
         case CONSTANT_UTF8:
-            buffer = convertToutf8(constant->utf8_.bytes);
+            free(buffer);
+            buffer = (char*)convertFromutf8(constant->utf8_.bytes, constant->utf8_.length);
             break;
         case CONSTANT_INTEGER:
             sprintf(buffer, "%"PRId32"\n",(int32_t)constant->integer_.bytes);
@@ -147,9 +148,7 @@ char * printConstant(constantUnion *constant){
             sprintf(buffer, "%f\n",(float)constant->float_.bytes);
             break;
         case CONSTANT_LONG:
-            tempLong = constant->long_.high_bytes;
-            tempLong = tempLong<<32;
-            tempLong += constant->long_.low_bytes;
+            tempLong = (int64_t)(((uint64_t)constant->long_.high_bytes<<32)|constant->long_.low_bytes);
             sprintf(buffer, "%"PRId64"\n",(int64_t)tempLong);
             break;
         case CONSTANT_DOUBLE:
@@ -204,39 +203,39 @@ char * printField(field_info *field){
 }
 void printClassFileContent(java_class * jclass){
     int i=0;
-    printf("Magic: %X \n", jclass->magic);
-    printf("Version: %X.%X \n", jclass->major_version, jclass->minor_version);
-    printf("# of constants: %u \n", jclass->constant_pool_count);
+    printf("Magic: %"PRIx32" \n", jclass->magic);
+    printf("Version: %"PRIx32".%"PRIx32" \n", jclass->major_version, jclass->minor_version);
+    printf("# of constants: %"PRIu16" \n", jclass->constant_pool_count);
     for(int i=1;i<jclass->constant_pool_count; i++){
         char * temp = NULL;
-        printf("\tConstant%d: %s\n", i,temp = printConstant(&jclass->constant_pool[i]));
+        printf("\tConstant%"PRId16": %s\n", i,temp = printConstant(&jclass->constant_pool[i]));
         free(temp);
     }
-    printf("Access Flags: %u \n", jclass->access_flags);
+    printf("Access Flags: %"PRIu16" \n", jclass->access_flags);
     printf("This Class: %"PRIu16" \n",jclass->this_class);
     printf("Super Class: %"PRIu16" \n",jclass->super_class);
     
-    printf("# of interfaces: %u \n", jclass->interfaces_count);
+    printf("# of interfaces: %"PRIu16" \n", jclass->interfaces_count);
     for(i=0;i<jclass->interfaces_count;i++){
         char * temp = NULL;
-        printf("\tInterface%u: %s \n",i,temp = printConstant(&jclass->constant_pool[jclass->interfaces[i]]));
+        printf("\tInterface%"PRIu16": %s \n",i,temp = printConstant(&jclass->constant_pool[jclass->interfaces[i]]));
         free(temp);
     }
-    printf("# of fields: %u \n",jclass->fields_count);
+    printf("# of fields: %"PRIu16" \n",jclass->fields_count);
     for(i=0;i<jclass->fields_count; i++){
         char *temp = NULL;
-        printf("\tField%d: %d \n",i, jclass->constant_pool[jclass->fields[i].descriptor_index].fieldref_.name_and_type_index);
+        printf("\tField%"PRId16": %"PRId16" \n",i, jclass->constant_pool[jclass->fields[i].descriptor_index].fieldref_.name_and_type_index);
         free(temp);
     }
     
-    printf("# of methods: %u \n",jclass->methods_count);
+    printf("# of methods: %"PRIu16" \n",jclass->methods_count);
     for(i=0;i<jclass->methods_count;i++){
-        printf("\tMethod%d: %d \n", i, jclass->constant_pool[jclass->methods[i].descriptor_index].nametype_.name_index);
+        printf("\tMethod%"PRId16": %"PRId16" \n", i, jclass->constant_pool[jclass->methods[i].descriptor_index].nametype_.name_index);
     }
     
-    printf("# of attributes: %u\n", jclass->attributes_count);
+    printf("# of attributes: %"PRIu16"\n", jclass->attributes_count);
     for(i=0;i<jclass->attributes_count; i++){
-        printf("\tAttribute%d: %d \n",i ,jclass->constant_pool[jclass->attributes[i].attribute_name_index].fieldref_.name_and_type_index);
+        printf("\tAttribute%"PRId16": %"PRId16" \n",i ,jclass->constant_pool[jclass->attributes[i].attribute_name_index].fieldref_.name_and_type_index);
     }
     
 }

@@ -33,20 +33,20 @@
 #define ACCESS_FLAG_ENUM      0x4000h
 
 //Tags de tipos constante
-#define CONSTANT_UTF8                1
-#define CONSTANT_INTEGER             3
-#define CONSTANT_FLOAT               4
-#define CONSTANT_LONG                5
-#define CONSTANT_DOUBLE              6
-#define CONSTANT_CLASS               7
-#define CONSTANT_STRING              8
-#define CONSTANT_FIELDREF            9
-#define CONSTANT_METHODREF          10
-#define CONSTANT_INTERFACEMETHODREF 11
-#define CONSTANT_NAMEANDTYPE        12
-#define CONSTANT_METHODHANDLE       15
-#define CONSTANT_METHODTYPE         16
-#define CONSTANT_INVOKEDYNAMIC      18
+#define CONSTANT_UTF8                0x01h
+#define CONSTANT_INTEGER             0x03h
+#define CONSTANT_FLOAT               0x04h
+#define CONSTANT_LONG                0x05h
+#define CONSTANT_DOUBLE              0x06h
+#define CONSTANT_CLASS               0x07h
+#define CONSTANT_STRING              0x08h
+#define CONSTANT_FIELDREF            0x09h
+#define CONSTANT_METHODREF           0x0Ah
+#define CONSTANT_INTERFACEMETHODREF  0x0Bh
+#define CONSTANT_NAMEANDTYPE         0x0Ch
+#define CONSTANT_METHODHANDLE        0x0Fh
+#define CONSTANT_METHODTYPE          0x10h
+#define CONSTANT_INVOKEDYNAMIC       0x12h
 
 
 /*

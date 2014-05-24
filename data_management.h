@@ -51,4 +51,7 @@ typedef uint32_t u4;
 u1 readu1(FILE * fp);
 u2 readu2(FILE * fp);
 u4 readu4(FILE * fp);
+u1 * convertToutf8(u1 * vet, u2 num_characters);
+u1 * convertFromutf8(u1 * vet, u2 num_characters);
+
 #endif
