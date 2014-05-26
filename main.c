@@ -20,8 +20,9 @@ java_class * readClassFile(char * fileAddress){
     FILE * fp = fopen(fileAddress, "rb");
     
     jclass->magic = readu4(fp);
-    jclass->minor_version = readu1(fp);
-    jclass->major_version = readu1(fp);
+    
+    jclass->minor_version = readu2(fp);
+    jclass->major_version = readu2(fp);
     
     jclass->constant_pool_count = readu2(fp);
 
@@ -294,8 +295,18 @@ void freeAttributeInfo(attribute_info * attinfo, u2 num_att){
     return;
 }
 void freeJClass(java_class *jclass){
+<<<<<<< HEAD
     freeConstantPoolUTF8(jclass->constant_pool, jclass->constant_pool_count);
     //free(jclass->constant_pool);
+=======
+    for(int i=1;i<jclass->constant_pool_count;i++){
+        if(jclass->constant_pool[i].cpinfo.tag==CONSTANT_UTF8){
+            free(jclass->constant_pool[i].utf8_.bytes);
+        }
+    }
+    
+    free(jclass->constant_pool);
+>>>>>>> origin/master
     free(jclass->interfaces);
     freeFieldsInfo(jclass->fields, jclass->fields_count);
     freeAttributeInfo(jclass->attributes, jclass->attributes_count);
@@ -325,8 +336,13 @@ int main(int argc, char** argv) {
     jclass = *readClassFile("/Users/gabriel/Desktop/jvm/jvm/HelloWorld.class");
     #endif
     
+<<<<<<< HEAD
     printClassFileContent(&jclass);
     freeJClass(&jclass);
+=======
+    //printClassFileContent(jclass);
+    freeJClass(jclass);
+>>>>>>> origin/master
     return 0;
 }
 
