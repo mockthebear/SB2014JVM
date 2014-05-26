@@ -223,4 +223,12 @@ typedef struct javaClass{
 
 //Funções
 void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp);
+void readAttributes(attribute_info * attributes, u2 num_attributes, FILE * fp);
+void readFields(field_info * fields, u2 num_fields, FILE * fp);
+void readMethods(method_info * methods, u2 num_methods, FILE * fp);
+
+void freeConstantPoolUTF8(constantUnion * cpool, u2 num_constants);
+void freeFieldsInfo(field_info * finfo, u2 num_fields);
+void freeAttributeInfo(attribute_info * attinfo, u2 num_att);
+
 #endif

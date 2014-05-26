@@ -41,30 +41,64 @@ java_class * readClassFile(char * fileAddress){
     }
     
     jclass->fields_count = readu2(fp);
-    
     jclass->fields = (field_info*)calloc(jclass->fields_count, sizeof(field_info));
-    fread(jclass->fields, jclass->fields_count, sizeof(field_info), fp);
-    for(int i=0;i<jclass->fields_count;i++){
-        
-    }
+    
+    readFields(jclass->fields, jclass->fields_count, fp);
     
     jclass->methods_count = readu2(fp);
     
     jclass->methods = (method_info*)calloc(jclass->methods_count, sizeof(method_info));
-    fread(jclass->methods, jclass->methods_count, sizeof(method_info), fp);
-    for(int i=0;i<jclass->methods_count;i++){
-        
-    }
+    readMethods(jclass->methods, jclass->methods_count, fp);
     
     jclass->attributes_count = readu2(fp);
     
     fread(jclass->attributes, jclass->attributes_count, sizeof(attribute_info), fp);
-    for(int i=0;i<jclass->attributes_count;i++){
-        
-    }
+    readAttributes(jclass->attributes, jclass->attributes_count, fp);
     
     fclose(fp);
     return jclass;
+}
+//Leitura de métodos
+void readMethods(method_info * methods, u2 num_methods, FILE * fp){
+    u2 k = 0;
+    for(int i=0;i<num_methods;i++,k=0){
+        methods[i].access_flags = readu2(fp);
+        methods[i].name_index = readu2(fp);
+        methods[i].descriptor_index = readu2(fp);
+        k = readu2(fp);
+        methods[i].attributes_count = k;
+        *methods[i].attributes = *(attribute_info*)calloc(k, sizeof(attribute_info));
+        readAttributes(methods[i].attributes, k, fp);
+    }
+    return;
+}
+//Leitura de campos
+void readAttributes(attribute_info * attributes, u2 num_attributes, FILE * fp){
+    u4 k = 0;
+    for(int i=0;i<num_attributes;i++,k=0){
+        attributes[i].attribute_name_index = readu2(fp);
+        k = readu4(fp);
+        attributes[i].attribute_length = k;
+        *attributes[i].info = *(u1*)calloc(k, sizeof(u1));
+        for(int j=0;j<k;j++){
+            attributes[i].info[j] = readu1(fp);
+        }
+    }
+    return;
+}
+//Leitura de campos
+void readFields(field_info * fields, u2 num_fields, FILE * fp){
+    u2 k = 0;
+    for(int i=0;i<num_fields;i++, k=0){
+        fields[i].access_flags = readu2(fp);
+        fields[i].name_index = readu2(fp);
+        fields[i].descriptor_index = readu2(fp);
+        k = readu2(fp);
+        fields[i].attributes_count = k;
+        *fields[i].attributes = *(attribute_info*)calloc(k, sizeof(attribute_info));
+        readAttributes(fields[i].attributes, k, fp);
+    }
+    return;
 }
 //Leitura do constant pool
 void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp){
@@ -240,7 +274,31 @@ void printClassFileContent(java_class * jclass){
     }
     
 }
+void freeConstantPoolUTF8(constantUnion * cpool, u2 num_constants){
+    for(int i=1; i<num_constants;i++){
+        if(cpool[i].cpinfo.tag==CONSTANT_UTF8){
+            free(cpool[i].utf8_.bytes);
+        }
+    }
+    return;
+}
+void freeFieldsInfo(field_info * finfo, u2 num_fields){
+    for(int i=0; i<num_fields;i++){
+        freeAttributeInfo(&(finfo[i].attributes[0]),finfo[i].attributes_count);
+    }
+    return;
+}
+void freeAttributeInfo(attribute_info * attinfo, u2 num_att){
+    for(int i=0; i<num_att;i++){
+        //free(attinfo[i].info);
+    }
+    return;
+}
 void freeJClass(java_class *jclass){
+<<<<<<< HEAD
+    freeConstantPoolUTF8(jclass->constant_pool, jclass->constant_pool_count);
+    //free(jclass->constant_pool);
+=======
     for(int i=1;i<jclass->constant_pool_count;i++){
         if(jclass->constant_pool[i].cpinfo.tag==CONSTANT_UTF8){
             free(jclass->constant_pool[i].utf8_.bytes);
@@ -248,10 +306,12 @@ void freeJClass(java_class *jclass){
     }
     
     free(jclass->constant_pool);
+>>>>>>> origin/master
     free(jclass->interfaces);
-    free(jclass->fields);
+    freeFieldsInfo(jclass->fields, jclass->fields_count);
+    freeAttributeInfo(jclass->attributes, jclass->attributes_count);
     free(jclass->methods);
-    free(jclass);
+    //free(jclass);
 }
 //JVM
 /*
@@ -268,16 +328,21 @@ void freeJClass(java_class *jclass){
 }*/
 int main(int argc, char** argv) {
     //printf("System is %s-endian.\n", is_big_endian() ? "big" : "little");
-    java_class * jclass;
+    java_class jclass;
     #ifdef WIN
     jclass = readClassFile("\\Users\-----\\Desktop\jvm\jvm\\HelloWorld.class");
     #endif
     #ifdef UNIX
-    jclass = readClassFile("/Users/gabriel/Desktop/jvm/jvm/HelloWorld.class");
+    jclass = *readClassFile("/Users/gabriel/Desktop/jvm/jvm/HelloWorld.class");
     #endif
     
+<<<<<<< HEAD
+    printClassFileContent(&jclass);
+    freeJClass(&jclass);
+=======
     //printClassFileContent(jclass);
     freeJClass(jclass);
+>>>>>>> origin/master
     return 0;
 }
 
