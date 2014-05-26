@@ -20,8 +20,9 @@ java_class * readClassFile(char * fileAddress){
     FILE * fp = fopen(fileAddress, "rb");
     
     jclass->magic = readu4(fp);
-    jclass->minor_version = readu1(fp);
-    jclass->major_version = readu1(fp);
+    
+    jclass->minor_version = readu2(fp);
+    jclass->major_version = readu2(fp);
     
     jclass->constant_pool_count = readu2(fp);
 
@@ -208,7 +209,7 @@ void printClassFileContent(java_class * jclass){
     printf("# of constants: %"PRIu16" \n", jclass->constant_pool_count);
     for(int i=1;i<jclass->constant_pool_count; i++){
         char * temp = NULL;
-        printf("\tConstant%"PRId16": %s\n", i,temp = printConstant(&jclass->constant_pool[i]));
+        printf("\tConstant%d: %s\n", i,temp = printConstant(&jclass->constant_pool[i]));
         free(temp);
     }
     printf("Access Flags: %"PRIu16" \n", jclass->access_flags);
@@ -218,28 +219,34 @@ void printClassFileContent(java_class * jclass){
     printf("# of interfaces: %"PRIu16" \n", jclass->interfaces_count);
     for(i=0;i<jclass->interfaces_count;i++){
         char * temp = NULL;
-        printf("\tInterface%"PRIu16": %s \n",i,temp = printConstant(&jclass->constant_pool[jclass->interfaces[i]]));
+        printf("\tInterface%d: %s \n",i,temp = printConstant(&jclass->constant_pool[jclass->interfaces[i]]));
         free(temp);
     }
     printf("# of fields: %"PRIu16" \n",jclass->fields_count);
     for(i=0;i<jclass->fields_count; i++){
         char *temp = NULL;
-        printf("\tField%"PRId16": %"PRId16" \n",i, jclass->constant_pool[jclass->fields[i].descriptor_index].fieldref_.name_and_type_index);
+        printf("\tField%d: %"PRId16" \n",i, jclass->constant_pool[jclass->fields[i].descriptor_index].fieldref_.name_and_type_index);
         free(temp);
     }
     
     printf("# of methods: %"PRIu16" \n",jclass->methods_count);
     for(i=0;i<jclass->methods_count;i++){
-        printf("\tMethod%"PRId16": %"PRId16" \n", i, jclass->constant_pool[jclass->methods[i].descriptor_index].nametype_.name_index);
+        printf("\tMethod%d: %"PRId16" \n", i, jclass->constant_pool[jclass->methods[i].descriptor_index].nametype_.name_index);
     }
     
     printf("# of attributes: %"PRIu16"\n", jclass->attributes_count);
     for(i=0;i<jclass->attributes_count; i++){
-        printf("\tAttribute%"PRId16": %"PRId16" \n",i ,jclass->constant_pool[jclass->attributes[i].attribute_name_index].fieldref_.name_and_type_index);
+        printf("\tAttribute%d: %"PRId16" \n",i ,jclass->constant_pool[jclass->attributes[i].attribute_name_index].fieldref_.name_and_type_index);
     }
     
 }
 void freeJClass(java_class *jclass){
+    for(int i=1;i<jclass->constant_pool_count;i++){
+        if(jclass->constant_pool[i].cpinfo.tag==CONSTANT_UTF8){
+            free(jclass->constant_pool[i].utf8_.bytes);
+        }
+    }
+    
     free(jclass->constant_pool);
     free(jclass->interfaces);
     free(jclass->fields);
@@ -269,7 +276,7 @@ int main(int argc, char** argv) {
     jclass = readClassFile("/Users/gabriel/Desktop/jvm/jvm/HelloWorld.class");
     #endif
     
-    printClassFileContent(jclass);
+    //printClassFileContent(jclass);
     freeJClass(jclass);
     return 0;
 }

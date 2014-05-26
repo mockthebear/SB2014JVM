@@ -17,36 +17,36 @@
 #define VALID_MAGIC_SIGNATURE 0xCAFEBABE
 
 //Flags de direito de acesso
-#define ACCESS_FLAG_PUBLIC    0x0001h
-#define ACCESS_FLAG_PRIVATE   0x0002h
-#define ACCESS_FLAG_PROTECTED 0x0004h
-#define ACCESS_FLAG_STATIC    0x0008h
-#define ACCESS_FLAG_FINAL     0x0010h
-#define ACCESS_FLAG_SUPER     0x0020h
-#define ACCESS_FLAG_BRIDGE    0x0040h
-#define ACCESS_FLAG_VARARGS   0x0080h
-#define ACCESS_FLAG_NATUVE    0x0100h
-#define ACCESS_FLAG_INTERFACE 0x0200h
-#define ACCESS_FLAG_ABSTRACT  0x0400h
-#define ACCESS_FLAG_STRICT    0x0800h
-#define ACCESS_FLAG_SYNTHETIC 0x1000h
-#define ACCESS_FLAG_ENUM      0x4000h
+#define ACCESS_FLAG_PUBLIC    0x0001
+#define ACCESS_FLAG_PRIVATE   0x0002
+#define ACCESS_FLAG_PROTECTED 0x0004
+#define ACCESS_FLAG_STATIC    0x0008
+#define ACCESS_FLAG_FINAL     0x0010
+#define ACCESS_FLAG_SUPER     0x0020
+#define ACCESS_FLAG_BRIDGE    0x0040
+#define ACCESS_FLAG_VARARGS   0x0080
+#define ACCESS_FLAG_NATUVE    0x0100
+#define ACCESS_FLAG_INTERFACE 0x0200
+#define ACCESS_FLAG_ABSTRACT  0x0400
+#define ACCESS_FLAG_STRICT    0x0800
+#define ACCESS_FLAG_SYNTHETIC 0x1000
+#define ACCESS_FLAG_ENUM      0x4000
 
 //Tags de tipos constante
-#define CONSTANT_UTF8                0x01h
-#define CONSTANT_INTEGER             0x03h
-#define CONSTANT_FLOAT               0x04h
-#define CONSTANT_LONG                0x05h
-#define CONSTANT_DOUBLE              0x06h
-#define CONSTANT_CLASS               0x07h
-#define CONSTANT_STRING              0x08h
-#define CONSTANT_FIELDREF            0x09h
-#define CONSTANT_METHODREF           0x0Ah
-#define CONSTANT_INTERFACEMETHODREF  0x0Bh
-#define CONSTANT_NAMEANDTYPE         0x0Ch
-#define CONSTANT_METHODHANDLE        0x0Fh
-#define CONSTANT_METHODTYPE          0x10h
-#define CONSTANT_INVOKEDYNAMIC       0x12h
+#define CONSTANT_UTF8                0x01
+#define CONSTANT_INTEGER             0x03
+#define CONSTANT_FLOAT               0x04
+#define CONSTANT_LONG                0x05
+#define CONSTANT_DOUBLE              0x06
+#define CONSTANT_CLASS               0x07
+#define CONSTANT_STRING              0x08
+#define CONSTANT_FIELDREF            0x09
+#define CONSTANT_METHODREF           0x0A
+#define CONSTANT_INTERFACEMETHODREF  0x0B
+#define CONSTANT_NAMEANDTYPE         0x0C
+#define CONSTANT_METHODHANDLE        0x0F
+#define CONSTANT_METHODTYPE          0x10
+#define CONSTANT_INVOKEDYNAMIC       0x12
 
 
 /*
