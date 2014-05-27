@@ -8,24 +8,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string.h>
 #include "jclass.h"
 
-
-#define  UNIX                // WIN para Windows e UNIX para Unix
-
-
+/*
+ Funções de leitura do .class
+ */
 //Le .class
-java_class * readClassFile(char * fileAddress){
-    java_class * jclass = (java_class*)calloc(1, sizeof(java_class));
+java_class * readClassFile(char * fileAddress, java_class * jclass){
+    //java_class * jclass = (java_class*)calloc(1, sizeof(java_class));
     FILE * fp = fopen(fileAddress, "rb");
     
     jclass->magic = readu4(fp);
-    
     jclass->minor_version = readu2(fp);
     jclass->major_version = readu2(fp);
     
     jclass->constant_pool_count = readu2(fp);
-
     jclass->constant_pool = (constantUnion*)calloc(jclass->constant_pool_count+1, sizeof(constantUnion));
     readConstantPool(jclass->constant_pool,jclass->constant_pool_count, fp);
     
@@ -34,7 +32,6 @@ java_class * readClassFile(char * fileAddress){
     jclass->super_class = readu2(fp);
     
     jclass->interfaces_count = readu2(fp);
-    
     jclass->interfaces = (u2*)calloc(jclass->interfaces_count, sizeof(u2));
     for(int i=0;i<jclass->interfaces_count;i++){
         jclass->interfaces[i] = readu2(fp);
@@ -42,17 +39,14 @@ java_class * readClassFile(char * fileAddress){
     
     jclass->fields_count = readu2(fp);
     jclass->fields = (field_info*)calloc(jclass->fields_count, sizeof(field_info));
-    
     readFields(jclass->fields, jclass->fields_count, fp);
     
     jclass->methods_count = readu2(fp);
-    
     jclass->methods = (method_info*)calloc(jclass->methods_count, sizeof(method_info));
     readMethods(jclass->methods, jclass->methods_count, fp);
     
     jclass->attributes_count = readu2(fp);
-    
-    fread(jclass->attributes, jclass->attributes_count, sizeof(attribute_info), fp);
+    jclass->attributes = (attribute_info*)calloc(jclass->attributes_count, sizeof(attribute_info));
     readAttributes(jclass->attributes, jclass->attributes_count, fp);
     
     fclose(fp);
@@ -67,7 +61,7 @@ void readMethods(method_info * methods, u2 num_methods, FILE * fp){
         methods[i].descriptor_index = readu2(fp);
         k = readu2(fp);
         methods[i].attributes_count = k;
-        *methods[i].attributes = *(attribute_info*)calloc(k, sizeof(attribute_info));
+        methods[i].attributes = (attribute_info*)calloc(k, sizeof(attribute_info));
         readAttributes(methods[i].attributes, k, fp);
     }
     return;
@@ -79,7 +73,7 @@ void readAttributes(attribute_info * attributes, u2 num_attributes, FILE * fp){
         attributes[i].attribute_name_index = readu2(fp);
         k = readu4(fp);
         attributes[i].attribute_length = k;
-        *attributes[i].info = *(u1*)calloc(k, sizeof(u1));
+        attributes[i].info = (u1*)calloc(k, sizeof(u1));
         for(int j=0;j<k;j++){
             attributes[i].info[j] = readu1(fp);
         }
@@ -109,7 +103,7 @@ void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp)
             case CONSTANT_UTF8:
                 k = readu2(fp);
 			    constantPool[i].utf8_.length = k;
-                *constantPool[i].utf8_.bytes = *(u1*)calloc(k,sizeof(u1));
+                constantPool[i].utf8_.bytes = (u1*)calloc(k,sizeof(u1));
                 for(int j=0;j<k;j++){
                     constantPool[i].utf8_.bytes[j] = readu1(fp);
                 }
@@ -167,39 +161,50 @@ void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp)
     }
 }
 
+/*
+ Funções de Impressão do conteúdo do .class
+ */
 //Impressão de cp_info (constantes)
-char * printConstant(constantUnion *constant){
-    char * buffer = (char*)calloc(100,sizeof(char));
+char * printConstant(constantUnion *constant,int i){
+    char * buffer = (char*)calloc(300,sizeof(char));
+    char * temp1 = NULL;
+    char * temp2 = NULL;
     int64_t tempLong=0;
-    switch (constant->cpinfo.tag) {
+    switch (constant[i].cpinfo.tag) {
         case CONSTANT_UTF8:
-            free(buffer);
-            buffer = (char*)convertFromutf8(constant->utf8_.bytes, constant->utf8_.length);
+            //temp1 = (char*)convertFromutf8(constant->utf8_.bytes, constant->utf8_.length);
+            if(constant[i].utf8_.length<290){
+               printf("String: %s\n",constant->utf8_.bytes);
+            }
             break;
         case CONSTANT_INTEGER:
-            sprintf(buffer, "%"PRId32"\n",(int32_t)constant->integer_.bytes);
+            sprintf(buffer, "Integer: %"PRId32"\n",(int32_t)constant->integer_.bytes);
             break;
         case CONSTANT_FLOAT:
-            sprintf(buffer, "%f\n",(float)constant->float_.bytes);
+            sprintf(buffer, "Float: %.5f\n",(float)constant->float_.bytes);
             break;
         case CONSTANT_LONG:
             tempLong = (int64_t)(((uint64_t)constant->long_.high_bytes<<32)|constant->long_.low_bytes);
-            sprintf(buffer, "%"PRId64"\n",(int64_t)tempLong);
+            sprintf(buffer, "Long: %"PRId64"\n",(int64_t)tempLong);
             break;
         case CONSTANT_DOUBLE:
             tempLong = constant->double_.high_bytes;
             tempLong = tempLong<<32;
             tempLong += constant->double_.low_bytes;
-            sprintf(buffer, "%lf\n", (double)tempLong);
+            sprintf(buffer, "Double: %lf\n", (double)tempLong);
             break;
         case CONSTANT_CLASS:
-            sprintf(buffer, "%"PRIu16"\n", constant->class_.name_index);
+            sprintf(buffer, "Classe %"PRIu16", de nome: %s\n", constant->class_.name_index, temp1 = printConstant(constant,constant->class_.name_index));
+            free(temp1);
             break;
         case CONSTANT_STRING:
-            sprintf(buffer, "%"PRIu16"\n", constant->string_.string_index);
+            sprintf(buffer, "String %"PRIu16", de conteudo: %s\n", constant->string_.string_index, temp1 = printConstant(constant, constant->string_.string_index));
+            free(temp1);
             break;
         case CONSTANT_FIELDREF:
-            sprintf(buffer, "%"PRIu16" %"PRIu16"\n",constant->fieldref_.class_index, constant->fieldref_.name_and_type_index);
+            sprintf(buffer, "Campo %"PRIu16" da classe %"PRIu16", ou %s da classe %s\n", constant->fieldref_.name_and_type_index, constant->fieldref_.class_index, temp1 = printConstant(constant, constant->fieldref_.name_and_type_index), temp2 = printConstant(constant, constant->fieldref_.class_index));
+            free(temp1);
+            free(temp2);
             break;
         case CONSTANT_METHODREF:
             
@@ -224,56 +229,74 @@ char * printConstant(constantUnion *constant){
     }
     return buffer;
 }
-//Impressão de interfaces
-/*char * printInterface(u2 interface){
-    char * buffer = (char*)calloc(100,sizeof(char));
-    sprintf("Tag:%"PRIu8" Indice da Classe:%"PRIu16" Indice Nome e Tipo:%"PRIu16"\n", interface.tag,interface.class_index, interface.name_and_type_index);
-    return buffer;
-}*/
-//Impressão de campos
-char * printField(field_info *field){
-    char * buffer = (char*)calloc(100,sizeof(char));
-    sprintf("Tag:%"PRIu16" Indice da Classe:%"PRIu16" Indice Nome e Tipo:%"PRIu16"\n", field->access_flags, field->attributes_count, field->descriptor_index);
+char * printAccessFlag(u2 flag){
+    char * buffer = (char*)calloc(100, sizeof(char));
+    strcat(buffer, "Flags: ");
+    if(flag&ACCESS_FLAG_ABSTRACT){
+        strcat(buffer, "abstract ");
+    }
+    if(flag&ACCESS_FLAG_FINAL){
+        strcat(buffer, "final ");
+    }
+    if(flag&ACCESS_FLAG_PUBLIC){
+        strcat(buffer, "public ");
+    }
+    if(flag&ACCESS_FLAG_SUPER){
+        strcat(buffer, "super ");
+    }
+    if(flag&ACCESS_FLAG_INTERFACE){
+        strcat(buffer, "interface ");
+    }
     return buffer;
 }
+
 void printClassFileContent(java_class * jclass){
     int i=0;
+    char * temp = NULL;
+    
+    //Impressão do código mágico, versão e numero de constantes
     printf("Magic: %"PRIx32" \n", jclass->magic);
-    printf("Version: %"PRIx32".%"PRIx32" \n", jclass->major_version, jclass->minor_version);
+    printf("Version: %"PRIu16".%"PRIu16" \n", jclass->major_version, jclass->minor_version);
     printf("# of constants: %"PRIu16" \n", jclass->constant_pool_count);
+    
+    //Impressão do pool de constantes
     for(int i=1;i<jclass->constant_pool_count; i++){
-        char * temp = NULL;
-        printf("\tConstant%d: %s\n", i,temp = printConstant(&jclass->constant_pool[i]));
+        printf("\tConstant%d: %s\n", i,temp = printConstant(jclass->constant_pool, i));
         free(temp);
     }
-    printf("Access Flags: %"PRIu16" \n", jclass->access_flags);
-    printf("This Class: %"PRIu16" \n",jclass->this_class);
-    printf("Super Class: %"PRIu16" \n",jclass->super_class);
-    
+    //Impressão do flag de acesso, nome da classe e super classe
+    printf("Access Flags: %"PRIu16" - %s\n", jclass->access_flags,temp = printAccessFlag(jclass->access_flags));
+    free(temp);
+    printf("This Class: %"PRIu16" - %s\n",jclass->this_class, temp = printConstant(jclass->constant_pool, jclass->this_class));
+    free(temp);
+    printf("Super Class: %"PRIu16" - %s\n",jclass->super_class, temp = printConstant(jclass->constant_pool, jclass->super_class));
+    free(temp);
+    //Impressão das interfaces
     printf("# of interfaces: %"PRIu16" \n", jclass->interfaces_count);
     for(i=0;i<jclass->interfaces_count;i++){
-        char * temp = NULL;
-        printf("\tInterface%d: %s \n",i,temp = printConstant(&jclass->constant_pool[jclass->interfaces[i]]));
+        printf("\tInterface%d: %s \n",i,temp = printConstant(jclass->constant_pool,i));
         free(temp);
     }
+    //Impressão dos campos
     printf("# of fields: %"PRIu16" \n",jclass->fields_count);
     for(i=0;i<jclass->fields_count; i++){
-        char *temp = NULL;
         printf("\tField%d: %"PRId16" \n",i, jclass->constant_pool[jclass->fields[i].descriptor_index].fieldref_.name_and_type_index);
-        free(temp);
     }
-    
+    //Impressão dos métodos
     printf("# of methods: %"PRIu16" \n",jclass->methods_count);
     for(i=0;i<jclass->methods_count;i++){
         printf("\tMethod%d: %"PRId16" \n", i, jclass->constant_pool[jclass->methods[i].descriptor_index].nametype_.name_index);
     }
-    
+    //Impressão dos atributos
     printf("# of attributes: %"PRIu16"\n", jclass->attributes_count);
     for(i=0;i<jclass->attributes_count; i++){
         printf("\tAttribute%d: %"PRId16" \n",i ,jclass->constant_pool[jclass->attributes[i].attribute_name_index].fieldref_.name_and_type_index);
     }
     
 }
+/*
+ Funções para liberar memória alocada durante a leitura do .class
+ */
 void freeConstantPoolUTF8(constantUnion * cpool, u2 num_constants){
     for(int i=1; i<num_constants;i++){
         if(cpool[i].cpinfo.tag==CONSTANT_UTF8){
@@ -290,59 +313,45 @@ void freeFieldsInfo(field_info * finfo, u2 num_fields){
 }
 void freeAttributeInfo(attribute_info * attinfo, u2 num_att){
     for(int i=0; i<num_att;i++){
-        //free(attinfo[i].info);
+        free(&attinfo[i].info[0]);
     }
     return;
 }
-void freeJClass(java_class *jclass){
-<<<<<<< HEAD
-    freeConstantPoolUTF8(jclass->constant_pool, jclass->constant_pool_count);
-    //free(jclass->constant_pool);
-=======
-    for(int i=1;i<jclass->constant_pool_count;i++){
-        if(jclass->constant_pool[i].cpinfo.tag==CONSTANT_UTF8){
-            free(jclass->constant_pool[i].utf8_.bytes);
-        }
+void freeMethodsInfo(method_info * methinfo, u2 num_meth){
+    for(int i=0; i<num_meth;i++){
+        freeAttributeInfo(methinfo[i].attributes, methinfo[i].attributes_count);
     }
-    
+    return;
+}
+
+//Desaloca estruturas alocadas da classe durante a leitura dos dados do arquivo
+void freeJClass(java_class *jclass){
+    freeConstantPoolUTF8(jclass->constant_pool,jclass->constant_pool_count);
     free(jclass->constant_pool);
->>>>>>> origin/master
     free(jclass->interfaces);
     freeFieldsInfo(jclass->fields, jclass->fields_count);
+    free(jclass->fields);
     freeAttributeInfo(jclass->attributes, jclass->attributes_count);
+    free(jclass->attributes);
+    freeMethodsInfo(jclass->methods, jclass->methods_count);
     free(jclass->methods);
-    //free(jclass);
 }
-//JVM
+
 /*
- *
+ Programa principal
  */
-/*int is_big_endian(void)
-{
-    union {
-        uint32_t i;
-        char c[4];
-    } e = { 0x01000000 };
-    
-    return e.c[0];
-}*/
 int main(int argc, char** argv) {
-    //printf("System is %s-endian.\n", is_big_endian() ? "big" : "little");
+
     java_class jclass;
-    #ifdef WIN
-    jclass = readClassFile("\\Users\-----\\Desktop\jvm\jvm\\HelloWorld.class");
-    #endif
-    #ifdef UNIX
-    jclass = *readClassFile("/Users/gabriel/Desktop/jvm/jvm/HelloWorld.class");
-    #endif
     
-<<<<<<< HEAD
+    //Lê arquivo .class para memória
+    jclass = *readClassFile("/Users/gabriel/Desktop/jvm/jvm/HelloWorld.class", &jclass);
+
+    //Impressão dos dados do arquivo .class
     printClassFileContent(&jclass);
+    
+    //Libera .class da memória
     freeJClass(&jclass);
-=======
-    //printClassFileContent(jclass);
-    freeJClass(jclass);
->>>>>>> origin/master
     return 0;
 }
 
