@@ -57,14 +57,14 @@
 //Tabela de constantes
 typedef struct cpinfo{
     u1 tag;
-    u1 info[];
+    u1 *info;
 }cp_info;
 
 //Tabela de atributos
 typedef struct attributeinfo{
     u2 attribute_name_index;
     u4 attribute_length;
-    u1 info[];//info[attribute_length];
+    u1 *info;//info[attribute_length];
 }attribute_info;
 
 //Tabela de campos
@@ -73,7 +73,7 @@ typedef struct fieldinfo{
     u2 name_index;
     u2 descriptor_index;
     u2 attributes_count;
-    attribute_info attributes[];//attributes[attributes_count];
+    attribute_info *attributes;//attributes[attributes_count];
 }field_info;
 
 //Tabela de métodos
@@ -82,7 +82,7 @@ typedef struct methodinfo{
     u2 name_index;
     u2 descriptor_index;
     u2 attributes_count;
-    attribute_info attributes[];//attributes[attributes_count];
+    attribute_info *attributes;//attributes[attributes_count];
 }method_info;
 
 
@@ -111,7 +111,7 @@ typedef struct nameAndTypeInfo{
 typedef struct utf8Info{
     u1 tag;
     u2 length;
-    u1 bytes[];//bytes[length];
+    u1 *bytes;//bytes[length];
 }Utf8_info;
 
 //Representa médoto
@@ -213,11 +213,11 @@ typedef struct javaClass{
     u2 interfaces_count;
     u2 *interfaces;//interfaces[interfaces_count];
     u2 fields_count;
-    field_info *fields;//fields[fields_count];
+    field_info * fields;//fields[fields_count];
     u2 methods_count;
-    method_info *methods;//methods[methods_count];
+    method_info * methods;//methods[methods_count];
     u2 attributes_count;
-    attribute_info attributes[];//attributes[attributes_count];
+    attribute_info * attributes;//attributes[attributes_count];
 } java_class;
 
 
