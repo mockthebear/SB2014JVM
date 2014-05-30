@@ -13,13 +13,6 @@
  Structs e funções para pilha
  */
 //Estrutura de item para ser empilhado
-typedef struct stackItem{
-    void * stackedItem;
-    struct stackItem * previousItem;
-}StackItem;
-//Estrutura de pilha
-typedef struct stack{
-    StackItem * topItem;
-}Stack;
+
 
 #endif

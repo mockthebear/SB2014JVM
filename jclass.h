@@ -221,14 +221,35 @@ typedef struct javaClass{
 } java_class;
 
 
-//Funções
-void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp);
-void readAttributes(attribute_info * attributes, u2 num_attributes, FILE * fp);
-void readFields(field_info * fields, u2 num_fields, FILE * fp);
-void readMethods(method_info * methods, u2 num_methods, FILE * fp);
+/*
+ Funções
+*/
 
+java_class * readClassFile(char * fileAddress, java_class * jclass);
+//Leitura de métodos
+void readMethods(method_info * methods, u2 num_methods, FILE * fp);
+//Leitura de campos
+void readAttributes(attribute_info * attributes, u2 num_attributes, FILE * fp);
+//Leitura de campos
+void readFields(field_info * fields, u2 num_fields, FILE * fp);
+//Leitura do constant pool
+void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp);
+
+//Funções de Impressão do conteúdo do .class
+ 
+//Impressão de cp_info (constantes)
+char * printConstant(constantUnion *constant,int i);
+char * printAccessFlag(u2 flag);
+char * getTypeOfConst(u1 tag);
+void printClassFileContent(java_class * jclass);
+//Funções para liberar memória alocada durante a leitura do .class
+ 
 void freeConstantPoolUTF8(constantUnion * cpool, u2 num_constants);
 void freeFieldsInfo(field_info * finfo, u2 num_fields);
 void freeAttributeInfo(attribute_info * attinfo, u2 num_att);
+void freeMethodsInfo(method_info * methinfo, u2 num_meth);
+
+//Desaloca estruturas alocadas da classe durante a leitura dos dados do arquivo
+void freeJClass(java_class *jclass);
 
 #endif

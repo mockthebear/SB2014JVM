@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "stack_management.h"
+#include "data_management.h"
 
 //Empilha item
 void pushToStack(StackItem * pushedItem, Stack * operationalStack){
