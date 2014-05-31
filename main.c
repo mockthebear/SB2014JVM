@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     java_class jclass;
     
     //Lê arquivo .class para memória
-    jclass = *readClassFile("/Users/gabriel/Desktop/jvm/jvm/HelloWorld.class", &jclass);
+    jclass = *readClassFile("/Users/gabriel/SB2014JVM/HelloWorld.class", &jclass);
     
     //Impressão dos dados do arquivo .class
     printClassFileContent(&jclass);

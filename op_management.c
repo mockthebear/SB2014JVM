@@ -452,7 +452,7 @@ void f2d(){
 void d2i(){
     
 }
-void _d2i(){
+void d2l(){
     
 }
 
@@ -687,7 +687,7 @@ void * op_table[256]={
     
     //Nona família de instruções 0x8Xh
     &ior, &lor, &ixor, &lxor, &iinc, &i2l, &i2f, &i2d,
-    &l2i, &l2f, &l2d, &f2i, &f2l, &f2d, &d2i, &_d2i,
+    &l2i, &l2f, &l2d, &f2i, &f2l, &f2d, &d2i, &d2l,
     
     //Décima família de instruções 0x9Xh
     &d2f, &i2b, &i2c, &i2s, &lcmp, &fcmpl, &fcmpg, &dcmpl,
@@ -717,42 +717,151 @@ void * op_table[256]={
     NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL,NULL, NULL, &impdep1, &impdep2
 };
-void * op_num_args_table[256]={
-    //Primeira família de instruções 0x0Xh
-    
-    //Segunda família de instruções 0x1Xh
-    
-    //Terceira família de instruções 0x2Xh
-    
-    //Quarta família de instruções 0x3Xh
-    
-    //Quinta família de instruções 0x4Xh
-    
-    //Sexta família de instruções 0x5Xh
-    
-    //Sétima família de instruções 0x6Xh
-    
-    //Oitava família de instruções 0x7Xh
-    
-    //Nona família de instruções 0x8Xh
-    
-    //Décima família de instruções 0x9Xh
-    
-    //Décima primeira família de instruções 0xAXh
-    
-    //Décima segunda família de instruções 0xBXh
-    
-    //Décima terceira família de instruções 0xCXh
-    
-    //Décima quarta família de instruções 0xDXh
-    
-    //Décima quinta família de instruções 0xEXh
-    
-    //Décima sexta família de instruções 0xFXh
-    
-};
 
 //Busca operação por opcode
 void * get_op(u1 index){
         return op_table[index];
 }
+
+//mnemonicos
+char * op_nameTable[256]={
+    //Primeira família de instruções 0x0Xh
+    "nop", "aconst_null", "iconst_m1", "iconst_0", "iconst_1", "iconst_2", "iconst3", "iconst_4",
+    "iconst_5", "lconst_0", "lconst_1", "fconst_0", "fconst_1", "fconst_2", "dconst_0", "dconst_1",
+    
+    //Segunda família de instruções 0x1Xh
+    "bipush", "sipush", "ldc", "ldc_w", "ldc2_w", "iload", "lload", "fload",
+    "dload", "aload", "iload_0", "iload_1", "iload_2", "iload_3", "lload_0", "lload_1",
+    
+    //Terceira família de instruções 0x2Xh
+    "lload_2", "lload_3", "fload_0", "fload_1", "fload_2", "fload_3", "dload_0", "dload_1",
+    "dload_2", "dload_3", "aload_0", "aload_1", "aload_3", "iaload", "laload",
+    
+    //Quarta família de instruções 0x3Xh
+    "faload", "daload", "aaload", "baload", "caload", "saload", "istore", "lstore",
+    "fstore", "dstore", "astore", "istore_0", "istore_1", "istore_2", "istore_3", "lstore_0",
+    
+    //Quinta família de instruções 0x4Xh
+    "lstore_1", "lstore_2", "lstore_3", "fstore_0", "fstore_1", "fstore_2", "fstore_3", "dstore_0",
+    "dstore_1", "dstore_2", "dstore_3", "astore_0", "astore_1", "astore_2", "astore_3", "iastore",
+    
+    //Sexta família de instruções 0x5Xh
+    "lastore", "fastore", "dastore", "aastore", "bastore", "castore", "sastore", "pop",
+    "pop2", "_dup", "dup_x1", "dup_x2", "_dup2", "dup2_x1", "dup2_x2", "swap",
+    
+    //Sétima família de instruções 0x6Xh
+    "iadd", "ladd", "fadd", "dadd", "isub", "lsub", "fsub", "dsub",
+    "imul", "lmul", "fmul", "dmul", "idiv", "_ldiv", "fdiv", "ddiv",
+    
+    //Oitava família de instruções 0x7Xh
+    "irem", "lrem", "frem", "_drem", "ineg", "lneg", "fneg", "dneg",
+    "ishl", "lshl", "ishr", "lshr", "iushr", "lushr", "iand", "land",
+    
+    //Nona família de instruções 0x8Xh
+    "ior", "lor", "ixor", "lxor", "iinc", "i2l", "i2f", "i2d",
+    "l2i", "l2f", "l2d", "f2i", "f2l", "f2d", "d2i", "d2l",
+    
+    //Décima família de instruções 0x9Xh
+    "d2f", "i2b", "i2c", "i2s", "lcmp", "fcmpl", "fcmpg", "dcmpl",
+    "dcmpg", "ifeq", "ifne", "iflt", "ifge", "ifgt", "ifle", "if_icmpeq",
+    
+    //Décima primeira família de instruções 0xAXh
+    "if_icmpne", "if_icmplt", "if_icmpge", "if_icmpgt", "if_icmple", "if_acmpeg", "if_acmpne", "_goto",
+    "jsr", "ret", "table_switch", "lookup_switch", "ireturn", "lreturn", "freturn", "dreturn",
+    
+    //Décima segunda família de instruções 0xBXh
+    "areturn", "_return", "getstatic", "putstatic", "getfield", "putfield", "invokevirtual", "invokespecial",
+    "invokestatic", "invokeInterface", NULL, "new", "newArray", "anewArray", "arrayLength", "athrow",
+    
+    //Décima terceira família de instruções 0xCXh
+    "checkCast", "instanceOf", "monitorEnter", "monitorExit", "wide", "multiNewArray", "ifNull", "ifNonNull",
+    "goto_w", "jsr_w", "breakPoint",NULL, NULL, NULL, NULL, NULL,
+    
+    //Décima quarta família de instruções 0xDXh
+    NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+    
+    //Décima quinta família de instruções 0xEXh
+    NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+    
+    //Décima sexta família de instruções 0xFXh
+    NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL,NULL, NULL, "impdep1", "impdep2"
+};
+
+//Recupera mnemonico pelo opcode
+char * get_opName(u1 index){
+    return op_nameTable[index];
+}
+
+//Numero de argumento das instruções
+u1 op_numBytesArgTable[256]={
+    //Primeira família de instruções 0x0Xh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Segunda família de instruções 0x1Xh
+    1, 2, 1, 2, 2, 1, 1, 1,
+    1, 1, 0, 0, 0, 0, 0, 0,
+    
+    //Terceira família de instruções 0x2Xh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Quarta família de instruções 0x3Xh
+    0, 0, 0, 0, 0, 0, 1, 1,
+    1, 1, 1, 0, 0, 0, 0, 0,
+    
+    //Quinta família de instruções 0x4Xh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Sexta família de instruções 0x5Xh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Sétima família de instruções 0x6Xh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Oitava família de instruções 0x7Xh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Nona família de instruções 0x8Xh
+    0, 0, 0, 0, 2, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Décima família de instruções 0x9Xh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1,
+    
+    //Décima primeira família de instruções 0xAXh
+    1, 1, 1, 1, 1, 1, 1, 1,
+    2, 1, /*caso*/0,/*especial*/ 0, 0, 0, 0, 0,
+    
+    //Décima segunda família de instruções 0xBXh
+    0, 0, 2, 2, 1, 2, 1, 1,
+    2, 4, 0, 2, 1, 2, 0, 0,
+    
+    //Décima terceira família de instruções 0xCXh
+    2, 2, 0, 0, 4/*3 no iinc*/, 3, 2, 2,
+    4, 4, 0, 0, 0, 0, 0, 0,
+    
+    //Décima quarta família de instruções 0xDXh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Décima quinta família de instruções 0xEXh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    
+    //Décima sexta família de instruções 0xFXh
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
+};
+u1 get_opNumArgs(u1 index){
+    return op_numBytesArgTable[index];
+}
+

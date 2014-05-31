@@ -25,7 +25,7 @@ StackItem * popFromStack(Stack * operationalStack){
 //Empilhar nova pilha para método java atual
 void prepareNewStack(Stack * operationalStack){
     StackItem * temp = (StackItem*)calloc(1, sizeof(StackItem));
-    temp->stackedItem = (Stack*)calloc(1, sizeof(Stack));
+    temp->stackedItem = (u4*)calloc(1, sizeof(Stack));
     temp->previousItem = operationalStack->topItem;
     operationalStack->topItem = temp;
     
@@ -41,7 +41,7 @@ void freeStackItem(Stack * operationalStack){
 void freeStackedStack(Stack * operationalStack){
     StackItem * temp = operationalStack->topItem;
     if(sizeof(temp->stackedItem)==sizeof(Stack)){
-        Stack * tempStack = temp->stackedItem;
+        Stack * tempStack = (Stack*)(temp->stackedItem);
         while(tempStack->topItem!=NULL){
             freeStackItem(tempStack);
         }

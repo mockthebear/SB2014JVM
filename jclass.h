@@ -10,6 +10,7 @@
  Includes
  */
 #include "data_management.h"
+#include "op_management.h"
 
 /*
  Macros
@@ -65,7 +66,7 @@ typedef struct attributeinfo{
     u2 attribute_name_index;
     u4 attribute_length;
     u1 *info;//info[attribute_length];
-}attribute_info;
+}Attribute_info;
 
 //Tabela de campos
 typedef struct fieldinfo{
@@ -73,8 +74,8 @@ typedef struct fieldinfo{
     u2 name_index;
     u2 descriptor_index;
     u2 attributes_count;
-    attribute_info *attributes;//attributes[attributes_count];
-}field_info;
+    Attribute_info *attributes;//attributes[attributes_count];
+}Field_info;
 
 //Tabela de métodos
 typedef struct methodinfo{
@@ -82,8 +83,8 @@ typedef struct methodinfo{
     u2 name_index;
     u2 descriptor_index;
     u2 attributes_count;
-    attribute_info *attributes;//attributes[attributes_count];
-}method_info;
+    Attribute_info *attributes;//attributes[attributes_count];
+}Method_info;
 
 
 
@@ -213,11 +214,11 @@ typedef struct javaClass{
     u2 interfaces_count;
     u2 *interfaces;//interfaces[interfaces_count];
     u2 fields_count;
-    field_info * fields;//fields[fields_count];
+    Field_info * fields;//fields[fields_count];
     u2 methods_count;
-    method_info * methods;//methods[methods_count];
+    Method_info * methods;//methods[methods_count];
     u2 attributes_count;
-    attribute_info * attributes;//attributes[attributes_count];
+    Attribute_info * attributes;//attributes[attributes_count];
 } java_class;
 
 
@@ -227,11 +228,11 @@ typedef struct javaClass{
 
 java_class * readClassFile(char * fileAddress, java_class * jclass);
 //Leitura de métodos
-void readMethods(method_info * methods, u2 num_methods, FILE * fp);
+void readMethods(Method_info * methods, u2 num_methods, FILE * fp);
 //Leitura de campos
-void readAttributes(attribute_info * attributes, u2 num_attributes, FILE * fp);
+void readAttributes(Attribute_info * attributes, u2 num_attributes, FILE * fp);
 //Leitura de campos
-void readFields(field_info * fields, u2 num_fields, FILE * fp);
+void readFields(Field_info * fields, u2 num_fields, FILE * fp);
 //Leitura do constant pool
 void readConstantPool(constantUnion * constantPool, u2 num_constants, FILE * fp);
 
@@ -245,9 +246,9 @@ void printClassFileContent(java_class * jclass);
 //Funções para liberar memória alocada durante a leitura do .class
  
 void freeConstantPoolUTF8(constantUnion * cpool, u2 num_constants);
-void freeFieldsInfo(field_info * finfo, u2 num_fields);
-void freeAttributeInfo(attribute_info * attinfo, u2 num_att);
-void freeMethodsInfo(method_info * methinfo, u2 num_meth);
+void freeFieldsInfo(Field_info * finfo, u2 num_fields);
+void freeAttributeInfo(Attribute_info * attinfo, u2 num_att);
+void freeMethodsInfo(Method_info * methinfo, u2 num_meth);
 
 //Desaloca estruturas alocadas da classe durante a leitura dos dados do arquivo
 void freeJClass(java_class *jclass);
