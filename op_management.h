@@ -216,5 +216,5 @@
 
 void * get_op(u1 index);
 char * get_opName(u1 index);
-u1 get_opNumParam(u1 index);
+u1 get_opNumBytesArgs(u1 index);
 #endif

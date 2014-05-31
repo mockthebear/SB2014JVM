@@ -861,7 +861,7 @@ u1 op_numBytesArgTable[256]={
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0
 };
-u1 get_opNumArgs(u1 index){
+u1 get_opNumBytesArgs(u1 index){
     return op_numBytesArgTable[index];
 }
 

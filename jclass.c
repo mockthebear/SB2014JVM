@@ -373,17 +373,17 @@ char * printMethod(Method_info * method){
 char * printAttributes(Attribute_info * attribute, constantUnion * cpool){
     char * buffer = (char*)calloc(1000, sizeof(char));
     char * temp2;
-    sprintf("(%"PRIu16")%s: \n", attribute->attribute_name_index, temp2 = printConstant(cpool, attribute->attribute_name_index));
+    sprintf(buffer,"\t(%"PRIu16")%s \n\t\t", attribute->attribute_name_index, temp2 = printConstant(cpool, attribute->attribute_name_index));
     for(int i=0;i<attribute->attribute_length;i++){
         u1 temp = attribute->info[i]; //pega opcode
         strcat(buffer, get_opName(temp)); //pega mnemonico
-        u1 operands = get_opNumParam(temp);
+        u1 operands = get_opNumBytesArgs(temp);
         for(int j=i;j<i+operands;j++){
             temp2 = (char*)calloc(5, sizeof(char));
-            sprintf(temp2,"#%d\n", attribute->info[j]);
+            sprintf(temp2," #%d", attribute->info[j]);
             strcat(buffer,temp2);
         }
-        strcat(buffer, "\n");
+        strcat(buffer, "\n\t\t");
         
     }
     
@@ -407,7 +407,7 @@ void printClassFileContent(java_class * jclass){
     
     //Impressão do pool de constantes
     for(int i=1;i<jclass->constant_pool_count; i++){
-        printf("Constant%d:Tipo %s: %s\n", i,getTypeOfConst(cpool[i].cpinfo.tag),temp = printConstant(cpool, i));
+        printf("\tConstant%d:Tipo %s: %s\n", i,getTypeOfConst(cpool[i].cpinfo.tag),temp = printConstant(cpool, i));
         free(temp);
     }
     
@@ -440,14 +440,15 @@ void printClassFileContent(java_class * jclass){
         char * temp = NULL;
         for(int j=0;j<methods[i].attributes_count;j++){
             buffer2 = (char*)calloc(20,sizeof(char));
-            sprintf(buffer2, "Atributo%d:", j);
+            sprintf(buffer2, "\tAtributo%d:", j);
             strcat(buffer, buffer2);
-            temp = printConstantAddr((constantUnion*)&methods[i].attributes[j]);
+            temp = printAttributes(&methods[i].attributes[j], cpool);
             strcat(buffer, temp);
             strcat(buffer, "\n");
+            free(buffer2);
             free(temp);
         }
-        printf("\tMethod (%d)%s - Flag de acesso(%d)%s - Descritor(%d)%s - Atributos:%d \n%s\n", i, printConstant(cpool, methods[i].name_index),methods[i].access_flags,printAccessFlag(methods[i].access_flags), methods[i].descriptor_index, printConstant(cpool, methods[i].descriptor_index), methods[i].attributes_count, buffer);
+        printf("Method (%d)%s - Flag de acesso(%d)%s - Descritor(%d)%s - Atributos:%d \n%s\n", i, printConstant(cpool, methods[i].name_index),methods[i].access_flags,printAccessFlag(methods[i].access_flags), methods[i].descriptor_index, printConstant(cpool, methods[i].descriptor_index), methods[i].attributes_count, buffer);
         free(buffer);
     }
     
