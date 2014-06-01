@@ -1,0 +1,94 @@
+# depslib dependency file v1.0
+1401320822 source:c:\mywork\filereader.c
+	"filereader.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1401320624 c:\mywork\filereader.h
+	<stdbool.h>
+	"errors.h"
+
+1401320857 source:c:\mywork\main.c
+	<stdlib.h>
+	<stdio.h>
+	<stdint.h>
+	"filereader.h"
+	"data_control.h"
+	"java.h"
+
+1401315519 c:\mywork\errors.h
+
+1401315776 source:c:\mywork\errors.c
+	<stdlib.h>
+	<stdio.h>
+	<stdbool.h>
+
+1401321017 source:c:\mywork\data_control.c
+	"data_control.h"
+
+1401320893 c:\mywork\data_control.h
+	<stdint.h>
+	"filereader.h"
+
+1401320933 source:c:\mywork\java.c
+	"java.h"
+	"filereader.h"
+	"data_control.h"
+
+1401320002 c:\mywork\java.h
+	<stdlib.h>
+	<stdio.h>
+	<stdint.h>
+	"filereader.h"
+
+1401321017 source:c:\users\mock\dropbox\mywork\data_control.c
+	"data_control.h"
+
+1401320893 c:\users\mock\dropbox\mywork\data_control.h
+	<stdint.h>
+	"filereader.h"
+
+1401320624 c:\users\mock\dropbox\mywork\filereader.h
+	<stdbool.h>
+	"errors.h"
+
+1401375834 c:\users\mock\dropbox\mywork\errors.h
+
+1401379403 source:c:\users\mock\dropbox\mywork\errors.c
+	<stdlib.h>
+	<stdio.h>
+	<stdbool.h>
+
+1401460960 source:c:\users\mock\dropbox\mywork\filereader.c
+	"filereader.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1401475975 source:c:\users\mock\dropbox\mywork\main.c
+	<stdlib.h>
+	<stdio.h>
+	<stdint.h>
+	"filereader.h"
+	"data_control.h"
+	"consolehelp.h"
+	"java.h"
+
+1401464760 c:\users\mock\dropbox\mywork\java.h
+	<stdlib.h>
+	<stdio.h>
+	<stdint.h>
+	"filereader.h"
+
+1401464822 source:c:\users\mock\dropbox\mywork\java.c
+	"java.h"
+	"filereader.h"
+	"data_control.h"
+
+1401460433 source:c:\users\mock\dropbox\mywork\consolehelp.c
+	"consolehelp.h"
+
+1401459693 c:\users\mock\dropbox\mywork\consolehelp.h
+	<windows.h>
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="JVM" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/JVM" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c99" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="consolehelp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="consolehelp.h" />
+		<Unit filename="data_control.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="data_control.h" />
+		<Unit filename="errors.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="errors.h" />
+		<Unit filename="filereader.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="filereader.h" />
+		<Unit filename="java.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="java.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
