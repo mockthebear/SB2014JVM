@@ -8,6 +8,7 @@ JVM::JVM(){
 
 JVM::~JVM(){
     //close stuff
+    Classes.clear();
 }
 
 void JVM::LoadClass(std::string name){
