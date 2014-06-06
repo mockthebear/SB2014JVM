@@ -61,13 +61,23 @@ typedef struct{
 } Attribute;
 
 
+
+
 typedef struct{
     uint16_t            acess_flags;
     uint16_t            name_index;
     uint16_t            descriptor_index;
     uint16_t            attributes_count;
+    uint16_t            this_index;
     Attribute           **Attributes;
 } Method;
+
+typedef struct{
+    uint16_t            acess_flags;
+    uint16_t            name_index;
+    uint16_t            descriptor_index;
+    uint16_t            attributes_count;
+} Field;
 
 
 

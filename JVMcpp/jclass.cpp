@@ -8,7 +8,7 @@ JClass::JClass(std::string name){
     //ASSERT(magic == 0xcafebabe,"Cafebabe not found!!!");
     minor                        = file->ReadBigEndian(2);
     major                        = file->ReadBigEndian(2);
-    constant_pull_count          = file->ReadBigEndian(2);
+    constant_pull_count          = file->ReadBigEndian(2)+1;
     constant_pool = new contstant_method*[constant_pull_count];
     //ASSERT(constant_pool,"Cannot allocate constant_pool");
     parseConstantPool();
@@ -16,13 +16,17 @@ JClass::JClass(std::string name){
     this_class                    = file->ReadBigEndian(2);
     super_class                   = file->ReadBigEndian(2);
     interfaces_count              = file->ReadBigEndian(2);
-    fields_count                  = file->ReadBigEndian(2);
-    methods_count                 = file->ReadBigEndian(2);
+    fields_count                  = file->ReadBigEndian(2)+1;
+    fields                        = new Field*[fields_count];
+
+    ParseFields();
+
+    methods_count                 = file->ReadBigEndian(2)+1;
     methods                       = new Method*[methods_count];
     //ASSERT(methods,"Cannot allocate methods");
     //JAVA_parseMethods(f,j);
     ParseMethods();
-    attributes_count              = file->ReadBigEndian(2);
+    attributes_count              = file->ReadBigEndian(2)+1;
     FAttr                         = new FileAttr*[attributes_count];
     //ASSERT(FAttr,"Cannot allocate FAttr");
     //JAVA_parseFileAttributes(f,j);
@@ -31,10 +35,11 @@ JClass::JClass(std::string name){
     c_name = name.substr(0,name.size()-6);
 }
 
+
 const unsigned char* JClass::GetUTF8(int i){
     static unsigned char buff[] = "???";
     if (i > 0 && i < constant_pull_count){
-        contstant_method *t = constant_pool[i-1];
+        contstant_method *t = constant_pool[i];
         if (t->tag == 1){
             return (const unsigned char*)t->bytes;
         }else{
@@ -48,7 +53,7 @@ const unsigned char* JClass::GetUTF8(int i){
 
 
 void JClass::ParseFileAttributes(){
-    for (int i=0;i<attributes_count;i++){
+    for (int i=1;i<attributes_count;i++){
         FAttr[i]                         =   new FileAttr;
         //ASSERT(FAttr[i],"Cannot allocate FAttr[i]");
         FAttr[i]->attribute_name_index   =   file->ReadBigEndian(2);
@@ -57,13 +62,15 @@ void JClass::ParseFileAttributes(){
     }
 }
 void JClass::ParseMethods(){
-    for (int i=0;i<methods_count ;i++){
+    for (int i=1;i<methods_count ;i++){
         methods[i] = new Method;
         //ASSERT(methods[i],"Cannot allocate methods[i]");
         methods[i]->acess_flags      = file->ReadBigEndian(2);
         methods[i]->name_index       = file->ReadBigEndian(2);
         methods[i]->descriptor_index = file->ReadBigEndian(2);
         methods[i]->attributes_count = file->ReadBigEndian(2);
+        //Custom
+        methods[i]->this_index       = i;
 
         //Attributtes
 
@@ -126,10 +133,20 @@ void JClass::ParseMethods(){
 }
 
 
+void JClass::ParseFields(){
+    for (int i=1;i<fields_count;i++){
+        fields[i] = new Field;
+        fields[i]->acess_flags = file->ReadBigEndian(2);
+        fields[i]->name_index = file->ReadBigEndian(2);
+        fields[i]->descriptor_index = file->ReadBigEndian(2);
+        fields[i]->attributes_count = file->ReadBigEndian(2);
+    }
+}
 void JClass::parseConstantPool(){
-    for (int i=0;i<constant_pull_count-1;i++){
+    for (int i=1;i<constant_pull_count-1;i++){
         constant_pool[i] = new contstant_method;
         constant_pool[i]->tag = file->ReadBigEndian(1);
+
         constant_pool[i]->name = Strings_[constant_pool[i]->tag];
         constant_pool[i]->lengh = 0;
         //printf("%s [%d]",constant_pool[i]->name,constant_pool[i]->tag);
@@ -185,13 +202,16 @@ void JClass::parseConstantPool(){
             default:{
                 printf("Error: Unknow tag [%d]->%d\n",constant_pool[i]->tag,i);
             }
+
+
         }
     }
 }
 
 JClass::~JClass(){
     std::cout << "Closing [" << c_name << "]\n";
-    for (int i=0;i<methods_count ;i++){
+    for (int i=0;i<methods_count-1 ;i++){
+        if (i != 0)
         for (int k=0;k<methods[i]->attributes_count;k++){
             delete[] methods[i]->Attributes[k]->code; //Libera code
             for (int g=0;g<methods[i]->Attributes[k]->attributes_count;g++){
@@ -215,12 +235,19 @@ JClass::~JClass(){
     delete(methods);
     //Clearing constant pool
     for (int i=0;i<constant_pull_count-1;i++){
-        if (constant_pool[i]->tag == 1){
+        if (constant_pool[i]->tag == 1 and i != 0){
             delete(constant_pool[i]->bytes);
         }
         delete(constant_pool[i]);
     }
     delete(constant_pool);
+    for (int i=0;i<fields_count-1;i++){
+        delete(fields[i]);
+    }
+    delete(fields);
+
+
+
     //Clearing attrs
     for (int i=0;i<attributes_count;i++){
         delete(FAttr[i]);

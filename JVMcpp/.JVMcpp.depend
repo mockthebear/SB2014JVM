@@ -4,49 +4,49 @@
 	<stdio.h>
 	<stdbool.h>
 
-1401991491 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\filereader.cpp
+1402059530 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\filereader.cpp
 	"filereader.hpp"
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<string>
 
-1401988381 c:\users\mock\documents\github\sb2014jvm\jvmcpp\filereader.hpp
+1402059530 c:\users\mock\documents\github\sb2014jvm\jvmcpp\filereader.hpp
 	<stdbool.h>
 	<iostream>
 	<string>
 
 1401375834 c:\users\mock\documents\github\sb2014jvm\jvmcpp\errors.h
 
-1401991492 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\jclass.cpp
+1402083453 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\jclass.cpp
 	<string.h>
 	"jclass.hpp"
 
-1401990587 c:\users\mock\documents\github\sb2014jvm\jvmcpp\jclass.hpp
+1402083450 c:\users\mock\documents\github\sb2014jvm\jvmcpp\jclass.hpp
 	<stdlib.h>
 	<stdio.h>
 	<stdint.h>
 	"java_structs.hpp"
 	"filereader.hpp"
 
-1401989624 c:\users\mock\documents\github\sb2014jvm\jvmcpp\java_structs.hpp
+1402083205 c:\users\mock\documents\github\sb2014jvm\jvmcpp\java_structs.hpp
 	<stdint.h>
 
-1401991454 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\main.cpp
+1402078943 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\main.cpp
 	<stdint.h>
 	<iostream>
 	"jvm.hpp"
 
-1401989220 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\java_structs.cpp
+1402059530 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\java_structs.cpp
 	"java_structs.hpp"
 
-1401991433 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\jvm.cpp
+1402082994 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\jvm.cpp
 	"jvm.hpp"
 
-1401991231 c:\users\mock\documents\github\sb2014jvm\jvmcpp\jvm.hpp
+1402080943 c:\users\mock\documents\github\sb2014jvm\jvmcpp\jvm.hpp
 	"jclass.hpp"
 	<iostream>
 	<string>
-	<unordered_map>
+	<map>
 	<memory>
 

@@ -3,16 +3,20 @@
 #include "jclass.hpp"
 #include <iostream>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <memory>
 
 class JVM{
     public:
-        JVM();
+        JVM(std::string);
         ~JVM();
-        void LoadClass(std::string name);
+        uint16_t LoadClass(std::string name);
+
+        Method *GetMethodByConstantPool(uint16_t,uint16_t);
+        Method *GetMethodByName(uint16_t,std::string);
     private:
-        std::unordered_map<std::string,std::unique_ptr<JClass>> Classes;
+        int mainclass;
+        std::map<uint16_t,std::unique_ptr<JClass>> Classes;
         //Memory
         //Stack
         //bla

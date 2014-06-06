@@ -4,7 +4,7 @@
 
 int main(){
 
-    JVM *j = new JVM();
+    JVM *j = new JVM("Bubblesort.class");
 
     delete j;
     return 0;
