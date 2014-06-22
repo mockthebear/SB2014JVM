@@ -5,10 +5,11 @@ JVM::JVM(std::string mainclass_str){
     //Start stuff
     mainclass = LoadClass(mainclass_str);
     //GetMethodByConstantPool(mainclass,1);
-    Method *m = GetMethodByName(mainclass,"<init>");
-    for (int i=0;i<m->Attributes[0]->code_lenght;i++){
-        printf("%X ",m->Attributes[0]->code[i] );
+    Attribute *m = GetMethodByName(mainclass,"<init>");
+    for (unsigned int i=0;i<m->code_lenght;i++){
+        printf("%X ",m->code[i] );
     }
+    //Rodar o init.
     //std::cout << m->Attributes[0]->code << "\n";
 }
 
@@ -16,6 +17,39 @@ JVM::~JVM(){
     //close stuff
     Classes.clear();
 }
+
+//Run!!
+
+bool JVM::Run(){
+    Attribute *m = GetMethodByName(mainclass,"main");
+    if (!m){
+        std::cout << "Cannot find class MAIN!\n";
+        return false;
+    }
+    try{
+       RunCode(m);
+
+    }
+    catch (int e){
+        std::cout << "Exception " << e << std::endl;
+    }
+
+
+    delete (m);
+    std::cout << "Done\n";
+    return true;
+}
+
+void JVM::RunCode(Attribute *a){
+    while (a->thispc != a->code_lenght){
+        //Execute!
+        unsigned char OPCODE = a->code[a->thispc];
+
+
+        a->thispc++;
+    }
+}
+
 
 uint16_t JVM::LoadClass(std::string name){
     static uint16_t class_counter = 0;
@@ -31,6 +65,7 @@ uint16_t JVM::LoadClass(std::string name){
     catch (int e){
 
     }
+    return -1;
 }
 
 Method *JVM::GetMethodByConstantPool(uint16_t index,uint16_t cpindex){
@@ -62,12 +97,23 @@ Method *JVM::GetMethodByConstantPool(uint16_t index,uint16_t cpindex){
     }
     return NULL;
 }
-Method *JVM::GetMethodByName(uint16_t index ,std::string search_name){
+Attribute *JVM::GetMethodByName(uint16_t index ,std::string search_name){
     if (Classes[index]){
         for (int i=1;i<Classes[index]->getMethodsCount();i++){
             std::string name((const char*)Classes[index]->GetUTF8(Classes[index]->methods[i]->name_index));
             if (name == search_name){
-                return Classes[index]->methods[i];
+                Attribute *newat = new Attribute;
+                newat->attributes_count          = Classes[index]->methods[i]->Attributes[0]->attributes_count   ;
+                newat->attribute_lenght          = Classes[index]->methods[i]->Attributes[0]->attribute_lenght   ;
+                newat->attribute_name_index      = Classes[index]->methods[i]->Attributes[0]->attribute_name_index   ;
+                newat->Attrs = NULL;
+                newat->code                      = Classes[index]->methods[i]->Attributes[0]->code   ;
+                newat->code_lenght               = Classes[index]->methods[i]->Attributes[0]->code_lenght   ;
+                newat->exception_table_lenght    = Classes[index]->methods[i]->Attributes[0]->exception_table_lenght;
+                newat->max_locals                = Classes[index]->methods[i]->Attributes[0]->max_locals;
+                newat->max_stack    = Classes[index]->methods[i]->Attributes[0]->max_stack;
+                newat->thispc = 0;
+                return newat;
             }
         }
         std::cout << "Method " << search_name << " not found." << std::endl;

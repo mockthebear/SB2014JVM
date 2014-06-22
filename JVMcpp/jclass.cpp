@@ -91,7 +91,7 @@ void JClass::ParseMethods(){
             //ASSERT(methods[i]->Attributes[k]->code,"Cannot allocate methods[i]->Attributes[k]->code");
             //printf("Code for attr %d ",k+1);
 
-            for (int r=0;r<methods[i]->Attributes[k]->code_lenght;r++){
+            for (unsigned int r=0;r<methods[i]->Attributes[k]->code_lenght;r++){
                 methods[i]->Attributes[k]->code[r]                   =   file->Read();
             }
             methods[i]->Attributes[k]->code[methods[i]->Attributes[k]->code_lenght]  = '\0';
@@ -122,7 +122,7 @@ void JClass::ParseMethods(){
                     }
                 }else{
                     aux->raw = new unsigned char[aux->attribute_lenght+1];
-                    for (int t=0;t<aux->attribute_lenght;t++){
+                    for (unsigned int t=0;t<aux->attribute_lenght;t++){
                         aux->raw[t] = file->Read();
                     }
                     aux->raw[aux->attribute_lenght] = '\0';
@@ -227,10 +227,10 @@ JClass::~JClass(){
                 delete(methods[i]->Attributes[k]->Attrs[g]);
             }
             delete(methods[i]->Attributes[k]->Attrs);
-            delete(methods[i]->Attributes[k]);
+            //delete(methods[i]->Attributes[k]);
         }
         delete(methods[i]->Attributes);
-        delete(methods[i]);
+        //delete(methods[i]);
     }
     delete(methods);
     //Clearing constant pool
@@ -241,11 +241,11 @@ JClass::~JClass(){
         delete(constant_pool[i]);
     }
     delete(constant_pool);
+
     for (int i=0;i<fields_count-1;i++){
         delete(fields[i]);
     }
     delete(fields);
-
 
 
     //Clearing attrs

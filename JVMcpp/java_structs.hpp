@@ -57,6 +57,7 @@ typedef struct{
     uint16_t            exception_table_lenght;
     uint16_t            attributes_count;
     AttrOfAttr          **Attrs;
+    uint16_t            thispc;
 
 } Attribute;
 
