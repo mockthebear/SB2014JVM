@@ -32,7 +32,7 @@
 1403469048 c:\users\mock\documents\github\sb2014jvm\jvmcpp\java_structs.hpp
 	<stdint.h>
 
-1403468633 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\main.cpp
+1403470411 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\main.cpp
 	<stdint.h>
 	<iostream>
 	"jvm.hpp"
@@ -40,13 +40,22 @@
 1401989220 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\java_structs.cpp
 	"java_structs.hpp"
 
-1403468606 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\jvm.cpp
+1403472743 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\jvm.cpp
 	"jvm.hpp"
+	"instructions.hpp"
 
-1403469336 c:\users\mock\documents\github\sb2014jvm\jvmcpp\jvm.hpp
+1403469870 c:\users\mock\documents\github\sb2014jvm\jvmcpp\jvm.hpp
 	"jclass.hpp"
 	<iostream>
 	<string>
 	<map>
 	<memory>
+
+1403471987 source:c:\users\mock\documents\github\sb2014jvm\jvmcpp\instructions.cpp
+	"instructions.hpp"
+
+1403472809 c:\users\mock\documents\github\sb2014jvm\jvmcpp\instructions.hpp
+	<map>
+	<functional>
+	<iostream>
 

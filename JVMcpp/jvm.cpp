@@ -1,5 +1,5 @@
 #include "jvm.hpp"
-
+#include "instructions.hpp"
 
 JVM::JVM(std::string mainclass_str){
     //Start stuff
@@ -9,6 +9,7 @@ JVM::JVM(std::string mainclass_str){
     for (unsigned int i=0;i<m->code_lenght;i++){
         printf("%X ",m->code[i] );
     }
+    //TODO
     //Rodar o init.
     //std::cout << m->Attributes[0]->code << "\n";
 }
@@ -31,7 +32,21 @@ bool JVM::Run(){
 
     }
     catch (int e){
-        std::cout << "Exception " << e << std::endl;
+        std::cout << "[ERROR] Exception " << e << " -> ";
+        switch (e){
+            case 10:{
+                std::cout << "Opcode is calling an function that is not registred" << std::endl;
+                break;
+            }
+            case 11:{
+                std::cout << "Opcode returned false." << std::endl;
+                break;
+            }
+
+            default:{
+                std::cout << "Regular error" << std::endl;
+            }
+        }
     }
 
 
@@ -41,12 +56,33 @@ bool JVM::Run(){
 }
 
 void JVM::RunCode(Attribute *a){
+    Instructions ins = Instructions::GetInstance();
     while (a->thispc != a->code_lenght){
         //Execute!
         unsigned char OPCODE = a->code[a->thispc];
 
+        if (!ins.GetFunction(OPCODE)){
+            //Opcode não encontrado!
+            throw 10;
 
-        a->thispc++;
+        }
+        auto F = ins.GetFunction(OPCODE);
+        unsigned char *str = new unsigned char[a->code_lenght+1];
+        int pos = 0;
+        for (int i=a->thispc;i<a->code_lenght;i++){
+            str[pos] = a->code[i];
+            pos++;
+        }
+
+        int ret = F(str);
+        delete str;
+        if (ret == -1){
+           //A função retornou falha!
+           throw 11;
+        }
+        a->thispc += 1+ret;
+        std::cout << "Enter para executar [" << a->thispc << "]\n";
+        getchar();
     }
 }
 
