@@ -36,6 +36,8 @@
 		</Compiler>
 		<Unit filename="filereader.cpp" />
 		<Unit filename="filereader.hpp" />
+		<Unit filename="instructions.cpp" />
+		<Unit filename="instructions.hpp" />
 		<Unit filename="java_structs.cpp" />
 		<Unit filename="java_structs.hpp" />
 		<Unit filename="jclass.cpp" />
