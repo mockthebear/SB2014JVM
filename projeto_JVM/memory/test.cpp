@@ -50,9 +50,18 @@ void teste_memory() {
 	memory.print();
 }
 
+void teste_memory2() {
+	Memory memory(100, 100);
+	Class *a, *b;
+	u4 out;
+	
+	a = memory.new_class((u1 *)"C1");
+	b = memory.new_class((u1 *)"C2");
+}
+
 int main() {
 
-	teste_memory();
+	teste_memory2();
 	
 	return 0;
 }

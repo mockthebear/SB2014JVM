@@ -15,43 +15,41 @@ public:
 	ClassArray *classes;
 	MemoryDataArray *data;
 	
-	Memory(int, int);
+	Memory(int c_size, int d_size);
 	
-	u4 op_new(Class *);
+	u4 op_new(Class *ref);
 	
-	u4 newarray(int, u1);
-	u4 anewarray(int, u1 *, Class *);
-	u4 multianewarray(int *, u1 *, Class *);
-	u4 arraylength(u4);
-	/*
+	void putstatic(Class *ref, u1 *fieldname, u4 *value, u1 *type);
+	u1 *getstatic(Class *ref, u1 *fieldname, u4 *value);
 	
-	void putstatic(Class *, u2, u4 *, u1);
-	u1 getstatic(Class *, u2, u4 *);
+	void putfield(u4 ref, u1 *fieldname, u4 *value, u1 *type);
+	u1 *getfield(u4 ref, u1 *fieldname, u4 *value);
 	
-	void putfield(u4, u2, u4 *, u1);
-	u1 getfield(u4, u2, u4 *);
+	u4 newarray(int size, u1 type);
+	u4 anewarray(int size, u1 *type, Class *ref);
+	u4 multianewarray(int *size, u1 *type, Class *ref);
+	u4 arraylength(u4 ref);
 	
+	void iaload(u4 ref, int index, u4 *data);
+	void laload(u4, int, u4 *);
+	void faload(u4, int, u4 *);
+	void daload(u4, int, u4 *);
+	void aaload(u4, int, u4 *);
+	void baload(u4, int, u4 *);
+	void caload(u4, int, u4 *);
+	void saload(u4, int, u4 *);
 	
-	void iaload();
-	void laload();
-	void faload();
-	void daload();
-	void aaload();
-	void baload();
-	void caload();
-	void saload();
+	void iastore(u4 ref, int index, u4 *data);
+	void lastore(u4, int, u4 *);
+	void fastore(u4, int, u4 *);
+	void dastore(u4, int, u4 *);
+	void aastore(u4, int, u4 *);
+	void bastore(u4, int, u4 *);
+	void castore(u4, int, u4 *);
+	void sastore(u4, int, u4 *);
 	
-	void iastore();
-	void lastore();
-	void fastore();
-	void dastore();
-	void aastore();
-	void bastore();
-	void castore();
-	void sastore();
-	*/
-	 Class *get_classref(u1 *);
-	 Class *new_class(u1 *);
+	 Class *get_classref(u1 *name);
+	 Class *new_class(u1 *name);
 	 void print();
 };
 

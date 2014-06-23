@@ -18,8 +18,8 @@ public:
 
 	ClassArray(int);
 	
-	void putstatic(Class *, int, u4 *, u1);
-	u1 getstatic(Class *, int, u4 *);
+	void putstatic(Class *, u1 *, u4 *, u1 *);
+	u1 *getstatic(Class *, u1 *, u4 *);
 	
 	Class *get_classref(u1 *);
 	Class *new_class(u1 *);
