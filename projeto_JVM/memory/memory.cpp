@@ -12,7 +12,7 @@ Memory::Memory(int c_array_size, int m_array_size) {
 u4 Memory::op_new(Class *ref) {
 	u4 instance;
 	
-	instance = data->new_instance(classref);
+	instance = data->new_instance(ref);
 	return instance;
 }
 
