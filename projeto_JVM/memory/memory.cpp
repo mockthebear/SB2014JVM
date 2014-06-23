@@ -1,7 +1,7 @@
 #include "memory.hpp"
 
-void test_load(char func, u1 type);
-void test_store(char func, u1 type);
+void test_array(const char *func, MemoryData *array, int index);
+void test_type(const char *func, MemoryData *array, u1 type);
 
 
 Memory::Memory(int c_array_size, int m_array_size) {
@@ -75,7 +75,8 @@ void Memory::iaload(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_load('i', array->type);
+	test_array("iaload", array, index);
+	test_type("iaload", array, TYPE_INT);
 	array->get_data(index, data, TYPE_INT);
 }
 
@@ -83,7 +84,8 @@ void Memory::laload(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_load('c', array->type);
+	test_array("laload", array, index);
+	test_type("laload", array, TYPE_LONG);
 	array->get_data(index, data, TYPE_LONG);
 }
 
@@ -91,7 +93,8 @@ void Memory::faload(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_load('f', array->type);
+	test_array("faload", array, index);
+	test_type("faload", array, TYPE_FLOAT);
 	array->get_data(index, data, TYPE_FLOAT);
 }
 
@@ -99,7 +102,8 @@ void Memory::daload(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_load('d', array->type);
+	test_array("daload", array, index);
+	test_type("daload", array, TYPE_DOUBLE);
 	array->get_data(index, data, TYPE_DOUBLE);
 }
 
@@ -107,7 +111,11 @@ void Memory::aaload(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_load('a', array->type);
+	test_array("aaload", array, index);
+	if( (TYPE_CLASS != array->array_type) && (TYPE_ARRAY != array->array_type) ) {
+		printf("Error type L/[ != %c: memory.aaload\n",array->array_type);
+		exit(0);
+	}
 	if(array->array_type == TYPE_CLASS)
 		array->get_data(index, data, TYPE_CLASS);
 	if(array->array_type == TYPE_ARRAY)
@@ -118,8 +126,11 @@ void Memory::baload(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	
-	test_load('d', array->type);
+	test_array("baload", array, index);
+	if( (TYPE_BOOL != array->array_type) && (TYPE_BYTE != array->array_type) ) {
+		printf("Error type B/Z != %c: memory.baload\n",array->array_type);
+		exit(0);
+	}
 	if(array->array_type == TYPE_BOOL)
 		array->get_data(index, data, TYPE_BOOL);
 	else if(array->array_type == TYPE_BYTE)
@@ -131,7 +142,8 @@ void Memory::caload(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_load('c', array->type);
+	test_array("caload", array, index);
+	test_type("caload", array, TYPE_CHAR);
 	array->get_data(index, data, TYPE_CHAR);
 	data[0] &= 0xFF;
 }
@@ -140,59 +152,72 @@ void Memory::saload(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_load('s', array->type);
-	array->get_data(index, data, TYPE_CHAR);
+	test_array("saload", array, index);
+	test_type("saload", array, TYPE_SHORT);
+	array->get_data(index, data, TYPE_SHORT);
 	data[0] &= 0xFFFF;
 }
 
-void iastore(u4 ref, int index, u4 *data) {
+void Memory::iastore(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_store('i', array->type);
+	test_array("iastore", array, index);
+	test_type("iastore", array, TYPE_INT);
 	array->put_data(index, data, TYPE_INT);	
 }
 
-void lastore(u4 ref, int index, u4 *data) {
+void Memory::lastore(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_store('l', array->type);
+	test_array("lastore", array, index);
+	test_type("lastore", array, TYPE_LONG);
 	array->put_data(index, data, TYPE_LONG);	
 }
 	
-void fastore(u4 ref, int index, u4 *data) {
+void Memory::fastore(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_store('f', array->type);
+	test_array("fastore", array, index);
+	test_type("fastore", array, TYPE_FLOAT);
 	array->put_data(index, data, TYPE_FLOAT);	
 }
 
-void dastore(u4 ref, int index, u4 *data) {
+void Memory::dastore(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_store('d', array->type);
+	test_array("dastore", array, index);
+	test_type("dastore", array, TYPE_DOUBLE);
 	array->put_data(index, data, TYPE_DOUBLE);	
 }
 
-void aastore(u4 ref, int index, u4 *data) {
+void Memory::aastore(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_store('a', array->type);
+	test_array("aastore", array, index);
+	if( (TYPE_CLASS != array->array_type) && (TYPE_ARRAY != array->array_type) ) {
+		printf("Error type L/[ != %c: memory.aastore\n",array->array_type);
+		exit(0);
+	}
 	if(array->array_type == TYPE_CLASS)
 		array->put_data(index, data, TYPE_CLASS);
 	if(array->array_type == TYPE_ARRAY)
 		array->put_data(index, data, TYPE_ARRAY);	
 }
 
-void bastore(u4 ref, int index, u4 *data) {
+void Memory::bastore(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_store('b', array->type);
+	test_array("bastore", array, index);
+	if( (TYPE_BOOL != array->array_type) && (TYPE_BYTE != array->array_type) ) {
+		printf("Error type B/Z != %c: memory.bastore\n",array->array_type);
+		exit(0);
+	}
 	data[0] &= 0xFF;
 	if(array->array_type == TYPE_BOOL)
 		array->put_data(index, data, TYPE_BOOL);
@@ -200,20 +225,22 @@ void bastore(u4 ref, int index, u4 *data) {
 		array->put_data(index, data, TYPE_BYTE);
 }
 
-void castore(u4 ref, int index, u4 *data) {
+void Memory::castore(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_store('c', array->type);
+	test_array("castore", array, index);
+	test_type("castore", array, TYPE_CHAR);
 	data[0] &= 0xFF;
 	array->put_data(index, data, TYPE_CHAR);	
 }
 
-void sastore(u4 ref, int index, u4 *data) {
+void Memory::sastore(u4 ref, int index, u4 *data) {
 	MemoryData *array;
 	
 	array = (MemoryData *)ref;
-	test_store('s', array->type);
+	test_array("sastore", array, index);
+	test_type("sastore", array, TYPE_SHORT);
 	data[0] &= 0xFFFF;
 	array->put_data(index, data, TYPE_SHORT);	
 }
@@ -228,19 +255,22 @@ Class *Memory::new_class(u1 *name) {
 
 void Memory::print() {
 	classes->print();
-	data->print_min();
+	data->print();
 }
 
-void test_load(char func, u1 type) {
-	if(type != TYPE_ARRAY) {
-		printf("Error not array: memory.%caload\n",func);
+void test_array(const char *func, MemoryData *array, int index) {
+	if(array->type != TYPE_ARRAY) {
+		printf("Error not array: memory.%s\n",func);
+		exit(0);
+	}
+	if(index >= (int)array->data_count) {
+		printf("Error index out of range index:%d array size:%d: memory.%s\n",index,array->data_count,func);
 		exit(0);
 	}
 }
-
-void test_store(char func, u1 type) {
-	if(type != TYPE_ARRAY) {
-		printf("Error not array: memory.%castore\n",func);
+void test_type(const char *func, MemoryData *array, u1 type) {
+	if(type != array->array_type) {
+		printf("Error type %c != %c: memory.%s\n",type,array->array_type,func);
 		exit(0);
 	}
 }

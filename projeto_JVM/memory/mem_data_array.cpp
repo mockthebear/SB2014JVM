@@ -112,7 +112,7 @@ u4 MemoryDataArray::new_array(int *a_size, u1 *a_type, Class *ref) {
 	m->data_count = a_size[0];
 	
 	m->data_length = make_array_index(m);
-	m->data = new u4[m->data_length];
+	m->data = (u4 *)calloc(m->data_length, sizeof(u4));
 	
 	if(a_type[1] == TYPE_CLASS) {
 		if(ref == NULL) {
@@ -148,13 +148,13 @@ u4 MemoryDataArray::new_array(int *a_size, u1 *a_type, Class *ref) {
 
 void MemoryDataArray::print() {
 	printf("MemoryDataArray\n");
-	//printf("max: %d\t",max);
+	printf("max: %d\t",max);
 	printf("size:%d\n",size);
 	for(int i=0; i<size; i++) {
-		printf("[%p] %c,",data[i],data[i]->type);
-		//printf("%d.[%p]\n",i,data[i]);
-		//data[i]->print();
-		//printf("\n");
+		//printf("[%p] %c,",data[i],data[i]->type);
+		printf("%d.[%p]\n",i,data[i]);
+		data[i]->print();
+		printf("\n");
 	}
 	printf("\n");
 }
@@ -191,15 +191,15 @@ u4 make_array_index(MemoryData *d) {
 	u4 length = 0;
 	int inc;
 	
-	if( (d->array_type != TYPE_LONG) || (d->array_type != TYPE_DOUBLE) ) {
-		inc = 0;
+	if( (d->array_type != TYPE_LONG) && (d->array_type != TYPE_DOUBLE) ) {
+		inc = 1;
 		length = d->data_count;
 	} else {
-		inc = 1;
+		inc = 2;
 		length = d->data_count * 2;
 	}	
 	for(u4 i=0; i<d->data_count; i++) {
-		d->data_index[i] = i + inc;
+		d->data_index[i] = i * inc;
 	}
 	return length;
 }

@@ -1,4 +1,6 @@
-COMPILER = g++
+CCPP = g++
+CC   = gcc
+CASM = nasm
 CFLAGS   = -Wextra -g
 INCLUDE  = -Iinclude
 TARGET   = prog
@@ -15,16 +17,16 @@ REMOVE  = del
 #REMOVE  = rm
 
 $(TARGET): $(OBJECTS)
-	$(COMPILER) -o $@ $^ 
+	$(CCPP) -o $@ $^ 
 
 %.obj: %.c
-	$(COMPILER) $(CFLAGS) $(INCLUDE) -o $@ -c $<
+	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 	
 %.obj: %.cpp
-	$(COMPILER) $(CFLAGS) $(INCLUDE) -o $@ -c $<
+	$(CCPP) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 %.obj: %.asm
-	nasm -f win32 -o $@ $<
+	$(CASM) -f win32 -o $@ $<
 
 all: clean $(TARGET)
 

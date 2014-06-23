@@ -7,6 +7,7 @@ public class C2 {
 
 	
     void metodo1() {
+		boolean[][] aabl = new boolean[21][31];
 		boolean[] abl = new boolean[21];
 		byte[] aby = new byte[21];
 		short[] ash = new short[21];

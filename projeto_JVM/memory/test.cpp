@@ -57,6 +57,23 @@ void teste_memory2() {
 	
 	a = memory.new_class((u1 *)"C1");
 	b = memory.new_class((u1 *)"C2");
+	
+	u4 data[10] = {0x55, 0x99, 0x45, 0x811};
+	u4 data1[2] = {-1,-1};
+	u4 index;
+	out = memory.newarray(3, 4);
+	index = 1;
+	memory.iastore(out, index, data);
+	index = 2;
+	memory.iastore(out, index, data+1);
+	memory.iaload(out, index, data1);
+	printf("value %X %X\n",data1[0],data1[1]);
+	
+	out = memory.anewarray(2, (u1 *)"[J", b);
+	index = 1;
+	memory.lastore(out, index, data+2);
+	
+	memory.print();
 }
 
 int main() {
