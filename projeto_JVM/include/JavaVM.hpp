@@ -2,6 +2,13 @@
 #define JAVAVM
 
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "definition.hpp"
+#include "memory.hpp"
+#include "stack_frame.hpp"
+#include "class.hpp"
+#include "mem_data.hpp"
 
 void nop();
 void aconst_null();
