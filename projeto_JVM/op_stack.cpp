@@ -404,7 +404,7 @@ void OperandStack::ladd(){
     op3 = pop();
     op4 = pop();//adicionando
     
-    int64_t resultado = ((int64_t)op4.bytes<<32 & op3.bytes)+((int64_t)op2.bytes<<32 & op1.bytes);
+    int64_t resultado = (int64_t)((uint64_t)op4.bytes<<32 & op3.bytes)+(int64_t)((uint64_t)op2.bytes<<32 & op1.bytes);
     op2.bytes = (resultado & 0xFFFFFFFF00000000)>>32;
     op1.bytes = (resultado & 0x00000000FFFFFFFF);
     
@@ -418,7 +418,7 @@ void OperandStack::lsub(){
     op3 = pop();
     op4 = pop();//subtraendo
     
-    int64_t resultado = ((int64_t)op4.bytes<<32 & op3.bytes)-((int64_t)op2.bytes<<32 & op1.bytes);
+    int64_t resultado = (int64_t)((uint64_t)op4.bytes<<32 & op3.bytes)-(int64_t)((uint64_t)op2.bytes<<32 & op1.bytes);
     op2.bytes = (resultado & 0xFFFFFFFF00000000)>>32;
     op1.bytes = (resultado & 0x00000000FFFFFFFF);
     
@@ -432,7 +432,7 @@ void OperandStack::lmul(){
     op3 = pop();
     op4 = pop();//multiplicando
     
-    int64_t resultado = ((int64_t)op4.bytes<<32 & op3.bytes)*((int64_t)op2.bytes<<32 & op1.bytes);
+    int64_t resultado = (int64_t)((uint64_t)op4.bytes<<32 & op3.bytes)*(int64_t)((uint64_t)op2.bytes<<32 & op1.bytes);
     op2.bytes = (resultado & 0xFFFFFFFF00000000)>>32;
     op1.bytes = (resultado & 0x00000000FFFFFFFF);
     
@@ -452,7 +452,7 @@ void OperandStack::ldiv(){
         //throw AritmethicException;
     }
     
-    int64_t resultado = ((int64_t)op4.bytes<<32 & op3.bytes)/divisor;
+    int64_t resultado = (int64_t)((uint64_t)op4.bytes<<32 & op3.bytes)/divisor;
     op2.bytes = (resultado & 0xFFFFFFFF00000000)>>32;
     op1.bytes = (resultado & 0x00000000FFFFFFFF);
     
@@ -566,8 +566,8 @@ void OperandStack::lrem(){
     op3 = pop();
     op4 = pop();
     
-    int64_t val1= ((uint64_t)op4.bytes<<32 & op3.bytes);
-    int64_t val2= ((uint64_t)op2.bytes<<32 & op1.bytes);
+    int64_t val1= (int64_t)((uint64_t)op4.bytes<<32 & op3.bytes);
+    int64_t val2= (int64_t)((uint64_t)op2.bytes<<32 & op1.bytes);
     
     if(val2 == 0){
         //throw ArithmeticException;
@@ -585,7 +585,7 @@ void OperandStack::lneg(){
     op1 = pop();
     op2 = pop();
     
-    uint64_t resultado = 0-((uint64_t)op2.bytes<<32 & op1.bytes);
+    int64_t resultado = 0-(int64_t)((uint64_t)op2.bytes<<32 & op1.bytes);
     op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
     op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
     
