@@ -30,12 +30,12 @@ public:
 	void dup();
 	void dup2();
 	void swap();
-	/*
-	dup_x1
-	dup2_x1
-	dup_x2
-	dup2_x2
-	*/
+	
+    void dup_x1();
+    void dup2_x1();
+    void dup_x2();
+    void dup2_x2();
+	
 	
 	int ifzero();
 	int ifgt();
@@ -52,20 +52,20 @@ public:
 	void idiv();
 	void irem();
 	void ineg();
-	/*
-	int ladd();
-	int lsub();
-	int lmul();
-	int ldiv();
-	int fadd();
-	int fsub();
-	int fmul();
-	int fdiv();
-	int dadd();
-	int dsub();
-	int dmul();
-	int ddiv();
 	
+	void ladd();
+	void lsub();
+	void lmul();
+	void ldiv();
+    
+	void fadd();
+	void fsub();
+	void fmul();
+	void fdiv();
+	void dadd();
+	void dsub();
+	void dmul();
+	void ddiv();
 	
 	void lrem();
 	void lneg();
@@ -73,7 +73,7 @@ public:
 	void fneg();
 	void drem();
 	void dneg();
-	
+	/*
 	fcmpg
 	fcmpl
 	dcmpg

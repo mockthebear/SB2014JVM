@@ -350,3 +350,327 @@ void OperandStack::print_min() {
 	}
 	printf("\n");
 }
+
+void OperandStack::dup_x1(){
+    Operand op1, op2;
+    op1 = pop();
+    op2 = pop();
+    push(op1);
+    push(op2);
+    push(op1);
+}
+
+void OperandStack::dup2_x1(){
+    Operand op1, op2, op3;
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    
+    
+}
+
+void OperandStack::dup_x2(){
+    Operand op1, op2, op3;
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    
+    push(op2);
+    push(op1);
+    push(op3);
+    push(op2);
+    push(op1);
+}
+
+void OperandStack::dup2_x2(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    
+    push(op2);
+    push(op1);
+    push(op4);
+    push(op3);
+    push(op2);
+    push(op1);
+}
+
+
+void OperandStack::ladd(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();//adicionado
+    op3 = pop();
+    op4 = pop();//adicionando
+    
+    int64_t resultado = ((int64_t)op4.bytes<<32 & op3.bytes)+((int64_t)op2.bytes<<32 & op1.bytes);
+    op2.bytes = (resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = (resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+void OperandStack::lsub(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();//subtraído
+    op3 = pop();
+    op4 = pop();//subtraendo
+    
+    int64_t resultado = ((int64_t)op4.bytes<<32 & op3.bytes)-((int64_t)op2.bytes<<32 & op1.bytes);
+    op2.bytes = (resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = (resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+void OperandStack::lmul(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();//multiplicador
+    op3 = pop();
+    op4 = pop();//multiplicando
+    
+    int64_t resultado = ((int64_t)op4.bytes<<32 & op3.bytes)*((int64_t)op2.bytes<<32 & op1.bytes);
+    op2.bytes = (resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = (resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+void OperandStack::ldiv(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();//divisor
+    op3 = pop();
+    op4 = pop();//dividendo
+    
+    int64_t divisor = ((int64_t)op2.bytes<<32 & op1.bytes);
+    
+    if(divisor ==0){
+        //throw AritmethicException;
+    }
+    
+    int64_t resultado = ((int64_t)op4.bytes<<32 & op3.bytes)/divisor;
+    op2.bytes = (resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = (resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+
+void OperandStack::fadd(){
+    Operand op1, op2;
+    op1 = pop();//adicionado
+    op2 = pop();//adicionando
+    
+    float resultado = ((float)op2.bytes)+((float)op1.bytes);
+    op1.bytes = (uint32_t)resultado;
+    
+    push(op1);
+}
+void OperandStack::fsub(){
+    Operand op1, op2;
+    op1 = pop();//subtraído
+    op2 = pop();//subtraendo
+    
+    float resultado = ((float)op2.bytes)-((float)op1.bytes);
+    op1.bytes = (uint32_t)resultado;
+    
+    push(op1);
+}
+void OperandStack::fmul(){
+    Operand op1, op2;
+    op1 = pop();//multiplicador
+    op2 = pop();//multiplicando
+    
+    float resultado = ((float)op2.bytes)*((float)op1.bytes);
+    op1.bytes = (uint32_t)resultado;
+    
+    push(op1);
+}
+void OperandStack::fdiv(){
+    Operand op1, op2;
+    op1 = pop();//divisor
+    op2 = pop();//dividendo
+    
+    float resultado = ((float)op2.bytes)/((float)op1.bytes);
+    op1.bytes = (uint32_t)resultado;
+    
+    push(op1);
+}
+  
+void OperandStack::dadd(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();//adicionado
+    op3 = pop();
+    op4 = pop();//adicionando
+    
+    double resultado = ((double)((uint64_t)op4.bytes<<32 & op3.bytes))+((double)((uint64_t)op2.bytes<<32 & op1.bytes));
+    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+void OperandStack::dsub(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();//subtraido
+    op3 = pop();
+    op4 = pop();//subtraendo
+    
+    double resultado = ((double)((uint64_t)op4.bytes<<32 & op3.bytes))-((double)((uint64_t)op2.bytes<<32 & op1.bytes));
+    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+void OperandStack::dmul(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();//multiplicador
+    op3 = pop();
+    op4 = pop();//multiplicando
+    
+    double resultado = ((double)((uint64_t)op4.bytes<<32 & op3.bytes))*((double)((uint64_t)op2.bytes<<32 & op1.bytes));
+    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+void OperandStack::ddiv(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();//divisor
+    op3 = pop();
+    op4 = pop();//dividendo
+    
+    double resultado = ((double)((uint64_t)op4.bytes<<32 & op3.bytes))/((double)((uint64_t)op2.bytes<<32 & op1.bytes));
+    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+	
+
+void OperandStack::lrem(){
+    Operand op1, op2, op3, op4;
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    op4 = pop();
+    
+    int64_t val1= ((uint64_t)op4.bytes<<32 & op3.bytes);
+    int64_t val2= ((uint64_t)op2.bytes<<32 & op1.bytes);
+    
+    if(val2 == 0){
+        //throw ArithmeticException;
+    }
+    
+    int64_t resultado = val1-((val1/val2)*val2);
+    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+void OperandStack::lneg(){
+    Operand op1, op2;
+    op1 = pop();
+    op2 = pop();
+    
+    uint64_t resultado = 0-((uint64_t)op2.bytes<<32 & op1.bytes);
+    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+void OperandStack::frem(){
+    Operand op1, op2;
+    op1 = pop();
+    op2 = pop();
+    
+    float val1= ((float)op2.bytes);
+    float val2= ((float)op1.bytes);
+    
+    if(val2 == 0){
+        //throw ArithmeticException;
+    }
+    
+    float resultado = val1-((val1/val2)*val2);
+    op1.bytes = (uint32_t)resultado;
+    
+    push(op1);
+}
+void OperandStack::fneg(){
+    Operand op1;
+    op1 = pop();
+    
+    float resultado = 0.0-(float)op1.bytes;
+    op1.bytes = (uint32_t)resultado;
+    
+    push(op1);
+    
+}
+void OperandStack::drem(){
+        Operand op1, op2, op3, op4;
+        op1 = pop();
+        op2 = pop();
+        op3 = pop();
+        op4 = pop();
+        
+        double val1= (double)((uint64_t)op4.bytes<<32 & op3.bytes);
+        double val2= (double)((uint64_t)op2.bytes<<32 & op1.bytes);
+        
+        if(val2 == 0){
+            //throw ArithmeticException;
+        }
+        
+        double resultado = val1-((val1/val2)*val2);
+        op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
+        op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
+        
+        push(op2);
+        push(op1);
+}
+void OperandStack::dneg(){
+    Operand op1, op2;
+    op1 = pop();
+    op2 = pop();
+    
+    double resultado = 0.0-(double)((uint64_t)op2.bytes<<32 & op1.bytes);
+    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
+    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
+    
+    push(op2);
+    push(op1);
+}
+	/*
+	fcmpg
+	fcmpl
+	dcmpg
+	dcmpl
+	lcmp
+	
+	iinc
+	
+	ishl
+	lshl
+	ishr
+	lshr
+	iushr
+	lushr
+	iand
+	land
+	ior
+	lor
+	ixor
+	lxor
+	*/

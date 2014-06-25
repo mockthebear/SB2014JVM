@@ -56,7 +56,7 @@ int64_t Operand::to_long(u4 high, u4 low) {
 }
 
 double Operand::to_double(u4 high, u4 low) {
-	double d = 0.0D;
+	double d = 0.0;
 	
 	_to_value64(&d, high, low);
 	return d;
