@@ -23,6 +23,13 @@ extern void _fdiv(void *);
 extern void _frem(void *);
 extern void _fneg(void *);
 
+extern void _dadd(void *);
+extern void _dsub(void *);
+extern void _dmul(void *);
+extern void _ddiv(void *);
+extern void _drem(void *);
+extern void _dneg(void *);
+
 #ifdef __cplusplus
 }
 #endif
@@ -455,6 +462,72 @@ void OperandStack::fneg(){
 	size--;
 }
 
+void OperandStack::dadd(){
+    if(size < 4) {
+		printf("Error  :op_stack.dadd\n");
+		exit(0);
+	}
+	_dadd(top);
+	top-=2;
+	size-=2;
+}
+
+void OperandStack::dsub(){
+    if(size < 4) {
+		printf("Error  :op_stack.dsub\n");
+		exit(0);
+	}
+	_dsub(top);
+	top-=2;
+	size-=2;
+}
+
+void OperandStack::dmul(){
+    if(size < 4) {
+		printf("Error  :op_stack.dmul\n");
+		exit(0);
+	}
+	_dmul(top);
+	top-=2;
+	size-=2;
+}
+
+void OperandStack::ddiv(){
+    if(size < 4) {
+		printf("Error  :op_stack.ddiv\n");
+		exit(0);
+	}
+	if( ( (top-1)->bytes == 0x0 ) && (top->bytes==0x0) ) {
+		printf("Excecao de divisao por zero\n");
+		exit(0);
+	}
+	_ddiv(top);
+	top-=2;
+	size-=2;
+}
+
+void OperandStack::drem(){
+    if(size < 4) {
+		printf("Error  :op_stack.drem\n");
+		exit(0);
+	}
+	if( ( (top-1)->bytes == 0x0 ) && (top->bytes==0x0) ) {
+		printf("Excecao de divisao por zero\n");
+		exit(0);
+	}
+	_drem(top);
+	top-=2;
+	size-=2;
+}
+
+void OperandStack::dneg(){
+	if(size < 2) {
+		printf("Error  :op_stack.dneg\n");
+		exit(0);
+	}
+	_dneg(top);
+}
+
 /* OPERACAO GERAL */
 void OperandStack::push(Operand op) {
 	if(size == max) {
@@ -579,103 +652,6 @@ void OperandStack::dup2_x2(){
 }
 
  
-void OperandStack::dadd(){
-    Operand op1, op2, op3, op4;
-    op1 = pop();
-    op2 = pop();//adicionado
-    op3 = pop();
-    op4 = pop();//adicionando
-    
-    double resultado = ((double)((uint64_t)op4.bytes<<32 & op3.bytes))+((double)((uint64_t)op2.bytes<<32 & op1.bytes));
-    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
-    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
-    
-    push(op2);
-    push(op1);
-}
-void OperandStack::dsub(){
-    Operand op1, op2, op3, op4;
-    op1 = pop();
-    op2 = pop();//subtraido
-    op3 = pop();
-    op4 = pop();//subtraendo
-    
-    double resultado = ((double)((uint64_t)op4.bytes<<32 & op3.bytes))-((double)((uint64_t)op2.bytes<<32 & op1.bytes));
-    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
-    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
-    
-    push(op2);
-    push(op1);
-}
-void OperandStack::dmul(){
-    Operand op1, op2, op3, op4;
-    op1 = pop();
-    op2 = pop();//multiplicador
-    op3 = pop();
-    op4 = pop();//multiplicando
-    
-    double resultado = ((double)((uint64_t)op4.bytes<<32 & op3.bytes))*((double)((uint64_t)op2.bytes<<32 & op1.bytes));
-    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
-    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
-    
-    push(op2);
-    push(op1);
-}
-void OperandStack::ddiv(){
-    Operand op1, op2, op3, op4;
-    op1 = pop();
-    op2 = pop();//divisor
-    op3 = pop();
-    op4 = pop();//dividendo
-    
-    double resultado = ((double)((uint64_t)op4.bytes<<32 & op3.bytes))/((double)((uint64_t)op2.bytes<<32 & op1.bytes));
-    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
-    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
-    
-    push(op2);
-    push(op1);
-}
-
-void OperandStack::drem(){
-        Operand op1, op2, op3, op4;
-        op1 = pop();
-        op2 = pop();
-        op3 = pop();
-        op4 = pop();
-        
-        double val1= (double)((uint64_t)op4.bytes<<32 & op3.bytes);
-        double val2= (double)((uint64_t)op2.bytes<<32 & op1.bytes);
-        
-        if(val2 == 0){
-            //throw ArithmeticException;
-        }
-        
-        double resultado = val1-((val1/val2)*val2);
-        op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
-        op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
-        
-        push(op2);
-        push(op1);
-}
-void OperandStack::dneg(){
-	if(size < 2) {
-		printf("Error  :op_stack.dneg\n");
-		exit(0);
-	}
-	(top-1)->bytes ^= 0x80000000;
-	/*
-    Operand op1, op2;
-    op1 = pop();
-    op2 = pop();
-    
-    double resultado = 0.0-(double)((uint64_t)op2.bytes<<32 & op1.bytes);
-    op2.bytes = ((uint64_t)resultado & 0xFFFFFFFF00000000)>>32;
-    op1.bytes = ((uint64_t)resultado & 0x00000000FFFFFFFF);
-    
-    push(op2);
-    push(op1);
-	*/
-}
 	/*
 	fcmpg
 	fcmpl
