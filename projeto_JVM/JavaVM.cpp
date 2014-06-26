@@ -9,7 +9,7 @@ void print();
 static StackFrame *frames;
 static Memory     *memory;
 
-int main_(int argc, char **argv) {
+int main(int argc, char **argv) {
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
 	
