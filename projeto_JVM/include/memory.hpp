@@ -22,10 +22,10 @@ public:
 	void putstatic(Class *ref, char *fieldname, u4 *value, char *type);
 	char *getstatic(Class *ref, char *fieldname, u4 *value);
 	
-	void putfield(u4 ref, char *fieldname, u4 *value, char *type);
-	char *getfield(u4 ref, char *fieldname, u4 *value);
+	void putfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value);
+	void getfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value);
 	
-	u4 newarray(int size, char type);
+	u4 newarray(int size, u1 type);
 	u4 anewarray(int size, char *type, Class *ref);
 	u4 multianewarray(int *size, char *type, Class *ref);
 	u4 arraylength(u4 ref);

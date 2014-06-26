@@ -22,10 +22,10 @@ __fadd:
 	
 	fld  dword [eax-4]	; op1 = [op1]
 	fld  dword [eax+4]	; op2 = [op2]
-	fadd				; op1 += op2
+	faddp				; op1 += op2
 	fstp  dword [eax-4]	; [op1] = op1
 	
-	mov  eax, [eax-4]
+	;mov  eax, [eax-4]
 	
 	leave
 	ret
@@ -43,7 +43,7 @@ __fsub:
 	fsubp				; op1 -= op2
 	fst  dword [eax-4]	; [op1] = op1
 	
-	mov  eax, [eax-4]
+	;mov  eax, [eax-4]
 	
 	leave
 	ret
@@ -61,7 +61,7 @@ __fmul:
 	fmulp				; op1 *= op2
 	fst  dword [eax-4]	; [op1] = op1
 	
-	mov  eax, [eax-4]
+	;mov  eax, [eax-4]
 	
 	leave
 	ret
@@ -79,7 +79,7 @@ __fdiv:
 	fdivp				; op1 /= op2
 	fst  dword [eax-4]	; [op1] = op1
 	
-	mov  eax, [eax-4]
+	;mov  eax, [eax-4]
 	
 	leave
 	ret
@@ -96,7 +96,7 @@ __frem:
 	fprem				; op1 %= op2
 	fst  dword [eax-4]	; [op1] = op1
 	
-	mov  eax, [eax-4]
+	;mov  eax, [eax-4]
 	
 	leave
 	ret
@@ -113,7 +113,7 @@ __fneg:
 	xor  ecx, 0x80000000 ; inverte MSB
 	mov  [eax+4], ecx	 ; [op1] = -op1
 	
-	mov  eax, [eax+4]
+	;mov  eax, [eax+4]
 	
 	leave
 	ret

@@ -84,7 +84,7 @@ void OperandStack::fconst(float f) {
 	push(op);
 }
 
-void OperandStack::lconst(int32_t l) {
+void OperandStack::lconst(int64_t l) {
 	Operand op;
 	
 	op.set_high(TYPE_LONG, &l);
@@ -528,6 +528,79 @@ void OperandStack::dneg(){
 	_dneg(top);
 }
 
+void OperandStack::i2l() {
+	if(size < 1) {
+		printf("Error  :op_stack.i2l\n");
+		exit(0);
+	}
+	Operand opH, opL;
+	int32_t i;
+	int64_t l;
+	
+	opH = pop();
+	i = opH.to_int();
+	l = (int64_t)i;
+	opH.set_high(TYPE_LONG, &l);
+	opL.set_low(TYPE_LONG, &l);
+	push(opH);
+	push(opL);
+}
+
+void OperandStack::i2f() {
+	if(size < 1) {
+		printf("Error  :op_stack.i2f\n");
+		exit(0);
+	}
+	int32_t i;
+	float f;
+	
+	i = top->to_int();
+	f = (float) i;
+	top->set_value(TYPE_FLOAT, &f);
+}
+
+void OperandStack::i2d() {
+	if(size < 1) {
+		printf("Error  :op_stack.i2d\n");
+		exit(0);
+	}
+	Operand opH, opL;
+	int32_t i;
+	double d;
+	
+	opH = pop();
+	i = opH.to_int();
+	d = (double)i;
+	opH.set_high(TYPE_DOUBLE, &d);
+	opL.set_low(TYPE_DOUBLE, &d);
+	push(opH);
+	push(opL);
+}
+
+void OperandStack::i2b() {
+	if(size < 1) {
+		printf("Error  :op_stack.i2b\n");
+		exit(0);
+	}
+	top->bytes &= 0xFF;
+}
+
+void OperandStack::i2c() {
+	if(size < 1) {
+		printf("Error  :op_stack.i2c\n");
+		exit(0);
+	}
+	top->bytes &= 0xFF;
+}
+
+void OperandStack::i2s() {
+	if(size < 1) {
+		printf("Error  :op_stack.i2s\n");
+		exit(0);
+	}
+	top->bytes &= 0xFFFF;
+}
+
 /* OPERACAO GERAL */
 void OperandStack::push(Operand op) {
 	if(size == max) {
@@ -578,7 +651,6 @@ void OperandStack::print() {
 	printf("\tbase\n");
 
 }
-
 
 void OperandStack::print_min() {
 	printf(">Operand Stack\n");

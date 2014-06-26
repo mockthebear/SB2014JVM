@@ -12,17 +12,23 @@ MemoryDataArray::MemoryDataArray(int m) {
 		data[i] = NULL;
 }
 
-void MemoryDataArray::putfield(u4 ref, char *fieldname, u4 *value, char *type) {
+void MemoryDataArray::putfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value) {
 	MemoryData *instance = (MemoryData *)ref;
 	int index = instance->classref->get_field_index(fieldname);
+	
+	char *c_name = instance->classref->get_cp_this_class();
 	char *f_type = instance->classref->get_field_type(index);
 	
-	if(strcmp( (char *)f_type, (char *)type ) != 0) {
-		printf("Error value type %s != %s: mem_data_array.putfield\n", f_type,type);
+	if(strcmp(c_name, classname) != 0) {
+		printf("Error class type %s != %s: mem_data_array.putfield\n", classname, c_name);
+		exit(0);
+	}
+	if(strcmp(f_type, type) != 0) {
+		printf("Error value type %s != %s: mem_data_array.putfield\n",type, f_type);
 		exit(0);
 	}
 	if( isStatic( instance->classref->get_field_flags(index) ) ) {
-		printf("Error field is static: mem_data_array.putfield\n");
+		printf("Error field %s is static: mem_data_array.putfield\n", fieldname);
 		exit(0);
 	}
 	instance->put_data(index, value, *f_type);
@@ -32,22 +38,31 @@ void MemoryDataArray::putfield(u4 ref, char *fieldname, u4 *value, char *type) {
 	printf("TEST_PUTFIELD\n")
 	printf("addr %p, value %08X\n",instance, ref);
 	printf("field index %d\n",index);
-	printf("field type %c\n",type);
+	printf("field type %s\n",type);
 #endif
 
 }
 
-char *MemoryDataArray::getfield(u4 ref, char *fieldname, u4 *value) {
+void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value) {
 	MemoryData *instance = (MemoryData *)ref;
 	int index = instance->classref->get_field_index(fieldname);
+	
+	char *c_name = instance->classref->get_cp_this_class();
 	char *f_type = instance->classref->get_field_type(index);
-
+	
+	if(strcmp(c_name, classname) != 0) {
+		printf("Error class type %s != %s: mem_data_array.getfield\n", classname, c_name);
+		exit(0);
+	}
+	if(strcmp(f_type, type) != 0) {
+		printf("Error value type %s != %s: mem_data_array.getfield\n",type, f_type);
+		exit(0);
+	}
 	if( isStatic( instance->classref->get_field_flags(index) ) ) {
 		printf("Error field is static: mem_data_array.getfield\n");
 		exit(0);
 	}
 	instance->get_data(index, value, *f_type);
-	return f_type;
 }
 
 u4 MemoryDataArray::arraylength(u4 ref) {
@@ -166,7 +181,7 @@ void MemoryDataArray::print_min() {
 	for(int i=0; i<size; i++) {
 		printf("[%p] ",data[i]);
 		data[i]->print_min();
-		printf(", ");
+		//printf(", ");
 	}
 	printf("\n");
 }

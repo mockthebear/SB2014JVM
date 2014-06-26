@@ -24,15 +24,15 @@ char *Memory::getstatic(Class *ref, char *fieldname, u4 *value) {
 	return classes->getstatic(ref, fieldname, value);
 }
 
-void Memory::putfield(u4 ref, char *fieldname, u4 *value, char *type) {
-	data->putfield(ref, fieldname, value, type);
+void Memory::putfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value) {
+	data->putfield(ref, classname, fieldname, type, value);
 }
 
-char *Memory::getfield(u4 ref, char *fieldname, u4 *value) {
-	return data->getfield(ref, fieldname, value);
+void Memory::getfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value) {
+	return data->getfield(ref, classname, fieldname, type, value);
 }
 
-u4 Memory::newarray(int size, char type) {
+u4 Memory::newarray(int size, u1 type) {
 	enum {A_BOOL = 4, A_CHAR, A_FLOAT, A_DOUBLE, A_BYTE, A_SHORT, A_INT, A_LONG};
 	u4 array;
 	char a_type[2] = {'[', 0};

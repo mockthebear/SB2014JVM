@@ -121,7 +121,7 @@ __ineg:
 	
 	mov  eax, [ebp+8]	 ; [topo da pilha], 1ro param
 	
-	mov  ecx, [eax+4]	 ; op1
+	mov  ecx, [eax+4]	 ; op1 = [op1]
 	xor  ecx, 0xFFFFFFFF ; ~op1		1 xor1= 0, 0 xor1= 1
 	add  ecx, 0x1		 ; ~op1+1	baseada em complemento de 2, -x = not(x)+1
 	mov  [eax+4], ecx	 ; [op1] = -op1

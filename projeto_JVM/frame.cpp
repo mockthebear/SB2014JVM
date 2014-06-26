@@ -10,6 +10,7 @@ Frame::Frame(Class *r, Code *c, Exceptions *e, int eCount, char *rType) {
 	returnType = rType;
 	opStack = new OperandStack(code->max_stack);
 	varArray = new LocalVariableArray(code->max_locals);
+	methodname = NULL;
 }
 
 void Frame::bipush(u1 in) {
@@ -18,6 +19,60 @@ void Frame::bipush(u1 in) {
 
 void Frame::sipush(u2 in) {
 	opStack->sipush(in);
+}
+
+void Frame::ldc(u1 cp_index) {
+	char tag = classref->get_cp_tag(cp_index);
+	u4 byte = classref->get_cp_bytes(cp_index);
+	Operand op;
+	if(tag == TAG_STRING) {
+		
+	} else if(tag == TAG_INTEGER) {
+		op.set_byte(TYPE_INT, byte);
+	} else if(tag == TAG_FLOAT) {
+		op.set_byte(TYPE_FLOAT, byte);
+	} else {
+		printf("Error wrong cp tag for ldc %d: frame.ldc\n",tag);
+		exit(0);
+	}
+	opStack->push(op);
+}
+
+void Frame::ldc_w(u2 cp_index) {
+	char tag = classref->get_cp_tag(cp_index);
+	u4 byte = classref->get_cp_bytes(cp_index);
+	Operand op;
+	if(tag == TAG_STRING) {
+		
+	} else if(tag == TAG_INTEGER) {
+		op.set_byte(TYPE_INT, byte);
+	} else if(tag == TAG_FLOAT) {
+		op.set_byte(TYPE_FLOAT, byte);
+	} else {
+		printf("Error wrong cp tag for ldc_w %d: frame.ldc_w\n",tag);
+		exit(0);
+	}
+	opStack->push(op);
+}
+
+void Frame::ldc2_w(u2 cp_index) {
+	char tag = classref->get_cp_tag(cp_index);
+	u4 byte1 = classref->get_cp_bytes(cp_index);
+	u4 byte2 = classref->get_cp_bytes(cp_index+1);
+	Operand op1, op2;
+		
+	if(tag == TAG_LONG) {
+		op1.set_byte(TYPE_LONG, byte1);
+		op2.set_byte(TYPE_LONG, byte2);
+	} else if(tag == TAG_DOUBLE) {
+		op1.set_byte(TYPE_DOUBLE, byte1);
+		op2.set_byte(TYPE_DOUBLE, byte2);
+	} else {
+		printf("Error wrong cp tag for ldc2_w %d: frame.ldc2_w\n",tag);
+		exit(0);
+	}
+	opStack->push(op1);
+	opStack->push(op2);
 }
 
 void Frame::pop() {
@@ -183,66 +238,68 @@ void Frame::lneg() {
 	opStack->lneg();
 }
 
+void Frame::fadd() {
+	opStack->fadd();
+}
+
+void Frame::fsub() {
+	opStack->fsub();
+}
+
+void Frame::fmul() {
+	opStack->fmul();
+}
+
+void Frame::fdiv() {
+	opStack->fdiv();
+}
+
 void Frame::fneg() {
 	opStack->fneg();
+}
+
+void Frame::dadd() {
+	opStack->fadd();
+}
+
+void Frame::dsub() {
+	opStack->fsub();
+}
+
+void Frame::dmul() {
+	opStack->fmul();
+}
+
+void Frame::ddiv() {
+	opStack->fdiv();
 }
 
 void Frame::dneg() {
 	opStack->dneg();
 }
 
-void Frame::ldc(u1 cp_index) {
-	char tag = classref->get_cp_tag(cp_index);
-	u4 byte = classref->get_cp_bytes(cp_index);
-	Operand op;
-	if(tag == TAG_STRING) {
-		
-	} else if(tag == TAG_INTEGER) {
-		op.set_byte(TYPE_INT, byte);
-	} else if(tag == TAG_FLOAT) {
-		op.set_byte(TYPE_FLOAT, byte);
-	} else {
-		printf("Error wrong cp tag for ldc %d: frame.ldc\n",tag);
-		exit(0);
-	}
-	opStack->push(op);
+void Frame::i2l() {
+	opStack->i2l();
 }
 
-void Frame::ldc_w(u2 cp_index) {
-	char tag = classref->get_cp_tag(cp_index);
-	u4 byte = classref->get_cp_bytes(cp_index);
-	Operand op;
-	if(tag == TAG_STRING) {
-		
-	} else if(tag == TAG_INTEGER) {
-		op.set_byte(TYPE_INT, byte);
-	} else if(tag == TAG_FLOAT) {
-		op.set_byte(TYPE_FLOAT, byte);
-	} else {
-		printf("Error wrong cp tag for ldc_w %d: frame.ldc_w\n",tag);
-		exit(0);
-	}
-	opStack->push(op);
+void Frame::i2f() {
+	opStack->i2f();
 }
 
-void Frame::ldc2_w(u2 cp_index) {
-	char tag = classref->get_cp_tag(cp_index);
-	u4 byte1 = classref->get_cp_bytes(cp_index);
-	u4 byte2 = classref->get_cp_bytes(cp_index+1);
-	Operand op1, op2;
-		
-	if(tag == TAG_LONG) {
-		op1.set_byte(TYPE_LONG, byte1);
-		op2.set_byte(TYPE_LONG, byte2);
-	} else if(tag == TAG_DOUBLE) {
-		op1.set_byte(TYPE_DOUBLE, byte1);
-		op2.set_byte(TYPE_DOUBLE, byte2);
-	} else {
-		printf("Error wrong cp tag for ldc2_w %d: frame.ldc2_w\n",tag);
-		exit(0);
-	}
-	opStack->push(op1);
-	opStack->push(op2);
+void Frame::i2d() {
+	opStack->i2d();
+}
+
+void Frame::i2b() {
+	opStack->i2b();
+}
+
+void Frame::i2c() {
+	opStack->i2c();
+}
+
+void Frame::i2s() {
+	opStack->i2s();
 }
 
 void Frame::iinc(u1 index, u1 value) {
@@ -320,13 +377,15 @@ void Frame::iload(u2 index) {
 }
 
 void Frame::lload(u2 index) {
-	Operand op;
-	op = varArray->load(index);
-	if(op.type != TYPE_LONG) {
-		printf("Error value type %c != %c index[%d]: frame.lload\n",TYPE_LONG,op.type,index);
+	Operand opH, opL;
+	opH = varArray->load(index);
+	opL = varArray->load(index+1);
+	if( (opH.type != TYPE_LONG) || (opL.type != TYPE_LONG) ) {
+		printf("Error value type %c != %c index[%d]: frame.lload\n",TYPE_LONG,opH.type,index);
 		exit(0);
 	}
-	opStack->push(op);
+	opStack->push(opH);
+	opStack->push(opL);
 }
 
 void Frame::fload(u2 index) {
@@ -340,13 +399,15 @@ void Frame::fload(u2 index) {
 }
 
 void Frame::dload(u2 index) {
-	Operand op;
-	op = varArray->load(index);
-	if(op.type != TYPE_DOUBLE) {
-		printf("Error value type %c != %c index[%d]: frame.dload\n",TYPE_DOUBLE,op.type,index);
+	Operand opH, opL;
+	opH = varArray->load(index);
+	opL = varArray->load(index+1);
+	if( (opH.type != TYPE_DOUBLE) || (opL.type != TYPE_DOUBLE) ) {
+		printf("Error value type %c != %c index[%d]: frame.dload\n",TYPE_DOUBLE,opH.type,index);
 		exit(0);
 	}
-	opStack->push(op);
+	opStack->push(opH);
+	opStack->push(opL);
 }
 
 void Frame::aload(u2 index) {
@@ -450,13 +511,15 @@ void Frame::istore(u2 index) {
 }
 
 void Frame::lstore(u2 index) {
-	Operand op;
-	op = opStack->pop();
-	if(op.type != TYPE_LONG) {
-		printf("Error value type %c != %c index[%d]: frame.lstore\n",TYPE_LONG,op.type,index);
+	Operand opH, opL;
+	opL = opStack->pop();
+	opH = opStack->pop();
+	if( (opH.type != TYPE_LONG) || (opL.type != TYPE_LONG) ) {
+		printf("Error value type %c != %c index[%d]: frame.lstore\n",TYPE_LONG,opH.type,index);
 		exit(0);
 	}
-	varArray->store(index, op);
+	varArray->store(index, opH);
+	varArray->store(index+1, opL);
 }
 
 void Frame::fstore(u2 index) {
@@ -470,13 +533,15 @@ void Frame::fstore(u2 index) {
 }
 
 void Frame::dstore(u2 index) {
-	Operand op;
-	op = opStack->pop();
-	if(op.type != TYPE_DOUBLE) {
-		printf("Error value type %c != %c index[%d]: frame.dstore\n",TYPE_DOUBLE,op.type,index);
+	Operand opH, opL;
+	opL = opStack->pop();
+	opH = opStack->pop();
+	if( (opH.type != TYPE_DOUBLE) || (opL.type != TYPE_DOUBLE) ) {
+		printf("Error value type %c != %c index[%d]: frame.dstore\n",TYPE_DOUBLE,opH.type,index);
 		exit(0);
 	}
-	varArray->store(index, op);
+	varArray->store(index, opH);
+	varArray->store(index+1, opL);
 }
 
 void Frame::astore(u2 index) {
@@ -568,7 +633,31 @@ void Frame::astore_2() {
 void Frame::astore_3() {
 	astore(3);
 }
-	
+
+char *Frame::get_field_class(u2 cp_index) {
+	return classref->get_cp_field_class(cp_index);
+}
+
+char *Frame::get_field_name(u2 cp_index) {
+	return classref->get_cp_field_name(cp_index);
+}
+
+char *Frame::get_field_type(u2 cp_index) {
+	return classref->get_cp_field_type(cp_index);
+}
+
+char *Frame::get_method_class(u2 cp_index) {
+	return classref->get_cp_method_class(cp_index);
+}
+
+char *Frame::get_method_name(u2 cp_index) {
+	return classref->get_cp_method_name(cp_index);
+}
+
+char *Frame::get_method_descriptor(u2 cp_index) {
+	return classref->get_cp_method_descriptor(cp_index);
+}
+
 u1 Frame::getCode() {
 	u1 c = code->code[pc];
 	pc++;

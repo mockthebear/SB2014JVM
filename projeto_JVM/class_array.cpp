@@ -6,6 +6,7 @@ ClassArray::ClassArray(int m) {
 	max  = m;
 	size = 0;
 	classes = (Class **)calloc(max,sizeof(Class *));
+	loader.temp = NULL;
 }
 
 void ClassArray::putstatic(Class *ref, char *fieldname, u4 *value, char *type) {

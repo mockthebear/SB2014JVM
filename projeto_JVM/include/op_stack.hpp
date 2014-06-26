@@ -23,7 +23,7 @@ public:
 	
 	void iconst(int32_t i);
 	void fconst(float f);
-	void lconst(int32_t l);
+	void lconst(int64_t l);
 	void dconst(double d);
 	void aconst_null();
 
@@ -57,22 +57,41 @@ public:
 	void lsub();
 	void lmul();
 	void ldiv();
+	void lrem();
+	void lneg();
+	
 	void fadd();
 	void fsub();
 	void fmul();
 	void fdiv();
+	void frem();
+	void fneg();
+	
 	void dadd();
 	void dsub();
 	void dmul();
 	void ddiv();
-	
-	
-	void lrem();
-	void lneg();
-	void frem();
-	void fneg();
 	void drem();
 	void dneg();
+	
+	void i2l();
+	void i2f();
+	void i2d();
+	void i2b();
+	void i2c();
+	void i2s();
+	
+	void l2i();
+	void l2f();
+	void l2d();
+	
+	void f2i();
+	void f2l();
+	void f2d();
+	
+	void d2i();
+	void d2l();
+	void d2f();
 	/*
 	
 	fcmpg

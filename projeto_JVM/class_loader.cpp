@@ -183,7 +183,7 @@ Attribute *ClassLoader::attribute_loader(FILE *fp, u2 n) {
 			
 //#define TEST_ATTRIBUTE
 #ifdef TEST_ATTRIBUTE
-		printf("TEST ATTRIBUTE: closs_loader",name);
+		printf("TEST ATTRIBUTE: closs_loader");
 		printf("\nget %s\n",name);
 #endif
 

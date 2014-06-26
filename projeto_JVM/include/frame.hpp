@@ -91,24 +91,21 @@ public:
 	void frem();
 	void fneg();
 	
-	void dneg();
-	/*
-	
-	
-	
 	void dadd();
 	void dsub();
 	void dmul();
 	void ddiv();
 	void drem();
+	void dneg();
 	
-	i2l
-	i2f
-	i2d
-	i2b
-	i2c
-	i2s
+	void i2l();
+	void i2f();
+	void i2d();
+	void i2b();
+	void i2c();
+	void i2s();
 	
+	/*
 	l2i
 	l2f
 	l2d
@@ -120,9 +117,8 @@ public:
 	d2i
 	d2l
 	d2f
-	
-	
 	*/
+	
 	void iinc(u1, u1);
 	
 	void iconst_m1();
@@ -191,8 +187,13 @@ public:
 	void astore_1();
 	void astore_2();
 	void astore_3();
-
 	
+	char *get_field_class(u2 cp_index);
+	char *get_field_name(u2 cp_index);
+	char *get_field_type(u2 cp_index);
+	char *get_method_class(u2 cp_index);
+	char *get_method_name(u2 cp_index);
+	char *get_method_descriptor(u2 cp_index);
 	u1 getCode();
 	void pcNext();
 	void pcBack(int);

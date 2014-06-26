@@ -16,8 +16,8 @@ public:
 	
 	MemoryDataArray(int);
 	
-	void putfield(u4, char *, u4 *, char *);
-	char *getfield(u4, char *, u4 *);
+	void putfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value);
+	void getfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value);
 	u4 arraylength(u4);
 
 	u4 new_instance(Class *);
