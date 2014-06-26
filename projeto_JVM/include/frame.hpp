@@ -84,15 +84,17 @@ public:
 	void lrem();
 	void lneg();
 	
-	void fneg();
-	void dneg();
-	/*
-	
 	void fadd();
 	void fsub();
 	void fmul();
 	void fdiv();
 	void frem();
+	void fneg();
+	
+	void dneg();
+	/*
+	
+	
 	
 	void dadd();
 	void dsub();

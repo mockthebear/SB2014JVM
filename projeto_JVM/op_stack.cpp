@@ -4,7 +4,6 @@
 extern "C" {
 #endif 
 
-extern void _to_value32(void *, void *);
 extern void _to_value64(void *, u4, u4);
 
 extern void _iadd(void *);
@@ -16,6 +15,13 @@ extern void _ineg(void *);
 
 extern void _ladd(void *);
 extern void _lneg(void *);
+
+extern void _fadd(void *);
+extern void _fsub(void *);
+extern void _fmul(void *);
+extern void _fdiv(void *);
+extern void _frem(void *);
+extern void _fneg(void *);
 
 #ifdef __cplusplus
 }
@@ -356,7 +362,7 @@ void OperandStack::ldiv(){
 
 void OperandStack::lrem(){
 	if(size < 4) {
-		printf("Error  :op_stack.ldiv\n");
+		printf("Error  :op_stack.lrem\n");
 		exit(0);
 	}
     Operand opL, opH;
@@ -379,6 +385,74 @@ void OperandStack::lneg(){
 		exit(0);
 	}
 	_lneg(top);
+}
+
+void OperandStack::fadd(){
+    if(size < 2) {
+		printf("Error  :op_stack.fadd\n");
+		exit(0);
+	}
+	_fadd(top);
+	top--;
+	size--;
+}
+
+void OperandStack::fsub(){
+    if(size < 2) {
+		printf("Error  :op_stack.fsub\n");
+		exit(0);
+	}
+	_fsub(top);
+	top--;
+	size--;
+}
+
+void OperandStack::fmul(){
+     if(size < 2) {
+		printf("Error  :op_stack.fmul\n");
+		exit(0);
+	}
+	_fmul(top);
+	top--;
+	size--;
+}
+
+void OperandStack::fdiv(){
+    if(size < 2) {
+		printf("Error  :op_stack.fdiv\n");
+		exit(0);
+	}
+	if(top->bytes == 0x0) {
+		printf("Excecao de divisao por zero\n");
+		exit(0);
+	}
+	_fdiv(top);
+	top--;
+	size--;
+}
+
+void OperandStack::frem(){
+    if(size < 2) {
+		printf("Error  :op_stack.frem\n");
+		exit(0);
+	}
+	if(top->bytes == 0x0) {
+		printf("Excecao de divisao por zero\n");
+		exit(0);
+	}
+	_frem(top);
+	top--;
+	size--;
+}
+
+void OperandStack::fneg(){
+	if(size < 2) {
+		printf("Error  :op_stack.fneg\n");
+		exit(0);
+	}
+	_fneg(top);
+	top--;
+	size--;
 }
 
 /* OPERACAO GERAL */
@@ -504,48 +578,7 @@ void OperandStack::dup2_x2(){
     push(op1);
 }
 
-
-void OperandStack::fadd(){
-    Operand op1, op2;
-    op1 = pop();//adicionado
-    op2 = pop();//adicionando
-    
-    float resultado = ((float)op2.bytes)+((float)op1.bytes);
-    op1.bytes = (uint32_t)resultado;
-    
-    push(op1);
-}
-void OperandStack::fsub(){
-    Operand op1, op2;
-    op1 = pop();//subtraído
-    op2 = pop();//subtraendo
-    
-    float resultado = ((float)op2.bytes)-((float)op1.bytes);
-    op1.bytes = (uint32_t)resultado;
-    
-    push(op1);
-}
-void OperandStack::fmul(){
-    Operand op1, op2;
-    op1 = pop();//multiplicador
-    op2 = pop();//multiplicando
-    
-    float resultado = ((float)op2.bytes)*((float)op1.bytes);
-    op1.bytes = (uint32_t)resultado;
-    
-    push(op1);
-}
-void OperandStack::fdiv(){
-    Operand op1, op2;
-    op1 = pop();//divisor
-    op2 = pop();//dividendo
-    
-    float resultado = ((float)op2.bytes)/((float)op1.bytes);
-    op1.bytes = (uint32_t)resultado;
-    
-    push(op1);
-}
-  
+ 
 void OperandStack::dadd(){
     Operand op1, op2, op3, op4;
     op1 = pop();
@@ -603,39 +636,6 @@ void OperandStack::ddiv(){
     push(op1);
 }
 
-void OperandStack::frem(){
-    Operand op1, op2;
-    op1 = pop();
-    op2 = pop();
-    
-    float val1= ((float)op2.bytes);
-    float val2= ((float)op1.bytes);
-    
-    if(val2 == 0){
-        //throw ArithmeticException;
-    }
-    
-    float resultado = val1-((val1/val2)*val2);
-    op1.bytes = (uint32_t)resultado;
-    
-    push(op1);
-}
-void OperandStack::fneg(){
-	if(size < 1) {
-		printf("Error  :op_stack.fneg\n");
-		exit(0);
-	}
-	top->bytes ^= 0x80000000;
-	/*
-    Operand op1;
-    op1 = pop();
-    
-    float resultado = 0.0-(float)op1.bytes;
-    op1.bytes = (uint32_t)resultado;
-    
-    push(op1);
-    */
-}
 void OperandStack::drem(){
         Operand op1, op2, op3, op4;
         op1 = pop();
