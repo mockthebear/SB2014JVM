@@ -3,8 +3,8 @@ section .data
 section .text
 
 global __to_byte
-global __byte_copy
-global __byte_copy_w
+global __get_high
+global __to_value32
 global __to_value64
 
 __to_byte:
@@ -13,44 +13,38 @@ __to_byte:
 	sub  esp, 0x40
 	
 	mov  eax, [ebp+8]	;fonte
-	;mov  ecx, [ebp+12]	;bytes
 
 	mov  eax, [eax]
-	;mov  [ecx], ebx
 	
 	;mov eax, ebx
 	
 	leave
 	ret
 
-__byte_copy:
+__get_high:
 	push ebp
 	mov  ebp, esp
 	sub  esp, 0x40
 	
 	mov  eax, [ebp+8]	;fonte
-	mov  ecx, [ebp+12]	;bytes
 
-	mov  ebx, [eax]
-	mov  [ecx], ebx
+	mov  eax, [eax+4]
 	
-	mov eax, ebx
+	;mov eax, ebx
 	
 	leave
 	ret
 
-__byte_copy_w:
+__to_value32:
 	push ebp
 	mov  ebp, esp
 	sub  esp, 0x40
 	
 	mov  eax, [ebp+8]	;fonte
 	mov  ecx, [ebp+12]	;bytes
-	
+
 	mov  ebx, [eax]
 	mov  [ecx], ebx
-	mov  ebx, [eax+4]
-	mov  [ecx+4], ebx
 	
 	mov eax, ebx
 	
@@ -66,8 +60,8 @@ __to_value64:
 	mov  ecx, [ebp+12]
 	mov  edx, [ebp+16]
 	
-	mov  [eax], ecx
-	mov  [eax+4], edx
+	mov  [eax+4], ecx
+	mov  [eax], edx
 	
 	leave
 	ret

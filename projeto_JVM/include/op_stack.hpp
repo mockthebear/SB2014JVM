@@ -24,17 +24,17 @@ public:
 	void iconst(int32_t i);
 	void fconst(float f);
 	void lconst(int32_t l);
-	void dconst();
+	void dconst(double d);
 	void aconst_null();
 
 	void dup();
 	void dup2();
 	void swap();
 	
-    void dup_x1();
-    void dup2_x1();
-    void dup_x2();
-    void dup2_x2();
+	void dup_x1();
+	void dup2_x1();
+	void dup_x2();
+	void dup2_x2();
 	
 	
 	int ifzero();
@@ -57,7 +57,6 @@ public:
 	void lsub();
 	void lmul();
 	void ldiv();
-    
 	void fadd();
 	void fsub();
 	void fmul();
@@ -67,6 +66,7 @@ public:
 	void dmul();
 	void ddiv();
 	
+	
 	void lrem();
 	void lneg();
 	void frem();
@@ -74,6 +74,7 @@ public:
 	void drem();
 	void dneg();
 	/*
+	
 	fcmpg
 	fcmpl
 	dcmpg

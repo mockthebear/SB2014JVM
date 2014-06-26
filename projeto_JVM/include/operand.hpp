@@ -28,14 +28,11 @@ public:
 	
 	void set_byte(u1 t, u4 b);
 	void set_value(u1 t, void *v);
+	void set_high(u1 t, void *v);
+	void set_low(u1 t, void *v);
 	
 	int32_t to_int();
 	float to_float();
-	
-	static int64_t to_long(u4, u4);
-	static double to_double(u4, u4);
-	static u4 to_bytes(void *);
-	static void to_bytes_w(void *, u4 *);
 	
 	void print();
 	static void print_w(Operand, Operand);

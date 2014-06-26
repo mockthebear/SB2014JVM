@@ -9,7 +9,7 @@ void print();
 static StackFrame *frames;
 static Memory     *memory;
 
-int main(int argc, char **argv) {
+int main_(int argc, char **argv) {
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
 	
@@ -25,11 +25,6 @@ int main(int argc, char **argv) {
 		printf("\nENTER para proseguir...\n");
 		getchar();
 	}
-	
-	
-	
-	
-	
 	
 	return 0;
 }

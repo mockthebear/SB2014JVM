@@ -9,6 +9,10 @@ global __idiv
 global __irem
 global __ineg
 
+;		 -8	   -4	  0	   +4	
+;	...[tipo][ val][tipo][ val]
+;	...|operando 1||operando 2|
+
 __iadd:
 	push ebp
 	mov  ebp, esp
@@ -17,7 +21,7 @@ __iadd:
 	mov  eax, [ebp+8]
 	
 	mov  ebx, [eax-4]	;penultimo valor
-	mov  ecx, [eax+4]	;ulimo  valor
+	mov  ecx, [eax+4]	;ultimo  valor
 	add  ebx, ecx;
 	mov  [eax-4], ebx	;penultimo valor
 	
@@ -35,7 +39,7 @@ __isub:
 	mov  eax, [ebp+8]
 	
 	mov  ebx, [eax-4]	;penultimo valor
-	mov  ecx, [eax+4]	;ulimo  valor
+	mov  ecx, [eax+4]	;ultimo  valor
 	sub  ebx, ecx
 	mov  [eax-4], ebx	;penultimo valor
 	
@@ -53,7 +57,7 @@ __imul:
 	mov  ecx, [ebp+8]
 	
 	mov  eax, [ecx-4]	;penultimo valor
-	mov  ebx, [ecx+4]	;ulimo  valor
+	mov  ebx, [ecx+4]	;ultimo  valor
 	imul ebx
 	mov  [ecx-4], eax	;penultimo valor
 	
@@ -71,7 +75,7 @@ __idiv:
 	mov  ecx, [ebp+8]
 DIVIDE:
 	mov  eax, [ecx-4]	;penultimo valor
-	mov  ebx, [ecx+4]	;ulimo  valor
+	mov  ebx, [ecx+4]	;ultimo  valor
 	mov  edx, 0			;parte alta 0
 	cmp  eax, 0			;verifica se eax < 0
 	jg   .L1  
@@ -94,7 +98,7 @@ __irem:
 	mov  ecx, [ebp+8]
 REM:
 	mov  eax, [ecx-4]	;penultimo valor
-	mov  ebx, [ecx+4]	;ulimo  valor
+	mov  ebx, [ecx+4]	;ultimo  valor
 	mov  edx, 0			;parte alta 0
 	cmp  eax, 0			;verifica se eax < 0
 	jg   .L1  
@@ -117,13 +121,14 @@ __ineg:
 	
 	mov  eax, [ebp+8]
 	
-	mov  ecx, [eax+4]	;ulimo  valor
-	xor  ebx, ebx
-	sub  ebx, ecx
-	mov  [eax+4], ebx	;ulimo  valor
+	mov  ecx, [eax+4]	;ultimo  valor
+	xor  ecx, 0xFFFFFFFF
+	add  ecx, 0x1
+	mov  [eax+4], ecx	;ultimo  valor
 	
-	;mov  eax, ebx
+	mov  eax, ecx
 	
 	leave
 	ret
 
+	

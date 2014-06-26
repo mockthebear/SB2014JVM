@@ -76,7 +76,7 @@ public:
 	void idiv();
 	void irem();
 	void ineg();
-	/*
+	
 	void ladd();
 	void lsub();
 	void lmul();
@@ -84,19 +84,21 @@ public:
 	void lrem();
 	void lneg();
 	
+	void fneg();
+	void dneg();
+	/*
+	
 	void fadd();
 	void fsub();
 	void fmul();
 	void fdiv();
 	void frem();
-	void fneg();
 	
 	void dadd();
 	void dsub();
 	void dmul();
 	void ddiv();
 	void drem();
-	void dneg();
 	
 	i2l
 	i2f

@@ -163,6 +163,33 @@ void Frame::ineg() {
 	opStack->ineg();
 }
 
+void Frame::ladd() {
+	opStack->ladd();
+}
+
+void Frame::lsub() {
+	opStack->lsub();
+}
+
+void Frame::lmul() {
+	opStack->lmul();
+}
+
+void Frame::ldiv() {
+	opStack->ldiv();
+}
+
+void Frame::lneg() {
+	opStack->lneg();
+}
+
+void Frame::fneg() {
+	opStack->fneg();
+}
+
+void Frame::dneg() {
+	opStack->dneg();
+}
 
 void Frame::ldc(u1 cp_index) {
 	char tag = classref->get_cp_tag(cp_index);
@@ -268,6 +295,14 @@ void Frame::lconst_0() {
 
 void Frame::lconst_1() {
 	opStack->lconst(1);
+}
+
+void Frame::dconst_0() {
+	opStack->dconst(0);
+}
+
+void Frame::dconst_1() {
+	opStack->dconst(1);
 }
 
 void Frame::aconst_null() {
