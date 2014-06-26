@@ -1,6 +1,7 @@
 #include "JavaVM.hpp"
 
 #define STACK_SIZE  100
+#define CLASS_SIZE  100
 #define MEMORY_SIZE 100
 
 void loadMain(char *);
@@ -11,7 +12,7 @@ static Memory     *memory;
 
 int main(int argc, char **argv) {
 	frames = new StackFrame(STACK_SIZE);
-	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
+	memory = new Memory(CLASS_SIZE, MEMORY_SIZE);
 	
 	char name[3] = "C2";
 	loadMain(name);

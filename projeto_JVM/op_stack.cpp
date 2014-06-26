@@ -274,7 +274,7 @@ void OperandStack::idiv() {
 		printf("Error  :op_stack.idiv\n");
 		exit(0);
 	}
-	if(top->.bytes == 0x0) {
+	if(top->bytes == 0x0) {
 		printf("Excecao de divisao por zero\n");
 		exit(0);
 	}

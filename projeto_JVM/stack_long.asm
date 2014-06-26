@@ -15,13 +15,13 @@ __ladd:
 	sub  esp, 0x40
 	
 	mov  eax, [ebp+8]
-	
+L_ADD:
 	xor  ecx, ecx
 	mov  ebx, [eax-12]	;penultimo valor L
 	add  ebx, [eax+4]	;ultimo  valor L
-	jnc  CARRY_0
+	jnc  .CARRY_0
 	add  ecx, 0x1
-CARRY_0:
+.CARRY_0:
 	mov [eax-12], ebx
 	
 	mov  ebx, [eax-20]
@@ -40,12 +40,15 @@ __lneg:
 	sub  esp, 0x40
 	
 	mov  eax, [ebp+8]
-	
+L_NEG:
 	mov  ebx, [eax-4]	;penultimo valor
 	mov  ecx, [eax+4]	;ultimo  valor
 	xor  ebx, 0xFFFFFFFF
 	xor  ecx, 0xFFFFFFFF
 	add  ecx, 0x1
+	jnc  .CARRY_0
+	add  ebx, 0x1
+.CARRY_0:
 	mov  [eax-4], ebx	;penultimo valor
 	mov  [eax+4], ecx	;ultimo  valor
 	
