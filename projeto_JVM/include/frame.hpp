@@ -29,7 +29,7 @@ public:
 	void bipush(u1);
 	void sipush(u2);
 	
-	void ldc(u2);
+	void ldc(u1);
 	void ldc_w(u2);
 	void ldc2_w(u2);
 	
@@ -39,12 +39,12 @@ public:
 	void dup();
 	void dup2();
 	void swap();
-	/*
+	
 	void dup_x1();
 	void dup2_x1();
 	void dup_x2();
 	void dup2_x2();
-	*/
+    
 	void ifeq(u2);
 	void ifnull(u2);
 	void ifgt(u2);
@@ -64,15 +64,12 @@ public:
 	void if_acmpeq(u2);
 	void if_acmpne(u2);
 	
-	void op_goto(u2);
-	void goto_w(u4);
-	/*
-	dcompg
-	dcompl
-	fcompg
-	fcompl
-	lcmp
-	*/
+    void dcompg();
+    void dcompl();
+    void fcompg();
+    void fcompl();
+    void lcmp();
+	
 	void iadd();
 	void isub();
 	void imul();
@@ -108,19 +105,19 @@ public:
 	void i2c();
 	void i2s();
 	
-	/*
-	l2i
-	l2f
-	l2d
 	
-	f2i
-	f2l
-	f2d
+	void l2i();
+	void l2f();
+	void l2d();
 	
-	d2i
-	d2l
-	d2f
-	*/
+	void f2i();
+	void f2l();
+	void f2d();
+	
+	void d2i();
+	void d2l();
+	void d2f();
+	
 	
 	void iinc(u1, u1);
 	
