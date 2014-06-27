@@ -29,7 +29,7 @@ public:
 	void bipush(u1);
 	void sipush(u2);
 	
-	void ldc(u1);
+	void ldc(u2);
 	void ldc_w(u2);
 	void ldc2_w(u2);
 	
