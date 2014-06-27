@@ -102,6 +102,35 @@ void StackFrame::pushMain(Class *ref) {
 	size++;
 }
 
+void StackFrame::pushClinit(Class *ref) {
+	if(size == max) {
+		printf("Error stack over :stack_frame.pushFrame\n");
+		exit(0);
+	}
+	int index;
+	
+	if(ref == NULL) {
+		printf("Error class ref is NULL :stack_frame.pushFrame\n");
+		exit(0);
+	}
+	index = ref->get_method_clinit();
+	if(index < 0) {
+		return;
+	}
+	printf("<clinit> encontrado!\n");
+	char *descriptor = ref->get_method_descriptor(index);
+	char *name = ref->get_method_name(index);
+	char *rType = getReturnType(descriptor);
+	
+	Code *code = ref->get_method_code(index);
+	Frame temp(ref, code, NULL, 0, rType);
+	temp.methodname = name;
+	
+	current++;
+	*current = temp;
+	size++;
+}
+
 int StackFrame::isEmpty() {
 	return size;
 }

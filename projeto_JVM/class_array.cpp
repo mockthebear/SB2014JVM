@@ -9,7 +9,7 @@ ClassArray::ClassArray(int m) {
 	loader.temp = NULL;
 }
 
-void ClassArray::putstatic(Class *ref, char *fieldname, u4 *value, char *type) {
+void ClassArray::putstatic(Class *ref, char *fieldname, char *type, u4 *value) {
 	int index;
 	char *f_type;
 	
@@ -18,19 +18,20 @@ void ClassArray::putstatic(Class *ref, char *fieldname, u4 *value, char *type) {
 		printf("Error field index = -1: class_array.putstatic\n");
 		exit(0);
 	}
-	if( !isStatic(ref->get_field_flags(index)) ) {
-		printf("Error field is not static: class_array.putstatic\n");
+	f_type = ref->get_field_type(index);
+	
+	if( strcmp(f_type, type) != 0) {
+		printf("Error field type %s != %s: class_array.putstatic\n", f_type, type);
 		exit(0);
 	}
-	f_type = ref->get_field_type(index);
-	if( strcmp((char *)f_type, (char *)type) != 0) {
-		printf("Error field type %s != %s\n", f_type, type);
+	if( !isStatic(ref->get_field_flags(index)) ) {
+		printf("Error field is not static: class_array.putstatic\n");
 		exit(0);
 	}
 	ref->putstatic(index, value, *f_type);
 }
 
-char *ClassArray::getstatic(Class *ref, char *fieldname, u4 *value) {
+void ClassArray::getstatic(Class *ref, char *fieldname, char *type, u4 *value) {
 	int index;
 	char *f_type;
 	
@@ -39,14 +40,17 @@ char *ClassArray::getstatic(Class *ref, char *fieldname, u4 *value) {
 		printf("Error field index = -1: class_array.getstatic\n");
 		exit(0);
 	}
+	f_type = ref->get_field_type(index);
+	
+	if( strcmp(f_type, type) != 0) {
+		printf("Error field type %s != %s: class_array.getstatic\n", f_type, type);
+		exit(0);
+	}
 	if( !isStatic(ref->get_field_flags(index)) ) {
 		printf("Error field is not static: class_array.getstatic\n");
 		exit(0);
 	}
-	f_type = ref->get_field_type(index);
 	ref->getstatic(index, value, *f_type);
-	
-	return f_type;
 }
 
 Class *ClassArray::get_classref(char *name) {
@@ -92,7 +96,8 @@ void ClassArray::print() {
 	printf("  size: %d\n",size);
 	printf("  ");
 	for(int i=0; i<size; i++) {
-		printf("[%p] %s, ",&classes[i],classes[i]->get_cp_this_class() );
+		printf("[%p] %s\n",&classes[i],classes[i]->get_cp_this_class() );
+		classes[i]->print_statics();
 	}
 	printf("\n");
 }

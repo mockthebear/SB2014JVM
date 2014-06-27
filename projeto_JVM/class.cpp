@@ -179,7 +179,19 @@ int Class::get_method_main() {
 	int index = -1;
 	
 	for(int i=0; i<methods_count; i++) {
-		if(strcmp("main", (char *)get_method_name(i)) == 0) {
+		if(strcmp("main", get_method_name(i)) == 0) {
+			index = i;
+			break;
+		}
+	}
+	return index;
+}
+
+int Class::get_method_clinit() {
+	int index = -1;
+	
+	for(int i=0; i<methods_count; i++) {
+		if(strcmp("<clinit>", get_method_name(i)) == 0) {
 			index = i;
 			break;
 		}
@@ -300,22 +312,24 @@ void Class::print_cp() {
 }
 
 void Class::print_statics() {
-	printf("Static Fields\n");
-	printf("statics: %d\n", static_fields_count);
-	for(u2 i=0;i<static_fields_count; i++) {
+	//printf("Static Fields\n");
+	printf("    statics: %d\n", static_fields_count);
+	printf("    ");
+	for(u2 i=0;i<fields_count; i++) {
 		if(static_fields_index[i] != -1) {
-			printf("[%d]->[%d] ",i,static_fields_index[i]);
+			printf("[%d] ",static_fields_index[i]);
 			u1 d_type;
 			d_type = *( get_field_type(i) );
-			printf("%c| ",d_type);
-			printf("%s\t", get_field_name(i));
-			printf("%08X", static_fields[ static_fields_index[i] ]);
+			printf("(%c)",d_type);
+			printf("%08X ", static_fields[ static_fields_index[i] ]);
 			if( (d_type == TYPE_LONG) || (d_type == TYPE_DOUBLE) ) {
-				printf("%08X", static_fields[ static_fields_index[i]+1 ]);
+				printf("[%d] ",static_fields_index[i]+1);
+				printf("(%c)",d_type);
+				printf("%08X ", static_fields[ static_fields_index[i]+1 ]);
 			}
-			printf("\n");
 		}
 	}
+	printf("\n");
 		
 }
 

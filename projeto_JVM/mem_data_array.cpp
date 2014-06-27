@@ -17,12 +17,17 @@ void MemoryDataArray::putfield(u4 ref, char *classname, char *fieldname, char *t
 	int index = instance->classref->get_field_index(fieldname);
 	
 	char *c_name = instance->classref->get_cp_this_class();
-	char *f_type = instance->classref->get_field_type(index);
 	
 	if(strcmp(c_name, classname) != 0) {
 		printf("Error class type %s != %s: mem_data_array.putfield\n", classname, c_name);
 		exit(0);
 	}
+	if(index == -1) {
+		printf("Error field index = -1: class_array.putfield\n");
+		exit(0);
+	}
+	char *f_type = instance->classref->get_field_type(index);
+	
 	if(strcmp(f_type, type) != 0) {
 		printf("Error value type %s != %s: mem_data_array.putfield\n",type, f_type);
 		exit(0);
@@ -48,12 +53,13 @@ void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *t
 	int index = instance->classref->get_field_index(fieldname);
 	
 	char *c_name = instance->classref->get_cp_this_class();
-	char *f_type = instance->classref->get_field_type(index);
 	
 	if(strcmp(c_name, classname) != 0) {
 		printf("Error class type %s != %s: mem_data_array.getfield\n", classname, c_name);
 		exit(0);
 	}
+	char *f_type = instance->classref->get_field_type(index);
+	
 	if(strcmp(f_type, type) != 0) {
 		printf("Error value type %s != %s: mem_data_array.getfield\n",type, f_type);
 		exit(0);
@@ -68,6 +74,7 @@ void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *t
 u4 MemoryDataArray::arraylength(u4 ref) {
 	MemoryData *array = (MemoryData *)ref;
 	u4 length = 0;
+	
 	if(array->type != TYPE_ARRAY) {
 		printf("Error not array type %c: mem_data_array.arraylength\n", array->type);
 		exit(0);

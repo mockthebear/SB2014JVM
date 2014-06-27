@@ -18,8 +18,8 @@ int main(int argc, char **argv) {
 	
 	char name[3] = "C2";
 	loadMain(name);
-	printf("Method main carregado!\n"); 
-	printf("iniciando JavaVM\n\n"); 
+	
+	
 	
 	while(frames->isEmpty()) {
 		u1 code = frames->current->getCode();
@@ -35,12 +35,16 @@ int main(int argc, char **argv) {
 
 void loadMain(char *classname) {
 	printf("load main\n");
-	Class *temp;
-	temp = memory->new_class(classname);
+	Class *classRef;
+	classRef = memory->new_class(classname);
 	
-	frames->pushMain(temp);
+	frames->pushMain(classRef);
 	
 	print();
+	
+	printf("Method main carregado!\n"); 
+	printf("iniciando JavaVM\n\n"); 
+	frames->pushClinit(classRef);
 }
 
 void nop() {
@@ -167,7 +171,7 @@ void ldc() {
 void ldc_w() {
 	printf("ldc_w");
 	
-	u2 cp_index = get1byte();
+	u2 cp_index = get2byte();
 	printf(" %d\n",cp_index);
 	
 	frames->current->ldc_w(cp_index);
@@ -176,7 +180,7 @@ void ldc_w() {
 void ldc2_w() {
 	printf("ldc2_w");
 	
-	u2 cp_index = get1byte();
+	u2 cp_index = get2byte();
 	printf(" %d\n",cp_index);
 	
 	frames->current->ldc2_w(cp_index);
@@ -929,7 +933,31 @@ void getstatic() {
 
 void putstatic() {
 	printf("putstatic\n");
+	//(Class *ref, char *fieldname, char *type, u4 *value)
+	u2 cp_index = get2byte();
 	
+	char *className = frames->current->get_field_class(cp_index);
+	char *fieldName = frames->current->get_field_name(cp_index);
+	char *fieldType = frames->current->get_field_type(cp_index);
+	
+	Class *classRef = memory->get_classref(className);
+	if(classRef == NULL) {
+		classRef = memory->new_class(className);
+		frames->current->pcBack(3);
+		frames->pushClinit(classRef);
+		
+		return;
+	}
+	
+	u4 value[2];
+	
+	value[0] = frames->current->popOpStack();
+	if( (*fieldType == TYPE_LONG) || (*fieldType == TYPE_DOUBLE) ) {
+		value[1] = value[0];
+		value[0] = frames->current->popOpStack();
+	}
+	
+	memory->putstatic(classRef, fieldName, fieldType, value);
 }
 
 void getfield() {
@@ -987,7 +1015,8 @@ void invokevirtual() {
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
 		frames->current->pcBack(3);
-		printf("<clinit>\n");
+		frames->pushClinit(classRef);
+		
 		return;
 	}
 	
@@ -1007,7 +1036,8 @@ void invokespecial() {
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
 		frames->current->pcBack(3);
-		printf("<clinit>\n");
+		frames->pushClinit(classRef);
+		
 		return;
 	}
 	

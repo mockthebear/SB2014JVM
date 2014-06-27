@@ -16,12 +16,12 @@ u4 Memory::op_new(Class *ref) {
 	return instance;
 }
 
-void Memory::putstatic(Class *ref, char *fieldname, u4 *value, char *type) {
-	classes->putstatic(ref, fieldname, value, type);
+void Memory::putstatic(Class *ref, char *fieldname, char *type, u4 *value) {
+	classes->putstatic(ref, fieldname, type, value);
 }
 
-char *Memory::getstatic(Class *ref, char *fieldname, u4 *value) {
-	return classes->getstatic(ref, fieldname, value);
+void Memory::getstatic(Class *ref, char *fieldname, char *type, u4 *value) {
+	classes->getstatic(ref, fieldname, type, value);
 }
 
 void Memory::putfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value) {

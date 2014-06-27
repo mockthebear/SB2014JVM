@@ -25,6 +25,7 @@ public:
 	void pushFrame(Class *ref, char *methodname, char *descriptor);
 	void popFrame();
 	void pushMain(Class *ref);
+	void pushClinit(Class *ref);
 	
 	int isEmpty();
 	
