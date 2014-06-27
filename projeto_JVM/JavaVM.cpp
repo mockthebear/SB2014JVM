@@ -1063,11 +1063,23 @@ void op_new() {
 		return;
 	}
 	
-	u4 instance = memory->op_new(temp);
-	frames->current->pushOpStack(TYPE_REF, instance);
+	u4 instRef = memory->op_new(temp);
+	frames->current->pushOpStack(TYPE_REF, instRef);
 }
 
-void newarray() {}
+void newarray() {
+	printf("newarray");
+	
+	u1 atype = get1byte();
+	printf("  %d\n",atype);
+	
+	u4 count = frames->current->popOpStack();
+	u4 arrayRef;
+	
+	arrayRef = memory->newarray(count, atype);
+	frames->current->pushOpStack(TYPE_REF, arrayRef);
+}
+
 void anewarray() {}
 void arraylength() {}
 void athrow() {}

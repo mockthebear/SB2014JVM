@@ -184,9 +184,8 @@ void MemoryDataArray::print() {
 void MemoryDataArray::print_min() {
 	printf(">Instances & Arrays\n");
 	printf("  size: %d\n",size);
-	printf("  ");
 	for(int i=0; i<size; i++) {
-		printf("[%p] ",data[i]);
+		printf("  [%p] ",data[i]);
 		data[i]->print_min();
 		//printf(", ");
 	}

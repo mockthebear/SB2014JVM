@@ -117,6 +117,9 @@ void StackFrame::pushClinit(Class *ref) {
 	if(index < 0) {
 		return;
 	}
+	if(strcmp(ref->get_cp_this_class(), "java/lang/Object") == 0) {
+		return;
+	}
 	printf("<clinit> encontrado!\n");
 	char *descriptor = ref->get_method_descriptor(index);
 	char *name = ref->get_method_name(index);

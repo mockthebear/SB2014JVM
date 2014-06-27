@@ -94,9 +94,8 @@ int ClassArray::get_index(char *name) {
 void ClassArray::print() {
 	printf(">Classes\n");
 	printf("  size: %d\n",size);
-	printf("  ");
 	for(int i=0; i<size; i++) {
-		printf("[%p] %s\n",&classes[i],classes[i]->get_cp_this_class() );
+		printf("  [%p] %s\n",&classes[i],classes[i]->get_cp_this_class() );
 		classes[i]->print_statics();
 	}
 	printf("\n");
