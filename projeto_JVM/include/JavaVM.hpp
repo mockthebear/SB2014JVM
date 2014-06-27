@@ -173,7 +173,7 @@ void if_icmpeq();
 void if_icmpne();
 void if_icmplt();
 void if_icmpge();
-void if_cmpgt();
+void if_icmpgt();
 void if_icmple();
 void if_acmpeq();
 void if_acmpne();
@@ -246,7 +246,7 @@ void (*op[256]) () = {
 	iand, land, ior, lor, ixor, lxor, iinc, 
 	i2l, i2f, i2d, l2i, l2f, l2d, f2i, f2l, f2d, d2i, d2l, d2f, i2b, i2c, i2s, 
 	lcmp, fcmpl, fcmpg, dcmpl, dcmpg, ifeq, ifne, iflt, ifge, ifgt, ifle, 
-	if_icmpeq, if_icmpne, if_icmplt, if_icmpge, if_cmpgt, if_icmple, if_acmpeq, if_acmpne, 
+	if_icmpeq, if_icmpne, if_icmplt, if_icmpge, if_icmpgt, if_icmple, if_acmpeq, if_acmpne, 
 	op_goto, jsr, ret, tableswitch, lookupswitch, 
 	ireturn, lreturn, freturn, dreturn, areturn, op_return, 
 	getstatic, putstatic, getfield, putfield, 

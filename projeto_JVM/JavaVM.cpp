@@ -4,7 +4,9 @@
 #define MEMORY_SIZE 100
 
 void loadMain(char *);
-u2 get2bytes();
+u1 get1byte();
+u2 get2byte();
+u4 get4byte();
 void print();
 
 static StackFrame *frames;
@@ -18,9 +20,10 @@ int main(int argc, char **argv) {
 	loadMain(name);
 	printf("Method main carregado!\n"); 
 	printf("iniciando JavaVM\n\n"); 
+	
 	while(frames->isEmpty()) {
 		u1 code = frames->current->getCode();
-		printf("[%X] ",code);
+		printf("%d: [%X] ",frames->current->getPC()-1,code);
 		op[code]();
 		print();
 		printf("\nENTER para proseguir...\n");
@@ -135,36 +138,64 @@ void dconst_1() {
 }
 
 void bipush() {
-	printf("bipush\n");
+	printf("bipush");
 	
-	u1 byte = frames->current->getCode();
+	u1 byte = get1byte();
+	printf(" %d\n",byte);
 	
 	frames->current->bipush(byte);
 }
 
 void sipush() {
-	printf("sipush\n");
+	printf("sipush");
 	
-	u2 bytes = get2bytes();
+	u2 bytes = get2byte();
+	printf(" %d\n",bytes);
 	
 	frames->current->sipush(bytes);
 }
 	
-void ldc() {}
-void ldc_w() {}
-void ldc2_w() {}
-void iload() {
-	printf("iload\n");
+void ldc() {
+	printf("ldc");
 	
-	u1 index = frames->current->getCode();
+	u2 cp_index = get1byte();
+	printf(" %d\n",cp_index);
+	
+	frames->current->ldc(cp_index);
+}
+
+void ldc_w() {
+	printf("ldc_w");
+	
+	u2 cp_index = get1byte();
+	printf(" %d\n",cp_index);
+	
+	frames->current->ldc_w(cp_index);
+}
+
+void ldc2_w() {
+	printf("ldc2_w");
+	
+	u2 cp_index = get1byte();
+	printf(" %d\n",cp_index);
+	
+	frames->current->ldc2_w(cp_index);
+}
+
+void iload() {
+	printf("iload");
+	
+	u1 index = get1byte();
+	printf(" %d\n",index);
 	
 	frames->current->iload(index);
 }
 
 void lload() {
-	printf("lload\n");
+	printf("lload");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
+	printf(" %d\n",index);
 	
 	frames->current->lload(index);
 }
@@ -172,7 +203,7 @@ void lload() {
 void fload() {
 	printf("fload\n");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
 	
 	frames->current->fload(index);
 }
@@ -180,7 +211,7 @@ void fload() {
 void dload() {
 	printf("dload\n");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
 	
 	frames->current->dload(index);
 }
@@ -188,7 +219,7 @@ void dload() {
 void aload() {
 	printf("aload\n");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
 	
 	frames->current->aload(index);
 }
@@ -294,8 +325,6 @@ void aload_0() {
 	printf("aload_0\n");
 	
 	frames->current->aload_0();
-	
-	
 }
 
 void aload_1() {
@@ -328,7 +357,7 @@ void saload() {}
 void istore() {
 	printf("istore\n");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
 	
 	frames->current->istore(index);
 }
@@ -336,7 +365,7 @@ void istore() {
 void lstore() {
 	printf("lstore\n");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
 	
 	frames->current->lstore(index);
 }
@@ -344,7 +373,7 @@ void lstore() {
 void fstore() {
 	printf("fstore\n");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
 	
 	frames->current->fstore(index);
 }
@@ -352,7 +381,7 @@ void fstore() {
 void dstore() {
 	printf("dstore\n");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
 	
 	frames->current->dstore(index);
 }
@@ -360,7 +389,7 @@ void dstore() {
 void astore() {
 	printf("astore\n");
 	
-	u1 index = frames->current->getCode();
+	u1 index = get1byte();
 	
 	frames->current->astore(index);
 }
@@ -496,8 +525,18 @@ void aastore() {}
 void bastore() {}
 void castore() {}
 void sastrore() {}
-void pop() {}
-void pop2() {}
+void pop() {
+	printf("pop\n");
+	
+	frames->current->pop();
+}
+
+void pop2() {
+	printf("pop2\n");
+	
+	frames->current->pop2();
+}
+
 void dup() {
 	printf("dup\n");
 	
@@ -509,31 +548,157 @@ void dup_x2() {}
 void dup2() {}
 void dup2_x1() {}
 void dup2_x2() {}
-void swap() {}
-void iadd() {}
-void ladd() {}
-void fadd() {}
-void dadd() {}
-void isub() {}
-void lsub() {}
-void fsub() {}
-void dsub() {}
-void imul() {}
-void lmul() {}
-void fmul() {}
-void dmul() {}
-void idiv() {}
-void ldiv() {}
-void fdiv() {}
-void ddiv() {}
-void irem() {}
-void lrem() {}
-void frem() {}
-void drem() {}
-void ineg() {}
-void lneg() {}
-void fneg() {}
-void dneg() {}
+void swap() {
+	printf("swap\n");
+	
+	frames->current->swap();
+
+}
+
+void iadd() {
+	printf("iadd\n");
+	
+	frames->current->iadd();
+}
+
+void ladd() {
+	printf("ladd\n");
+	
+	frames->current->ladd();
+}
+
+void fadd() {
+	printf("fadd\n");
+	
+	frames->current->fadd();
+}
+
+void dadd() {
+	printf("dadd\n");
+	
+	frames->current->dadd();
+}
+
+void isub() {
+	printf("isub\n");
+	
+	frames->current->isub();
+}
+
+void lsub() {
+	printf("lsub\n");
+	
+	frames->current->lsub();
+}
+
+void fsub() {
+	printf("fsub\n");
+	
+	frames->current->fsub();
+}
+
+void dsub() {
+	printf("dsub\n");
+	
+	frames->current->dsub();
+}
+
+void imul() {
+	printf("imul\n");
+	
+	frames->current->imul();
+}
+
+void lmul() {
+	printf("lmul\n");
+	
+	frames->current->lmul();
+}
+
+void fmul() {
+	printf("fmul\n");
+	
+	frames->current->fmul();
+}
+
+void dmul() {
+	printf("dmul\n");
+	
+	frames->current->dmul();
+}
+
+void idiv() {
+	printf("idiv\n");
+	
+	frames->current->idiv();
+}
+
+void ldiv() {
+	printf("ldiv\n");
+	
+	frames->current->ldiv();
+}
+
+void fdiv() {
+	printf("fdiv\n");
+	
+	frames->current->fdiv();
+}
+
+void ddiv() {
+	printf("ddiv\n");
+	
+	frames->current->ddiv();
+}
+
+void irem() {
+	printf("irem\n");
+	
+	frames->current->irem();
+}
+
+void lrem() {
+	printf("lrem\n");
+	
+	frames->current->lrem();
+}
+
+void frem() {
+	printf("frem\n");
+	
+	frames->current->frem();
+}
+
+void drem() {
+	printf("drem\n");
+	
+	frames->current->drem();
+}
+
+void ineg() {
+	printf("ineg\n");
+	
+	frames->current->ineg();
+}
+
+void lneg() {
+	printf("lneg\n");
+	
+	frames->current->lneg();
+}
+
+void fneg() {
+	printf("fneg\n");
+	
+	frames->current->fneg();
+}
+
+void dneg() {
+	printf("dneg\n");
+	
+	frames->current->dneg();
+}
+
 void ishl() {}
 void lshl() {}
 void ishr() {}
@@ -546,7 +711,15 @@ void ior() {}
 void lor() {}
 void ixor() {}
 void lxor() {}
-void iinc() {}
+void iinc() {
+	printf("iinc\n");
+	
+	u1 index = get1byte();
+	u1 value = get1byte();
+	
+	frames->current->iinc(index, value);
+}
+
 void i2l() {}
 void i2f() {}
 void i2d() {}
@@ -567,21 +740,173 @@ void fcmpl() {}
 void fcmpg() {}
 void dcmpl() {}
 void dcmpg() {}
-void ifeq() {}
-void ifne() {}
-void iflt() {}
-void ifge() {}
-void ifgt() {}
-void ifle() {}
-void if_icmpeq() {}
-void if_icmpne() {}
-void if_icmplt() {}
-void if_icmpge() {}
-void if_cmpgt() {}
-void if_icmple() {}
-void if_acmpeq() {}
-void if_acmpne() {}
-void op_goto() {}
+
+void ifeq() {
+	printf("ifeq\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->ifeq(pc);
+}
+
+void ifne() {
+	printf("ifne\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->ifne(pc);
+}
+
+void iflt() {
+	printf("iflt\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->iflt(pc);
+}
+
+void ifge() {
+	printf("ifge\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->ifge(pc);
+}
+
+void ifgt() {
+	printf("ifgt\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->ifgt(pc);
+}
+
+void ifle() {
+	printf("ifle\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->ifle(pc);
+}
+
+void if_icmpeq() {
+	printf("if_icmpeq\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->if_icmpeq(pc);
+}
+
+void if_icmpne() {
+	printf("if_icmpne\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->if_icmpne(pc);
+}
+
+void if_icmplt() {
+	printf("if_icmplt\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->if_icmplt(pc);
+}
+
+void if_icmpge() {
+	printf("if_icmpge\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->if_icmpge(pc);
+}
+
+void if_icmpgt() {
+	printf("if_icmpgt\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->if_icmpgt(pc);
+}
+
+void if_icmple() {
+	printf("if_icmple\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->if_icmple(pc);
+}
+
+void if_acmpeq() {
+	printf("if_acmpeq\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->if_acmpeq(pc);
+}
+
+void if_acmpne() {
+	printf("if_acmpne\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->if_acmpne(pc);
+}
+
+void op_goto() {
+	printf("op_goto\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->op_goto(pc);
+	
+}
+
 void jsr() {}
 void ret() {}
 void tableswitch() {}
@@ -610,7 +935,7 @@ void putstatic() {
 void getfield() {
 	printf("getfield\n");
 
-	u2 cp_index = get2bytes();
+	u2 cp_index = get2byte();
 	
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -631,7 +956,7 @@ void getfield() {
 void putfield() {
 	printf("putfield\n");
 	
-	u2 cp_index = get2bytes();
+	u2 cp_index = get2byte();
 	
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -652,7 +977,7 @@ void putfield() {
 void invokevirtual() {
 	printf("invokevirtual\n");
 	
-	u2 cp_index = get2bytes();
+	u2 cp_index = get2byte();
 	
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -672,7 +997,7 @@ void invokevirtual() {
 void invokespecial() {
 	printf("invokespecial\n");
 	
-	u2 cp_index = get2bytes();
+	u2 cp_index = get2byte();
 	
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -696,7 +1021,7 @@ void invokedynamic() {}
 void op_new() {
 	printf("new\n");
 
-	u2 cp_index = get2bytes();
+	u2 cp_index = get2byte();
 	
 	Class *temp = frames->current->classref;
 	char *classname = temp->get_cp_class_name(cp_index);
@@ -722,19 +1047,66 @@ void monitorenter() {}
 void monitorexit() {}
 void wide() {}
 void multianewarray() {}
-void ifnull() {}
-void ifnonnull() {}
-void goto_w() {}
+void ifnull() {
+	printf("ifnull\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->ifnull(pc);
+}
+
+void ifnonnull() {
+	printf("ifnonnull\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->ifnonnull(pc);
+}
+
+void goto_w() {
+	printf("goto_w\n");
+	
+	int16_t pc = frames->current->getPC()-1;
+	
+	u2 branch = get2byte();
+	pc += (int16_t)branch;
+	
+	frames->current->goto_w(pc);
+}
+
 void jsr_w() {}
 void breakpoint() {}
 void impdep() {}
 void impdep2() {}
 
-u2 get2bytes() {
+u1 get1byte() {
+	return frames->current->getCode();
+}
+
+u2 get2byte() {
 	u2 bytes;
 	
 	bytes = frames->current->getCode();
-	bytes<<8;
+	bytes<<=8;
+	bytes |= frames->current->getCode();
+	return bytes;
+}
+
+u4 get4byte() {
+	u4 bytes;
+	
+	bytes = frames->current->getCode();
+	bytes<<=8;
+	bytes |= frames->current->getCode();
+	bytes<<=8;
+	bytes |= frames->current->getCode();
+	bytes<<=8;
 	bytes |= frames->current->getCode();
 	return bytes;
 }

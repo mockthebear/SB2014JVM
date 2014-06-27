@@ -29,7 +29,7 @@ public:
 	void bipush(u1);
 	void sipush(u2);
 	
-	void ldc(u1);
+	void ldc(u2);
 	void ldc_w(u2);
 	void ldc2_w(u2);
 	
@@ -63,6 +63,9 @@ public:
 	
 	void if_acmpeq(u2);
 	void if_acmpne(u2);
+	
+	void op_goto(u2);
+	void goto_w(u4);
 	/*
 	dcompg
 	dcompl
@@ -195,6 +198,7 @@ public:
 	char *get_method_name(u2 cp_index);
 	char *get_method_descriptor(u2 cp_index);
 	u1 getCode();
+	int16_t getPC();
 	void pcNext();
 	void pcBack(int);
 	void setParam(Operand *param, int count, int ini);

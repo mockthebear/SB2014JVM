@@ -21,7 +21,7 @@ void Frame::sipush(u2 in) {
 	opStack->sipush(in);
 }
 
-void Frame::ldc(u1 cp_index) {
+void Frame::ldc(u2 cp_index) {
 	char tag = classref->get_cp_tag(cp_index);
 	u4 byte = classref->get_cp_bytes(cp_index);
 	Operand op;
@@ -188,6 +188,14 @@ void Frame::if_acmpeq(u2 branch) {
 	}
 }
 
+void Frame::op_goto(u2 branch) {
+	pc = (int)branch;
+}
+
+void Frame::goto_w(u4 branch) {
+	pc = (int)branch;
+}
+
 void Frame::if_acmpne(u2 branch) {
 	if(!opStack->if_cmpeq(TYPE_REF)) {
 		pc = (int)branch;
@@ -234,6 +242,10 @@ void Frame::ldiv() {
 	opStack->ldiv();
 }
 
+void Frame::lrem() {
+	opStack->lrem();
+}
+
 void Frame::lneg() {
 	opStack->lneg();
 }
@@ -254,24 +266,32 @@ void Frame::fdiv() {
 	opStack->fdiv();
 }
 
+void Frame::frem() {
+	opStack->frem();
+}
+
 void Frame::fneg() {
 	opStack->fneg();
 }
 
 void Frame::dadd() {
-	opStack->fadd();
+	opStack->dadd();
 }
 
 void Frame::dsub() {
-	opStack->fsub();
+	opStack->dsub();
 }
 
 void Frame::dmul() {
-	opStack->fmul();
+	opStack->dmul();
 }
 
 void Frame::ddiv() {
-	opStack->fdiv();
+	opStack->ddiv();
+}
+
+void Frame::drem() {
+	opStack->drem();
 }
 
 void Frame::dneg() {
@@ -664,6 +684,10 @@ u1 Frame::getCode() {
 	return c;
 }
 
+int16_t Frame::getPC() {
+	return (int16_t)pc;
+}
+
 void Frame::pcNext() {
 	pc++;
 }
@@ -703,11 +727,11 @@ u4 Frame::getOpStackTop(){
 }
 
 void Frame::print() {
-	printf(">>Frame\n");
+	printf(">>Current frame\n");
 	printf("  method: %s.", classref->get_cp_this_class());
 	printf("%s ", methodname);
 	printf("return %s\n", returnType);
-	printf("  pc: %d\n", pc);
+	printf("  next pc: %d\n", pc);
 	opStack->print_min();
 	varArray->print_min();
 }

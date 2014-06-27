@@ -141,6 +141,12 @@ void OperandStack::swap() {
 		printf("Error  :op_stack.swap\n");
 		exit(0);
 	}
+	if( ( (top-1)->type == TYPE_LONG ) || (top->type == TYPE_LONG) ||
+		( (top-1)->type == TYPE_DOUBLE ) || (top->type == TYPE_DOUBLE) ) 
+	{
+		printf("Error type categ 2  :op_stack.swap\n");
+		exit(0);
+	}
 	Operand temp;
 	
 	temp = *(top-1);
