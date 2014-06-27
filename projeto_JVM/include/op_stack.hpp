@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "definition.hpp"
 #include "operand.hpp"
@@ -40,10 +41,17 @@ public:
 	int ifzero();
 	int ifgt();
 	int iflt();
+    int ifle();
+    int ifne();
 	
-	int if_cmpeq(u4);
+	int if_cmpeq();
+    int if_icmpge();
 	int if_icmpgt();
+    int if_cmpne();
 	int if_icmplt();
+    int if_icmple();
+    int if_acmpeq();
+    int if_acmpne();
 	
 	
 	void iadd();
@@ -92,29 +100,30 @@ public:
 	void d2i();
 	void d2l();
 	void d2f();
+	
+	
+	void fcmpg();
+	void fcmpl();
+	void dcmpg();
+	void dcmpl();
+	void lcmp();
+    
 	/*
-	
-	fcmpg
-	fcmpl
-	dcmpg
-	dcmpl
-	lcmp
-	
 	iinc
-	
-	ishl
-	lshl
-	ishr
-	lshr
-	iushr
-	lushr
-	iand
-	land
-	ior
-	lor
-	ixor
-	lxor
 	*/
+	void ishl();
+	void lshl();
+	void ishr();
+	void lshr();
+	void iushr();
+	void lushr();
+	void iand();
+	void land();
+	void ior();
+	void lor();
+	void ixor();
+	void lxor();
+	
 	
 	void push(Operand);
 	Operand pop();

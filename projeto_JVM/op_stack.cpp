@@ -141,12 +141,6 @@ void OperandStack::swap() {
 		printf("Error  :op_stack.swap\n");
 		exit(0);
 	}
-	if( ( (top-1)->type == TYPE_LONG ) || (top->type == TYPE_LONG) ||
-		( (top-1)->type == TYPE_DOUBLE ) || (top->type == TYPE_DOUBLE) ) 
-	{
-		printf("Error type categ 2  :op_stack.swap\n");
-		exit(0);
-	}
 	Operand temp;
 	
 	temp = *(top-1);
@@ -198,7 +192,37 @@ int OperandStack::iflt() {
 	return 0;
 }
 
-int OperandStack::if_cmpeq(u4 type) {
+int OperandStack::ifle() {
+    if(size < 1) {
+        printf("Error  :op_stack.ifle\n");
+        exit(0);
+    }
+    Operand op;
+    int result = 0;
+    
+    op = pop();
+    int32_t itest = op.to_int();
+    if(itest <= 0)
+        result = 1;
+    return 0;
+}
+
+int OperandStack::ifne() {
+    if(size < 1) {
+        printf("Error  :op_stack.ifne\n");
+        exit(0);
+    }
+    Operand op;
+    int result = 0;
+    
+    op = pop();
+    int32_t itest = op.to_int();
+    if(itest != 0)
+        result = 1;
+    return 0;
+}
+
+int OperandStack::if_cmpeq() {
 	if(size < 2) {
 		printf("Error  :op_stack.if_cmpeq\n");
 		exit(0);
@@ -207,13 +231,52 @@ int OperandStack::if_cmpeq(u4 type) {
 	int result = 0;
 	op2 = pop();
 	op1 = pop();
-	if( (op1.type != type) || (op2.type != type) ) {
+	if( (op1.type != TYPE_INT) || (op2.type != TYPE_INT) ) {
 		printf("Error type int or ref :op_stack.f_icmpeq\n");
 		exit(0);
 	}
 	if(op1.bytes == op2.bytes)
 		result = 1;
 	return result;
+}
+
+int OperandStack::if_cmpne() {
+    if(size < 2) {
+        printf("Error  :op_stack.if_cmpeq\n");
+        exit(0);
+    }
+    Operand op1, op2;
+    int result = 0;
+    op2 = pop();
+    op1 = pop();
+    if( (op1.type != TYPE_INT) || (op2.type != TYPE_INT) ) {
+        printf("Error type int or ref :op_stack.f_icmpne\n");
+        exit(0);
+    }
+    if(op1.bytes != op2.bytes)
+        result = 1;
+    return result;
+}
+
+int OperandStack::if_icmpge() {
+    if(size < 2) {
+        printf("Error  :op_stack.if_icmpgt\n");
+        exit(0);
+    }
+    Operand op1, op2;
+    int result = 0;
+    
+    op2 = pop();
+    op1 = pop();
+    if( (op1.type != TYPE_INT) || (op2.type != TYPE_INT) ) {
+        printf("Error type not int: :op_stack.if_icmpge\n");
+        exit(0);
+    }
+    int32_t int1 = op1.to_int();
+    int32_t int2 = op2.to_int();
+    if(int1 >= int2)
+        result = 1;
+    return result;
 }
 
 int OperandStack::if_icmpgt() {
@@ -258,6 +321,69 @@ int OperandStack::if_icmplt() {
 	return result;
 }
 
+int OperandStack::if_icmple() {
+    if(size < 2) {
+        printf("Error  :op_stack.if_icmplt\n");
+        exit(0);
+    }
+    Operand op1, op2;
+    int result = 0;
+    
+    op2 = pop();
+    op1 = pop();
+    if( (op1.type != TYPE_INT) || (op2.type != TYPE_INT) ) {
+        printf("Error type not int: :op_stack.if_icmple\n");
+        exit(0);
+    }
+    int32_t int1 = op1.to_int();
+    int32_t int2 = op2.to_int();
+    if(int1 <= int2)
+        result = 1;
+    return result;
+}
+/* revisar funcionamento
+int OperandStack::if_acmpeq() {
+    if(size < 2) {
+        printf("Error  :op_stack.if_icmplt\n");
+        exit(0);
+    }
+    Operand op1, op2;
+    int result = 0;
+    
+    op2 = pop();
+    op1 = pop();
+    if( (op1.type != TYPE_REF) || (op2.type != TYPE_REF) ) {
+        printf("Error type not int: :op_stack.if_acmpeq\n");
+        exit(0);
+    }
+    int32_t int1 = op1.to_int();
+    int32_t int2 = op2.to_int();
+    if(int1 <= int2)
+        result = 1;
+    return result;
+}
+
+int OperandStack::if_acmpne() {
+    if(size < 2) {
+        printf("Error  :op_stack.if_acmpne\n");
+        exit(0);
+    }
+    Operand op1, op2;
+    int result = 0;
+    
+    op2 = pop();
+    op1 = pop();
+    if( (op1.type != TYPE_REF) || (op2.type != TYPE_REF) ) {
+        printf("Error type not int: :op_stack.if_icmplt\n");
+        exit(0);
+    }
+    int32_t int1 = op1.to_int();
+    int32_t int2 = op2.to_int();
+    if(int1 <= int2)
+        result = 1;
+    return result;
+}
+*/
 void OperandStack::iadd() {
 	if(size < 2) {
 		printf("Error  :op_stack.iadd\n");
@@ -349,6 +475,11 @@ void OperandStack::lmul(){
     opL = pop();
     opH = pop();//multiplicador
     
+    if((opL.type != TYPE_INT) || (opH.type != TYPE_INT) || ((top)->type != TYPE_INT) || ((top-1)->type != TYPE_INT) ) {
+        printf("Error type not int: :op_stack.lmul\n");
+        exit(0);
+    }
+    
 	int64_t resultado = to_long( (top-1)->bytes, (top)->bytes ) * to_long(opH.bytes, opL.bytes);
 	(top-1)->set_high(TYPE_LONG, &resultado);
 	top->set_low(TYPE_LONG, &resultado);
@@ -363,6 +494,11 @@ void OperandStack::ldiv(){
 	
     opL = pop();
     opH = pop();//divisor
+    
+    if((opL.type != TYPE_LONG) || (opH.type != TYPE_LONG) || ((top)->type != TYPE_LONG) || ((top-1)->type != TYPE_LONG) ) {
+        printf("Error type not int: :op_stack.ldiv\n");
+        exit(0);
+    }
     
 	if( (opH.bytes == 0x0) && (opL.bytes==0x0) ) {
 		printf("Excecao de divisao por zero\n");
@@ -382,6 +518,11 @@ void OperandStack::lrem(){
 	
     opL = pop();
     opH = pop();
+    
+    if((opL.type != TYPE_LONG) || (opH.type != TYPE_LONG) || ((top)->type != TYPE_LONG) || ((top-1)->type != TYPE_LONG) ) {
+        printf("Error type not int: :op_stack.ldiv\n");
+        exit(0);
+    }
     
 	if( (opH.bytes == 0x0) && (opL.bytes==0x0) ) {
 		printf("Excecao de divisao por zero\n");
@@ -607,6 +748,164 @@ void OperandStack::i2s() {
 	top->bytes &= 0xFFFF;
 }
 
+void OperandStack::l2i(){
+    Operand opL = pop();
+    
+    if((opL.type != TYPE_LONG) || (top)->type != TYPE_LONG) {
+        printf("Error type not long: :op_stack.l2i\n");
+        exit(0);
+    }
+    
+    pop();
+    
+    opL.type = TYPE_INT;
+    push(opL);
+}
+
+void OperandStack::l2f(){
+    Operand opL = pop();
+    Operand opH = pop();
+    
+    if((opL.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
+        printf("Error type not long: :op_stack.l2f\n");
+        exit(0);
+    }
+    
+    float l2f = (float)((int64_t)to_long(opH.bytes, opL.bytes));
+    
+    opL.type = TYPE_FLOAT;
+    opL.bytes = (u4)l2f;
+    push(opL);
+}
+
+void OperandStack::l2d(){
+    Operand opL = pop();
+    Operand opH = pop();
+    
+    if((opL.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
+        printf("Error type not long: :op_stack.l2d\n");
+        exit(0);
+    }
+    
+    double l2d = (double)((int64_t)to_long(opH.bytes, opL.bytes));
+    
+    opL.type = TYPE_DOUBLE;
+    opL.bytes = (u4)l2d;
+    
+    opH.type = TYPE_DOUBLE;
+    opH.bytes = (u4)((uint64_t)l2d>>32);
+    
+    push(opH);
+    push(opL);
+}
+
+void OperandStack::f2i(){
+    Operand op1 = pop();
+    
+    if(op1.type != TYPE_FLOAT) {
+        printf("Error type not float: :op_stack.f2i\n");
+        exit(0);
+    }
+    
+    op1.type = TYPE_INT;
+    op1.bytes = (u4)((int32_t)op1.bytes);
+    
+    push(op1);
+}
+
+void OperandStack::f2l(){
+    Operand opL = pop();
+    Operand opH;
+    
+    if(opL.type != TYPE_FLOAT) {
+        printf("Error type not float: :op_stack.f2l\n");
+        exit(0);
+    }
+    
+    int64_t f2l = (int64_t)((float)opL.bytes);
+    
+    opL.type = TYPE_LONG;
+    opL.bytes = (u4)f2l;
+    
+    opH.type = TYPE_LONG;
+    opH.bytes = (u4)((uint64_t)f2l>>32);
+    
+    push(opH);
+    push(opL);
+}
+
+void OperandStack::f2d(){
+    Operand opL = pop();
+    Operand opH;
+    
+    if(opL.type != TYPE_FLOAT) {
+        printf("Error type not float: :op_stack.f2d\n");
+        exit(0);
+    }
+    
+    double f2d = (double)((float)opL.bytes);
+    
+    opL.type = TYPE_DOUBLE;
+    opL.bytes = (u4)f2d;
+    
+    opH.type = TYPE_DOUBLE;
+    opH.bytes = (u4)((uint64_t)f2d>>32);
+    
+    push(opH);
+    push(opL);
+}
+
+void OperandStack::d2i(){
+    Operand opL = pop();
+    Operand opH = pop();
+    
+    if((opL.type != TYPE_DOUBLE) || (opH.type != TYPE_DOUBLE)) {
+        printf("Error type not double: :op_stack.d2i\n");
+        exit(0);
+    }
+    
+    opL.bytes = (u4)(int32_t)((double)to_long(opH.bytes, opL.bytes));
+    
+    opL.type = TYPE_INT;
+    push(opL);
+}
+
+void OperandStack::d2l(){
+    Operand opL = pop();
+    Operand opH = pop();
+    
+    if((opL.type != TYPE_DOUBLE) || (opH.type != TYPE_DOUBLE)) {
+        printf("Error type not double: :op_stack.d2l\n");
+        exit(0);
+    }
+    
+    long d2l = (long)((double)to_long(opH.bytes, opL.bytes));
+    
+    opL.type = TYPE_LONG;
+    opL.bytes = (u4)d2l;
+    
+    opH.type = TYPE_LONG;
+    opH.bytes = (u4)((uint64_t)d2l>>32);
+    
+    push(opH);
+    push(opL);
+}
+
+void OperandStack::d2f(){
+    Operand opL = pop();
+    Operand opH = pop();
+    
+    if((opL.type != TYPE_DOUBLE) || (opH.type != TYPE_DOUBLE)) {
+        printf("Error type not double: :op_stack.d2f\n");
+        exit(0);
+    }
+    
+    opL.bytes = (u4)(float)((double)to_long(opH.bytes, opL.bytes));
+    
+    opL.type = TYPE_FLOAT;
+    push(opL);
+}
+
 /* OPERACAO GERAL */
 void OperandStack::push(Operand op) {
 	if(size == max) {
@@ -728,27 +1027,376 @@ void OperandStack::dup2_x2(){
     push(op2);
     push(op1);
 }
+	
+void OperandStack::fcmpg(){
+    Operand op1, op2, opReturn;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
+        printf("Error type not double: :op_stack.fcmpg\n");
+        exit(0);
+    }
+    
+    if(isnan(op2.bytes) || isnan(op1.bytes)){
+        opReturn.bytes =1;
+        push(opReturn);
+        return;
+    }
+    
+    if((float)op2.bytes>(float)op1.bytes){
+        opReturn.bytes = 1;
+    }else if((float)op2.bytes<(float)op1.bytes){
+        opReturn.bytes = -1;
+    }else{
+        opReturn.bytes = 0;
+    }
+    
+    push(opReturn);
 
- 
-	/*
-	fcmpg
-	fcmpl
-	dcmpg
-	dcmpl
-	lcmp
-	
-	iinc
-	
-	ishl
-	lshl
-	ishr
-	lshr
-	iushr
-	lushr
-	iand
-	land
-	ior
-	lor
-	ixor
-	lxor
-	*/
+}
+
+void OperandStack::fcmpl(){
+    Operand op1, op2, opReturn;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
+        printf("Error type not double: :op_stack.fcmpl\n");
+        exit(0);
+    }
+    
+    if(isnan(op2.bytes) || isnan(op1.bytes)){
+        opReturn.bytes =-1;
+        push(opReturn);
+        return;
+    }
+    
+    if((float)op2.bytes>(float)op1.bytes){
+        opReturn.bytes = 1;
+    }else if((float)op2.bytes<(float)op1.bytes){
+        opReturn.bytes = -1;
+    }else{
+        opReturn.bytes = 0;
+    }
+    
+    push(opReturn);
+}
+
+void OperandStack::dcmpg(){
+    Operand op1, op2, op3, op4, opReturn;
+    opReturn.type = TYPE_INT;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    op4 = pop();
+    
+    if((op1.type != TYPE_DOUBLE) || (op2.type != TYPE_DOUBLE) || (op3.type != TYPE_DOUBLE) || (op4.type != TYPE_DOUBLE)) {
+        printf("Error type not double: :op_stack.dcmpg\n");
+        exit(0);
+    }
+    
+    double d1 = (double)((uint64_t)op4.bytes<<32 &(uint32_t)op3.bytes);
+    double d2 = (double)((uint64_t)op2.bytes<<32 &(uint32_t)op1.bytes);
+    
+    if(isnan(d1) || isnan(d2)){
+        opReturn.bytes = 1;
+    }
+    
+    if(d1>d2){
+        opReturn.bytes = 1;
+    }else if(d1<d2){
+        opReturn.bytes = -1;
+    }else{
+        opReturn.bytes = 0;
+    }
+}
+
+void OperandStack::dcmpl(){
+    Operand op1, op2, op3, op4, opReturn;
+    opReturn.type = TYPE_INT;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    op4 = pop();
+    
+    if((op1.type != TYPE_DOUBLE) || (op2.type != TYPE_DOUBLE) || (op3.type != TYPE_DOUBLE) || (op4.type != TYPE_DOUBLE)) {
+        printf("Error type not double: :op_stack.dcmpl\n");
+        exit(0);
+    }
+    
+    double d1 = (double)((uint64_t)op4.bytes<<32 &(uint32_t)op3.bytes);
+    double d2 = (double)((uint64_t)op2.bytes<<32 &(uint32_t)op1.bytes);
+    
+    if(isnan(d1) || isnan(d2)){
+        opReturn.bytes = -1;
+    }
+    
+    if(d1>d2){
+        opReturn.bytes = 1;
+    }else if(d1<d2){
+        opReturn.bytes = -1;
+    }else{
+        opReturn.bytes = 0;
+    }
+}
+
+void OperandStack::lcmp(){
+    Operand op1, op2, op3, op4, opReturn;
+    opReturn.type = TYPE_INT;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    op4 = pop();
+    
+    if((op1.type != TYPE_LONG) || (op2.type != TYPE_LONG) || (op3.type != TYPE_LONG) || (op4.type != TYPE_LONG)) {
+        printf("Error type not long: :op_stack.lcmp\n");
+        exit(0);
+    }
+    
+    int64_t d1 = (int64_t)((uint64_t)op4.bytes<<32 &(uint32_t)op3.bytes);
+    int64_t d2 = (int64_t)((uint64_t)op2.bytes<<32 &(uint32_t)op1.bytes);
+    
+    
+    if(d1>d2){
+        opReturn.bytes = 1;
+    }else if(d1<d2){
+        opReturn.bytes = -1;
+    }else{
+        opReturn.bytes = 0;
+    }
+}
+//iinc
+
+void OperandStack::ishl(){
+    Operand op1, op2, opReturn;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
+        printf("Error type not int: :op_stack.ishl\n");
+        exit(0);
+    }
+    
+    opReturn.bytes = (int32_t)op2.bytes << op1.bytes;
+    
+    push(opReturn);
+}
+void OperandStack::lshl(){
+    Operand op1, opL, opH;
+    
+    opL = pop();
+    opH = pop();
+    op1 = pop();
+    
+    if((opL.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
+        printf("Error type not long or shift amount not an int: :op_stack.lshl\n");
+        exit(0);
+    }
+    
+    int64_t resultado = (int64_t)to_long( op1.bytes, opH.bytes ) << opL.bytes;
+    
+    opH.bytes = (u4)(resultado>>32);
+    opL.bytes = (u4)resultado;
+    
+    push(opH);
+    push(opL);
+}
+void OperandStack::ishr(){
+    Operand op1, op2, opReturn;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
+        printf("Error type not int: :op_stack.ishr\n");
+        exit(0);
+    }
+    
+    opReturn.bytes = (int32_t)op2.bytes >> op1.bytes;
+    
+    push(opReturn);
+}
+
+void OperandStack::lshr(){
+    Operand op1, opL, opH;
+    
+    opL = pop();
+    opH = pop();
+    op1 = pop();
+    
+    if((opL.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
+        printf("Error type not long or shift amount not an int: :op_stack.lshr\n");
+        exit(0);
+    }
+    
+    int64_t resultado = (int64_t)to_long( op1.bytes, opH.bytes ) >> opL.bytes;
+    
+    opH.bytes = (u4)(resultado>>32);
+    opL.bytes = (u4)resultado;
+    
+    push(opH);
+    push(opL);
+}
+
+void OperandStack::iushr(){
+    Operand op1, op2, opReturn;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
+        printf("Error type not int: :op_stack.iushr\n");
+        exit(0);
+    }
+    
+    opReturn.bytes = op2.bytes >> op1.bytes;
+    
+    push(opReturn);
+}
+
+void OperandStack::lushr(){
+    Operand op1, opL, opH;
+    
+    opL = pop();
+    opH = pop();
+    op1 = pop();
+    
+    if((opL.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
+        printf("Error type not long or shift amount not an int: :op_stack.lushr\n");
+        exit(0);
+    }
+    
+    uint64_t resultado = (uint64_t)to_long( op1.bytes, opH.bytes ) >> opL.bytes;
+    
+    opH.bytes = (u4)(resultado>>32);
+    opL.bytes = (u4)resultado;
+    
+    push(opH);
+    push(opL);
+}
+void OperandStack::iand(){
+    Operand op1, op2, opReturn;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
+        printf("Error type not int: :op_stack.iand\n");
+        exit(0);
+    }
+    
+    opReturn.bytes = (int32_t)op2.bytes & (int32_t)op1.bytes;
+    
+    push(opReturn);
+}
+void OperandStack::land(){
+    Operand op1, op2, opL, opH;
+    
+    opL = pop();
+    opH = pop();
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_LONG) || (op2.type != TYPE_LONG) || (opL.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
+        printf("Error type not long: :op_stack.land\n");
+        exit(0);
+    }
+    
+    int64_t resultado = (int64_t)to_long( op2.bytes, op1.bytes ) & (int64_t)to_long(opH.bytes, opL.bytes);
+    
+    opH.bytes = (u4)(resultado>>32);
+    opL.bytes = (u4)resultado;
+    
+    push(opH);
+    push(opL);
+}
+void OperandStack::ior(){
+    Operand op1, op2, opReturn;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+
+    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
+        printf("Error type not int: :op_stack.ior\n");
+        exit(0);
+    }
+    
+    opReturn.bytes = (int32_t)op2.bytes + (int32_t)op1.bytes;
+    
+    push(opReturn);
+}
+void OperandStack::lor(){
+    Operand op1, op2, opL, opH;
+    
+    opL = pop();
+    opH = pop();
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_LONG) || (op2.type != TYPE_LONG) || (opL.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
+        printf("Error type not long: :op_stack.lor\n");
+        exit(0);
+    }
+    
+    int64_t resultado = (int64_t)to_long( op2.bytes, op1.bytes ) | (int64_t)to_long(opH.bytes, opL.bytes);
+    
+    opH.bytes = (u4)(resultado>>32);
+    opL.bytes = (u4)resultado;
+    
+    push(opH);
+    push(opL);
+}
+void OperandStack::ixor(){
+    Operand op1, op2, opReturn;
+    opReturn.type = TYPE_INT;
+    
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
+        printf("Error type not int: :op_stack.ixor\n");
+        exit(0);
+    }
+    
+    opReturn.bytes = (int32_t)op2.bytes ^ (int32_t)op1.bytes;
+    
+    push(opReturn);
+}
+void OperandStack::lxor(){
+    Operand op1, op2, opL, opH;
+    
+    opL = pop();
+    opH = pop();
+    op1 = pop();
+    op2 = pop();
+    
+    if((op1.type != TYPE_LONG) || (op2.type != TYPE_LONG) || (opL.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
+        printf("Error type not long: :op_stack.lxor\n");
+        exit(0);
+    }
+    
+    int64_t resultado = (int64_t)to_long( op2.bytes, op1.bytes ) ^ (int64_t)to_long(opH.bytes, opL.bytes);
+    
+    opH.bytes = (u4)(resultado>>32);
+    opL.bytes = (u4)resultado;
+    
+    push(opH);
+    push(opL);
+}
