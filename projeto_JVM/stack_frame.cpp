@@ -35,6 +35,46 @@ void StackFrame::invokespecial(Class *classRef, char *methodname, char *descript
 	
 	current->setParam(param, param_count, 0);
 }
+
+void StackFrame::ireturn() {
+	u4 value = current->popOpStack();
+	
+	popFrame();
+	current->pushOpStack(TYPE_INT, value);
+}
+
+void StackFrame::lreturn() {
+	u4 valueL = current->popOpStack();
+	u4 valueH = current->popOpStack();
+
+	popFrame();
+	current->pushOpStack(TYPE_LONG, valueH);
+	current->pushOpStack(TYPE_LONG, valueL);
+}
+
+void StackFrame::freturn() {
+	u4 value = current->popOpStack();
+	
+	popFrame();
+	current->pushOpStack(TYPE_FLOAT, value);
+}
+
+void StackFrame::dreturn() {
+	u4 valueL = current->popOpStack();
+	u4 valueH = current->popOpStack();
+
+	popFrame();
+	current->pushOpStack(TYPE_DOUBLE, valueH);
+	current->pushOpStack(TYPE_DOUBLE, valueL);
+}
+
+void StackFrame::areturn() {
+	u4 value = current->popOpStack();
+	
+	popFrame();
+	current->pushOpStack(TYPE_REF, value);
+}
+
 void StackFrame::op_return() {
 	popFrame();
 }

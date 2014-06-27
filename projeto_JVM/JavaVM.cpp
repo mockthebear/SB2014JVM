@@ -929,8 +929,8 @@ void iflt() {
 	
 	int16_t pc = frames->current->getPC()-1;
 	
-	u2 branch = get2byte();
-	pc += (int16_t)branch;
+	int16_t branch = (int16_t)get2byte();
+	pc += branch;
 	
 	frames->current->iflt(pc);
 }
@@ -1072,11 +1072,36 @@ void jsr() {}
 void ret() {}
 void tableswitch() {}
 void lookupswitch() {}
-void ireturn() {}
-void lreturn() {}
-void freturn() {}
-void dreturn() {}
-void areturn() {}
+void ireturn() {
+	printf("ireturn\n");
+	
+	frames->ireturn();
+}
+
+void lreturn() {
+	printf("lreturn\n");
+	
+	frames->lreturn();
+}
+
+void freturn() {
+	printf("freturn\n");
+	
+	frames->freturn();
+}
+
+void dreturn() {
+	printf("dreturn\n");
+	
+	frames->dreturn();
+}
+
+void areturn() {
+	printf("areturn\n");
+	
+	frames->areturn();
+}
+
 void op_return() {
 	printf("return\n");
 	
@@ -1332,7 +1357,7 @@ void multianewarray() {
 	arrayRef = memory->multianewarray(count, arrayType, classRef);
 	frames->current->pushOpStack(TYPE_REF, arrayRef);
 	
-	delete classname;
+	delete[] classname;
 }
 
 void ifnull() {
@@ -1369,9 +1394,17 @@ void goto_w() {
 }
 
 void jsr_w() {}
-void breakpoint() {}
-void impdep() {}
-void impdep2() {}
+void breakpoint() {
+	printf("breakpoint\n");
+}
+
+void impdep() {
+	printf("impdep\n");
+}
+
+void impdep2() {
+	printf("impdep2\n");
+}
 
 u1 get1byte() {
 	return frames->current->getCode();

@@ -17,8 +17,13 @@ public:
 	Frame *stack;
 	
 	void invokevirtual(Class *ref, char *methodname, char *descriptor);
-	//void invokespecial(u2 cp_index);
 	void invokespecial(Class *ref, char *methodname, char *descriptor);
+	
+	void ireturn();
+	void lreturn();
+	void freturn();
+	void dreturn();
+	void areturn();
 	void op_return();
 	
 	StackFrame(int);
