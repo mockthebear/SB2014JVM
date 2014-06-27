@@ -191,6 +191,7 @@ public:
 	void astore_2();
 	void astore_3();
 	
+	char *get_class_name(u2 cp_index);
 	char *get_field_class(u2 cp_index);
 	char *get_field_name(u2 cp_index);
 	char *get_field_type(u2 cp_index);

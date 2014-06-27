@@ -96,7 +96,7 @@ void dastore();
 void aastore();
 void bastore();
 void castore();
-void sastrore();
+void sastore();
 void pop();
 void pop2();
 void dup();
@@ -234,7 +234,7 @@ void (*op[256]) () = {
 	fstore_0, fstore_1, fstore_2, fstore_3, 
 	dstore_0, dstore_1, dstore_2, dstore_3, 
 	astore_0, astore_1, astore_2, astore_3, 
-	iastore, lastore, fastore, dastore, aastore, bastore, castore, sastrore, 
+	iastore, lastore, fastore, dastore, aastore, bastore, castore, sastore, 
 	pop, pop2, dup, dup_x1, dup_x2, dup2, dup2_x1, dup2_x2, swap, 
 	iadd, ladd, fadd, dadd, 
 	isub, lsub, fsub, dsub, 

@@ -654,6 +654,10 @@ void Frame::astore_3() {
 	astore(3);
 }
 
+char *Frame::get_class_name(u2 cp_index) {
+	return classref->get_cp_class_name(cp_index);
+}
+
 char *Frame::get_field_class(u2 cp_index) {
 	return classref->get_cp_field_class(cp_index);
 }

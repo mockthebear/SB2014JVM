@@ -55,8 +55,9 @@ u4 Memory::newarray(int size, u1 type) {
 
 u4 Memory::anewarray(int size, char *type, Class *ref) {
 	u4 array;
+	char a_type[2] = {'[', TYPE_CLASS};
 	
-	array = data->new_array(&size, type, ref);
+	array = data->new_array(&size, a_type, ref);
 	return array;
 }
 

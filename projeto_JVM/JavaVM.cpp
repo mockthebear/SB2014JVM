@@ -349,14 +349,95 @@ void aload_3() {
 	frames->current->aload_3();
 }
 
-void iaload() {}
-void laload() {}
-void faload() {}
-void daload() {}
-void aaload() {}
-void baload() {}
-void caload() {}
-void saload() {}
+void iaload() {
+	printf("iaload\n");
+	
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	u4 value;
+	
+	memory->iaload(arrayRef, index, &value);
+	frames->current->pushOpStack(TYPE_INT, value);
+}
+
+void laload() {
+	printf("laload\n");
+	
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	u4 value[2];
+	
+	memory->laload(arrayRef, index, value);
+	frames->current->pushOpStack(TYPE_LONG, value[0]);
+	frames->current->pushOpStack(TYPE_LONG, value[1]);
+}
+
+void faload() {
+	printf("faload\n");
+	
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	u4 value;
+	
+	memory->faload(arrayRef, index, &value);
+	frames->current->pushOpStack(TYPE_FLOAT, value);
+}
+
+void daload() {
+	printf("daload\n");
+	
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	u4 value[2];
+	
+	memory->daload(arrayRef, index, value);
+	frames->current->pushOpStack(TYPE_DOUBLE, value[0]);
+	frames->current->pushOpStack(TYPE_DOUBLE, value[1]);
+}
+
+void aaload() {
+	printf("aaload\n");
+	
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	u4 value;
+	
+	memory->aaload(arrayRef, index, &value);
+	frames->current->pushOpStack(TYPE_REF, value);
+}
+
+void baload() {
+	printf("baload\n");
+	
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	u4 value;
+	
+	memory->baload(arrayRef, index, &value);
+	frames->current->pushOpStack(TYPE_INT, value);
+}
+
+void caload() {
+	printf("caload\n");
+	
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	u4 value;
+	
+	memory->caload(arrayRef, index, &value);
+	frames->current->pushOpStack(TYPE_INT, value);
+}
+
+void saload() {
+	printf("saload\n");
+	
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	u4 value;
+	
+	memory->saload(arrayRef, index, &value);
+	frames->current->pushOpStack(TYPE_INT, value);
+}
 
 void istore() {
 	printf("istore\n");
@@ -521,14 +602,90 @@ void astore_3() {
 	frames->current->astore_3();
 }
 
-void iastore() {}
-void lastore() {}
-void fastore() {}
-void dastore() {}
-void aastore() {}
-void bastore() {}
-void castore() {}
-void sastrore() {}
+void iastore() {
+	printf("iastore\n");
+	
+	u4 value = frames->current->popOpStack();
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	
+	memory->iastore(arrayRef, index, &value);
+}
+
+void lastore() {
+	printf("lastore\n");
+	
+	u4 value[2];
+	value[1]= frames->current->popOpStack();
+	value[0]= frames->current->popOpStack();
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	
+	memory->lastore(arrayRef, index, value);
+}
+
+void fastore() {
+	printf("fastore\n");
+	
+	u4 value = frames->current->popOpStack();
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	
+	memory->fastore(arrayRef, index, &value);
+}
+
+void dastore() {
+	printf("dastore\n");
+	
+	u4 value[2];
+	value[1]= frames->current->popOpStack();
+	value[0]= frames->current->popOpStack();
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	
+	memory->dastore(arrayRef, index, value);
+}
+
+void aastore() {
+	printf("aastore\n");
+	
+	u4 value = frames->current->popOpStack();
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	
+	memory->aastore(arrayRef, index, &value);
+}
+
+void bastore() {
+	printf("bastore\n");
+	
+	u4 value = frames->current->popOpStack();
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	
+	memory->bastore(arrayRef, index, &value);
+}
+
+void castore() {
+	printf("castore\n");
+	
+	u4 value = frames->current->popOpStack();
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	
+	memory->castore(arrayRef, index, &value);
+}
+
+void sastore() {
+	printf("sastore\n");
+	
+	u4 value = frames->current->popOpStack();
+	u4 index = frames->current->popOpStack();
+	u4 arrayRef = frames->current->popOpStack();
+	
+	memory->sastore(arrayRef, index, &value);
+}
+
 void pop() {
 	printf("pop\n");
 	
@@ -927,14 +1084,38 @@ void op_return() {
 }
 
 void getstatic() {
-	printf("getstatic\n");
+	printf("getstatic");
 	
+	u2 cp_index = get2byte();
+	printf("  %d\n",cp_index);
+	
+	char *className = frames->current->get_field_class(cp_index);
+	char *fieldName = frames->current->get_field_name(cp_index);
+	char *fieldType = frames->current->get_field_type(cp_index);
+	
+	Class *classRef = memory->get_classref(className);
+	if(classRef == NULL) {
+		classRef = memory->new_class(className);
+		frames->current->pcBack(3);
+		frames->pushClinit(classRef);
+		
+		return;
+	}
+	u4 value[2];
+	
+	memory->getstatic(classRef, fieldName, fieldType, value);
+	
+	frames->current->pushOpStack(*fieldType, value[0]);
+	if( (*fieldType == TYPE_LONG) || (*fieldType == TYPE_DOUBLE) ) {
+		frames->current->pushOpStack(*fieldType, value[1]);
+	}
 }
 
 void putstatic() {
-	printf("putstatic\n");
-	//(Class *ref, char *fieldname, char *type, u4 *value)
+	printf("putstatic");
+	
 	u2 cp_index = get2byte();
+	printf("  %d\n",cp_index);
 	
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -961,9 +1142,10 @@ void putstatic() {
 }
 
 void getfield() {
-	printf("getfield\n");
+	printf("getfield");
 
 	u2 cp_index = get2byte();
+	printf("  %d\n",cp_index);
 	
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -982,9 +1164,10 @@ void getfield() {
 }
 
 void putfield() {
-	printf("putfield\n");
+	printf("putfield");
 	
 	u2 cp_index = get2byte();
+	printf("  %d\n",cp_index);
 	
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -1003,9 +1186,10 @@ void putfield() {
 }
 
 void invokevirtual() {
-	printf("invokevirtual\n");
+	printf("invokevirtual");
 	
 	u2 cp_index = get2byte();
+	printf("  %d\n",cp_index);
 	
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -1024,9 +1208,10 @@ void invokevirtual() {
 }
 
 void invokespecial() {
-	printf("invokespecial\n");
+	printf("invokespecial");
 	
 	u2 cp_index = get2byte();
+	printf("  %d\n",cp_index);
 	
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -1049,21 +1234,23 @@ void invokestatic() {}
 void invokeinterface() {}
 void invokedynamic() {}
 void op_new() {
-	printf("new\n");
+	printf("new");
 
 	u2 cp_index = get2byte();
+	printf("  %d\n",cp_index);
 	
-	Class *temp = frames->current->classref;
-	char *classname = temp->get_cp_class_name(cp_index);
+	char *classname = frames->current->get_class_name(cp_index);
 	
-	temp = memory->get_classref(classname);
-	if(temp == NULL) {
-		temp = memory->new_class(classname);
+	Class *classRef = memory->get_classref(classname);
+	if(classRef == NULL) {
+		classRef = memory->new_class(classname);
 		frames->current->pcBack(3);
+		frames->pushClinit(classRef);
+		
 		return;
 	}
 	
-	u4 instRef = memory->op_new(temp);
+	u4 instRef = memory->op_new(classRef);
 	frames->current->pushOpStack(TYPE_REF, instRef);
 }
 
@@ -1080,7 +1267,29 @@ void newarray() {
 	frames->current->pushOpStack(TYPE_REF, arrayRef);
 }
 
-void anewarray() {}
+void anewarray() {
+	printf("anewarray");
+	
+	u2 cp_index = get2byte();
+	printf("  %d\n",cp_index);
+	
+	char *classname = frames->current->get_class_name(cp_index);
+	
+	Class *classRef = memory->get_classref(classname);
+	if(classRef == NULL) {
+		classRef = memory->new_class(classname);
+		frames->current->pcBack(3);
+		frames->pushClinit(classRef);
+		
+		return;
+	}
+	
+	u4 count = frames->current->popOpStack();
+	u4 arrayRef;
+	arrayRef = memory->anewarray(count, classname, classRef);
+	frames->current->pushOpStack(TYPE_REF, arrayRef);
+}
+
 void arraylength() {}
 void athrow() {}
 void checkcast() {}
