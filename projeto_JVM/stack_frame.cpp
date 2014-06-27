@@ -115,6 +115,7 @@ void StackFrame::pushClinit(Class *ref) {
 	}
 	index = ref->get_method_clinit();
 	if(index < 0) {
+		printf("<clinit> nao encontrado!\n");
 		return;
 	}
 	if(strcmp(ref->get_cp_this_class(), "java/lang/Object") == 0) {

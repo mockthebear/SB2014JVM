@@ -1297,7 +1297,44 @@ void instanceof() {}
 void monitorenter() {}
 void monitorexit() {}
 void wide() {}
-void multianewarray() {}
+void multianewarray() {
+	printf("multianewarray");
+	
+	u2 cp_index = get2byte();
+	int dim = get1byte();
+	printf("  %d %d\n",cp_index,dim);
+	
+	char *arrayType = frames->current->get_class_name(cp_index);
+	
+	char *classname = new char[strlen(arrayType)];
+	strcpy(classname, arrayType+dim);
+	
+	Class *classRef = NULL;
+	if(*classname == TYPE_CLASS) {
+		classname[strlen(classname)-1] = '\0';
+		classname++;
+		classRef = memory->get_classref(classname);
+		if(classRef == NULL) {
+			classRef = memory->new_class(classname);
+			frames->current->pcBack(4);
+			frames->pushClinit(classRef);
+			
+			return;
+		}
+	}
+	
+	int32_t *count = new int32_t[dim];
+	for(int i=dim-1; i>=0; i--) {
+		count[i] = (int)frames->current->popOpStack();
+	}
+	u4 arrayRef;
+	printf("%s\n", arrayType);
+	arrayRef = memory->multianewarray(count, arrayType, classRef);
+	frames->current->pushOpStack(TYPE_REF, arrayRef);
+	
+	delete classname;
+}
+
 void ifnull() {
 	printf("ifnull\n");
 	
