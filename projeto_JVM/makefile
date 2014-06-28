@@ -1,23 +1,36 @@
+CASM = nasm
 CCPP = g++
 CC   = gcc
-CASM = nasm
-CFLAGS   = -Wextra -g
+CFLAGS   = -Wextra -g -m32
+NFLAGS   = 
 INCLUDE  = -Iinclude
 TARGET   = prog
+SOURCES_ASM = $(wildcard *.asm)
 SOURCES_C   = $(wildcard *.c)
 SOURCES_CPP = $(wildcard *.cpp)
-SOURCES_ASM = $(wildcard *.asm)
+OBJECTS_ASM = $(SOURCES_ASM:.asm=.obj)
 OBJECTS_C   = $(SOURCES_C:.c=.obj)
 OBJECTS_CPP = $(SOURCES_CPP:.cpp=.obj)
-OBJECTS_ASM = $(SOURCES_ASM:.asm=.obj)
 OBJECTS  = $(OBJECTS_ASM) $(OBJECTS_CPP) $(OBJECTS_C)
 DEPENDS  = $(OBJECTS_C:.obj=.d) $(OBJECTS_CPP:.obj=.d) $(OBJECTS_ASM:.obj=.d)
 
-REMOVE  = del
-#REMOVE  = rm
+ifeq ($(OS),Windows_NT)
+    REMOVE = del
+    NFLAGS += -fwin32
+else
+    REMOVE = rm
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        NFLAGS += -felf32
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        NFLAGS += -fmacho32
+    endif
+    
+endif
 
 $(TARGET): $(OBJECTS)
-	$(CCPP) -o $@ $^ 
+	$(CCPP) -m32 -o $@ $^ 
 
 %.obj: %.c
 	$(CCPP) $(CFLAGS) $(INCLUDE) -o $@ -c $<
@@ -26,7 +39,8 @@ $(TARGET): $(OBJECTS)
 	$(CCPP) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 %.obj: %.asm
-	$(CASM) -f win32 -o $@ $<
+	$(CASM) $(NFLAGS) -o $@ $<
+
 
 all: clean $(TARGET)
 
@@ -35,3 +49,4 @@ clean:
 	
 test:
 	echo $(OBJECTS)
+	

@@ -827,7 +827,7 @@ void Frame::setParam(Operand *param, int count, int ini) {
 }
 
 Operand *Frame::popParam(int count) {
-	opStack->pop_param(count);
+	return opStack->pop_param(count);
 }
 
 void Frame::pushOpStack(u1 type, u4 value){
