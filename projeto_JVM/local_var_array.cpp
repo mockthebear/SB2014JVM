@@ -6,9 +6,9 @@ LocalVariableArray::LocalVariableArray(u2 s) {
 	array = new Operand[size];
 }
 
-void LocalVariableArray::iinc(u1 index, u1 value) {
+void LocalVariableArray::iinc(u2 index, u1 value) {
 	u4 bytes = value;
-	
+
 	if(value & 0x80)
 		bytes |= 0xFFFFFF00;
 	array[index].bytes += bytes;

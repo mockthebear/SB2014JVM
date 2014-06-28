@@ -59,7 +59,8 @@ void MemoryData::print_min() {
 	printf("%c", type);
 	u2 max= data_count;
 	if(type == TYPE_CLASS){
-		printf("%s", classref->get_cp_this_class());
+		printf("%s\n", classref->get_cp_this_class());
+		printf("    super: [%08X]", superInst);
 		max = classref->fields_count;
 	} else {
 		printf("%c", array_type);

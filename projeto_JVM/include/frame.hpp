@@ -11,8 +11,10 @@
 #include "class.hpp"
 
 
+
 class Frame {
 public:
+    bool wideFlag;
 	int pc;
 	int retpc;
 	Class *classref;
@@ -23,28 +25,33 @@ public:
 	OperandStack *opStack;
 	LocalVariableArray *varArray;
 	char *methodname;
-	
+
+	void setPC(int pc);
+
 	Frame(Class *r, Code *c, Exceptions *e, int eCount, char *rType);
-	
+
+
 	void bipush(u1);
 	void sipush(u2);
-	
+
+	void checkcast(u2);
+
 	void ldc(u2);
 	void ldc_w(u2);
 	void ldc2_w(u2);
-	
+
 	void pop();
 	void pop2();
-	
+
 	void dup();
 	void dup2();
 	void swap();
-	
+
 	void dup_x1();
 	void dup2_x1();
 	void dup_x2();
 	void dup2_x2();
-    
+
 	void ifeq(u2);
 	void ifnull(u2);
 	void ifgt(u2);
@@ -53,74 +60,86 @@ public:
 	void ifle(u2);
 	void ifne(u2);
 	void ifnonnull(u2);
-	
+
 	void if_icmpeq(u2);
 	void if_icmpgt(u2);
 	void if_icmpge(u2);
 	void if_icmplt(u2);
 	void if_icmple(u2);
 	void if_icmpne(u2);
-	
+
 	void if_acmpeq(u2);
 	void if_acmpne(u2);
-	
-    void dcompg();
-    void dcompl();
-    void fcompg();
-    void fcompl();
+
+    void dcmpg();
+    void dcmpl();
+    void fcmpg();
+    void fcmpl();
     void lcmp();
-	
+
 	void iadd();
 	void isub();
 	void imul();
 	void idiv();
 	void irem();
 	void ineg();
-	
+	void ixor();
+	void ior();
+	void iand();
+	void ishl();
+	void ishr();
+	void iushr();
+
 	void ladd();
+	void lxor();
+	void lor();
+	void land();
 	void lsub();
 	void lmul();
 	void ldiv();
 	void lrem();
 	void lneg();
-	
+	void lshl();
+	void lshr();
+	void lushr();
+
 	void fadd();
 	void fsub();
 	void fmul();
 	void fdiv();
 	void frem();
 	void fneg();
-	
+
 	void dadd();
 	void dsub();
 	void dmul();
 	void ddiv();
 	void drem();
 	void dneg();
-	
+
 	void i2l();
 	void i2f();
 	void i2d();
 	void i2b();
 	void i2c();
 	void i2s();
-	
-	
+
+
 	void l2i();
 	void l2f();
 	void l2d();
-	
+
 	void f2i();
 	void f2l();
 	void f2d();
-	
+
 	void d2i();
 	void d2l();
 	void d2f();
-	
-	
-	void iinc(u1, u1);
-	
+
+
+	void iinc(u2, u1);
+
 	void iconst_m1();
 	void iconst_0();
 	void iconst_1();
@@ -136,7 +155,7 @@ public:
 	void dconst_0();
 	void dconst_1();
 	void aconst_null();
-	
+
 	void iload(u2);
 	void lload(u2);
 	void fload(u2);
@@ -187,7 +206,10 @@ public:
 	void astore_1();
 	void astore_2();
 	void astore_3();
-	
+
+	void goto_w(u4 branch) ;
+	void op_goto(u2 branch) ;
+
 	char *get_class_name(u2 cp_index);
 	char *get_field_class(u2 cp_index);
 	char *get_field_name(u2 cp_index);
@@ -201,12 +223,12 @@ public:
 	void pcBack(int);
 	void setParam(Operand *param, int count, int ini);
 	Operand *popParam(int count);
-	
+
 	void pushOpStack(u1, u4);
 	u4 popOpStack();
 	u4 getOpStackTop();
-	
-	
+	void clear();
+
 	void print();
 };
 

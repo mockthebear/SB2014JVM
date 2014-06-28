@@ -286,7 +286,7 @@ void Class::print_cp() {
 			int64_t t = constant_pool[i].high_bytes;
 			t<<=32;
 			t|=constant_pool[i+1].low_bytes;
-			printf("   (%ld)\n", t);
+			printf("   (%lld)\n", t);
 			i++;
 		} else if(tag == TAG_DOUBLE) {
 			printf("%08X, ", constant_pool[i].high_bytes);

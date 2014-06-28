@@ -11,6 +11,7 @@ Frame::Frame(Class *r, Code *c, Exceptions *e, int eCount, char *rType) {
 	opStack = new OperandStack(code->max_stack);
 	varArray = new LocalVariableArray(code->max_locals);
 	methodname = NULL;
+	wideFlag = false;
 }
 
 void Frame::bipush(u1 in) {
@@ -26,7 +27,7 @@ void Frame::ldc(u2 cp_index) {
 	u4 byte = classref->get_cp_bytes(cp_index);
 	Operand op;
 	if(tag == TAG_STRING) {
-		
+        op.set_byte( TYPE_REF , byte);
 	} else if(tag == TAG_INTEGER) {
 		op.set_byte(TYPE_INT, byte);
 	} else if(tag == TAG_FLOAT) {
@@ -43,7 +44,7 @@ void Frame::ldc_w(u2 cp_index) {
 	u4 byte = classref->get_cp_bytes(cp_index);
 	Operand op;
 	if(tag == TAG_STRING) {
-		
+
 	} else if(tag == TAG_INTEGER) {
 		op.set_byte(TYPE_INT, byte);
 	} else if(tag == TAG_FLOAT) {
@@ -60,7 +61,7 @@ void Frame::ldc2_w(u2 cp_index) {
 	u4 byte1 = classref->get_cp_bytes(cp_index);
 	u4 byte2 = classref->get_cp_bytes(cp_index+1);
 	Operand op1, op2;
-		
+
 	if(tag == TAG_LONG) {
 		op1.set_byte(TYPE_LONG, byte1);
 		op2.set_byte(TYPE_LONG, byte2);
@@ -94,6 +95,18 @@ void Frame::dup2() {
 
 void Frame::swap() {
 	opStack->swap();
+}
+void Frame::dup_x1() {
+	opStack->dup_x1();
+}
+void Frame::dup_x2() {
+	opStack->dup_x2();
+}
+void Frame::dup2_x1() {
+	opStack->dup2_x1();
+}
+void Frame::dup2_x2() {
+	opStack->dup2_x2();
 }
 
 void Frame::ifeq(u2 branch) {
@@ -145,8 +158,8 @@ void Frame::ifnonnull(u2 branch) {
 }
 
 void Frame::if_icmpeq(u2 branch) {
-	
-	if(opStack->if_cmpeq(TYPE_INT)) {
+
+	if(opStack->if_icmpeq()) {
 		pc = (int)branch;
 	}
 }
@@ -176,14 +189,14 @@ void Frame::if_icmple(u2 branch) {
 }
 
 void Frame::if_icmpne(u2 branch) {
-	if(!opStack->if_cmpeq(TYPE_INT)) {
+	if(!opStack->if_icmpeq()) {
 		pc = (int)branch;
 	}
 }
 
 void Frame::if_acmpeq(u2 branch) {
-	
-	if(opStack->if_cmpeq(TYPE_REF)) {
+
+	if(opStack->if_icmpeq()) {
 		pc = (int)branch;
 	}
 }
@@ -197,7 +210,7 @@ void Frame::goto_w(u4 branch) {
 }
 
 void Frame::if_acmpne(u2 branch) {
-	if(!opStack->if_cmpeq(TYPE_REF)) {
+	if(!opStack->if_icmpeq()) {
 		pc = (int)branch;
 	}
 }
@@ -228,6 +241,56 @@ void Frame::ineg() {
 
 void Frame::ladd() {
 	opStack->ladd();
+}
+
+void Frame::ixor() {
+	opStack->ixor();
+}
+
+void Frame::ior() {
+	opStack->ior();
+}
+
+void Frame::iand() {
+	opStack->iand();
+}
+
+void Frame::ishl() {
+	opStack->ishl();
+}
+
+void Frame::ishr() {
+	opStack->ishr();
+}
+
+void Frame::iushr() {
+	opStack->iushr();
+}
+
+void Frame::land() {
+	opStack->land();
+}
+
+void Frame::lushr() {
+	opStack->lushr();
+}
+
+
+void Frame::lshl() {
+	opStack->lshl();
+}
+
+void Frame::lshr() {
+	opStack->lshr();
+}
+
+
+void Frame::lxor() {
+	opStack->lxor();
+}
+
+void Frame::lor() {
+	opStack->lor();
 }
 
 void Frame::lsub() {
@@ -310,6 +373,17 @@ void Frame::i2d() {
 	opStack->i2d();
 }
 
+
+void Frame::l2i() {
+	opStack->l2i();
+}
+void Frame::l2f() {
+	opStack->l2f();
+}
+
+void Frame::l2d() {
+	opStack->l2d();
+}
 void Frame::i2b() {
 	opStack->i2b();
 }
@@ -322,10 +396,51 @@ void Frame::i2s() {
 	opStack->i2s();
 }
 
-void Frame::iinc(u1 index, u1 value) {
+void Frame::lcmp() {
+	opStack->lcmp();
+}
+
+void Frame::fcmpl() {
+	opStack->fcmpl();
+}
+
+void Frame::fcmpg() {
+	opStack->fcmpg();
+}
+
+void Frame::dcmpl() {
+	opStack->dcmpl();
+}
+void Frame::dcmpg() {
+	opStack->dcmpg();
+}
+void Frame::f2i() {
+	opStack->f2i();
+}
+
+void Frame::f2l() {
+	opStack->f2l();
+}
+
+void Frame::f2d() {
+	opStack->f2d();
+}
+
+void Frame::d2i() {
+	opStack->d2i();
+}
+
+void Frame::d2l() {
+	opStack->d2l();
+}
+
+void Frame::d2f() {
+	opStack->d2f();
+}
+void Frame::iinc(u2 index, u1 value) {
 	varArray->iinc(index, value);
 }
-	
+
 void Frame::iconst_m1() {
 	opStack->iconst(-1);
 }
@@ -386,6 +501,9 @@ void Frame::aconst_null() {
 	opStack->aconst_null();
 }
 
+void Frame::checkcast(u2 index){
+
+}
 void Frame::iload(u2 index) {
 	Operand op;
 	op = varArray->load(index);
@@ -568,7 +686,7 @@ void Frame::astore(u2 index) {
 	Operand op;
 	op = opStack->pop();
 	if(op.type != TYPE_REF) {
-		printf("Error value type %c != %c index[%d]: frame.astore\n",TYPE_REF,op.type,index);
+		printf("Error value type %d != %d index[%d]: frame.astore\n",TYPE_REF,op.type,index);
 		exit(0);
 	}
 	varArray->store(index,op);
@@ -730,6 +848,10 @@ u4 Frame::getOpStackTop(){
 	return op.bytes;
 }
 
+void Frame::clear() {
+	opStack->clear();
+}
+
 void Frame::print() {
 	printf(">>Current frame\n");
 	printf("  method: %s.", classref->get_cp_this_class());
@@ -738,4 +860,9 @@ void Frame::print() {
 	printf("  next pc: %d\n", pc);
 	opStack->print_min();
 	varArray->print_min();
+}
+
+void Frame::setPC(int pc)
+{
+	this->pc = pc;
 }

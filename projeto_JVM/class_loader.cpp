@@ -3,7 +3,7 @@
 //#define CLASSFILE "Test1.class"
 //#define DEV
 
-#define JAVA6VER 0x32
+#define JAVA6VER 0x88
 
 cp_info *cp_loader(FILE *, u2);
 u2 *interface_loader(FILE *, u2);
@@ -20,23 +20,23 @@ Class *ClassLoader::load_class(char *name) {
 	FILE *fp;
 	char name_buff[100];
 	temp = NULL;
-	
+
 	strcpy(name_buff, (char *)name);
 	strcat(name_buff, ".class");
-	
+
 	if( (fp = fopen(name_buff, "rb")) == NULL) {
 		printf("ClassNotFoundException: %s\n", name_buff);
 		exit(0);
 	}
-	
+
 	if( (temp = new Class) == NULL) {
 		printf("MemoryAllocationException\n");
 		fclose(fp);
 		exit(0);
 	}
-	
-	
-	// Chegem de magic number 
+
+
+	// Chegem de magic number
 	temp->magic = read_u4(fp);
 	if(temp->magic != 0xCAFEBABE) {
 		printf("ClassFormatError: Incompatible magic value %08X\n", temp->magic);
@@ -44,7 +44,7 @@ Class *ClassLoader::load_class(char *name) {
 		fclose(fp);
 		exit(0);
 	}
-	
+
 	// Chegem de versao
 	temp->major_version = read_u2(fp);
 	temp->minor_version = read_u2(fp);
@@ -55,7 +55,7 @@ Class *ClassLoader::load_class(char *name) {
 		fclose(fp);
 		exit(0);
 	}
-	
+
 	temp->cp_count = read_u2(fp);
 	temp->constant_pool = cp_loader(fp, temp->cp_count);
 	temp->access_flags = read_u2(fp);
@@ -69,9 +69,9 @@ Class *ClassLoader::load_class(char *name) {
 	temp->methods = method_loader(fp, temp->methods_count);
 	temp->attributes_count = read_u2(fp);
 	temp->attributes = attribute_loader(fp, temp->attributes_count);
-	
+
 	fclose(fp);
-	
+
 	return temp;
 }
 
@@ -79,7 +79,7 @@ cp_info *cp_loader(FILE *fp, u2 n) {
 	cp_info *cp = NULL;
 	u1 tag;
 	cp = new cp_info[n];
-	
+
 	for(int i=1; i<n; i++) {
 		tag = read_u1(fp);
 		cp[i].tag = tag;
@@ -110,29 +110,29 @@ cp_info *cp_loader(FILE *fp, u2 n) {
 			cp[i].utf8[length] = '\0';
 		}
 	}
-	
+
 	return cp;
 }
 
 u2 *interface_loader(FILE *fp, u2 n) {
-	if(n == 0) 
+	if(n == 0)
 		return NULL;
 
 	u2 *interfaces = NULL;
-	
+
 	interfaces = new u2[n];
 	for(int i=0; i<n; i++)
 		interfaces[i] = read_u2(fp);
-		
+
 	return interfaces;
 }
 
 Field *ClassLoader::field_loader(FILE *fp, u2 n) {
-	if(n == 0) 
+	if(n == 0)
 		return NULL;
-		
+
 	Field *f = NULL;
-	
+
 	f = new Field[n];
 	for(int i=0; i<n; i++) {
 		f[i].access_flags = read_u2(fp);
@@ -146,11 +146,11 @@ Field *ClassLoader::field_loader(FILE *fp, u2 n) {
 }
 
 Method *ClassLoader::method_loader(FILE *fp, u2 n) {
-	if(n == 0) 
+	if(n == 0)
 		return NULL;
-	
+
 	Method *m = NULL;
-	
+
 	m = new Method[n];
 	for(int i=0; i<n; i++) {
 		m[i].access_flags = read_u2(fp);
@@ -164,30 +164,30 @@ Method *ClassLoader::method_loader(FILE *fp, u2 n) {
 }
 
 Attribute *ClassLoader::attribute_loader(FILE *fp, u2 n) {
-	if(n == 0) 
+	if(n == 0)
 		return NULL;
-	
+
 	Attribute *a = NULL;
-	
+
 	a = new Attribute[n];
 	for(int i=0; i<n; i++) {
 		char *name;
 		u4 length;
-		
+
 		a[i].name_index = read_u2(fp);
 		name = temp->get_cp_utf8(a[i].name_index);
 		length = read_u4(fp);
-		
+
 		if(name == NULL)
 			return NULL;
-			
+
 //#define TEST_ATTRIBUTE
 #ifdef TEST_ATTRIBUTE
 		printf("TEST ATTRIBUTE: closs_loader");
 		printf("\nget %s\n",name);
 #endif
 
-		
+
 		if( strcmp((char *)name, "Code") == 0 ) {
 			a[i].code = new Code;
 			a[i].code->max_stack = read_u2(fp);
@@ -195,12 +195,17 @@ Attribute *ClassLoader::attribute_loader(FILE *fp, u2 n) {
 			a[i].code->code_length = read_u4(fp);
 			a[i].code->code = read_n(fp, a[i].code->code_length);
 			a[i].code->exception_table_length = read_u2(fp);
-			for(u2 j=0; j<a[i].code->exception_table_length; j++)
-				a[i].code->exception_table = (exception_table_t *)read_n(fp, sizeof(exception_table_t));
+			a[i].code->exception_table = new exception_table_t[a[i].code->exception_table_length];
+			for(u2 j=0; j<a[i].code->exception_table_length; j++) {
+				a[i].code->exception_table[j].start_pc = read_u2(fp);
+				a[i].code->exception_table[j].end_pc = read_u2(fp);
+				a[i].code->exception_table[j].handler_pc = read_u2(fp);
+				a[i].code->exception_table[j].catch_type = read_u2(fp);
+			}
 			a[i].code->attributes_count = read_u2(fp);
-			
 
-#ifdef TEST_ATTRIBUTE			
+
+#ifdef TEST_ATTRIBUTE
 			printf("CODE\n");
 			printf("stack %d\n",a[i].code->max_stack);
 			printf("locals %d\n",a[i].code->max_locals);
@@ -210,12 +215,12 @@ Attribute *ClassLoader::attribute_loader(FILE *fp, u2 n) {
 			printf("\n");
 			printf("exp len %d\n",a[i].code->exception_table_length);
 			for(u2 j=0; j<a[i].code->exception_table_length; j++)
-				printf("%d %d %d %X\n", a[i].code->exception_table[j].start_pc, 
-										a[i].code->exception_table[j].end_pc, 
-										a[i].code->exception_table[j].handler_pc, 
+				printf("%d %d %d %X\n", a[i].code->exception_table[j].start_pc,
+										a[i].code->exception_table[j].end_pc,
+										a[i].code->exception_table[j].handler_pc,
 										a[i].code->exception_table[j].catch_type);
 			printf("att count %d\n",a[i].code->attributes_count);
-#endif			
+#endif
 
 			a[i].code->attributes = attribute_loader(fp, a[i].code->attributes_count);
 		} else if( strcmp((char *)name, "Exceptions") == 0 ) {
@@ -224,14 +229,14 @@ Attribute *ClassLoader::attribute_loader(FILE *fp, u2 n) {
 			a[i].exceptions->exception_index_table = new u2[a[i].exceptions->number_of_exceptions];
 			for(u2 j=0; j<a[i].exceptions->number_of_exceptions; j++)
 				a[i].exceptions->exception_index_table[j] = read_u2(fp);
-			
-#ifdef TEST_ATTRIBUTE			
+
+#ifdef TEST_ATTRIBUTE
 			printf("EXCEPTIONS\n");
 			printf("number of excep %d\n",a[i].exceptions->number_of_exceptions);
 			for(u2 j=0; j<a[i].exceptions->number_of_exceptions; j++)
 				printf("%X ",a[i].exceptions->exception_index_table[j]);
 			printf("\n");
-#endif		
+#endif
 		} else {
 			a[i].info = new a_info;
 			a[i].info->length = length;
@@ -239,13 +244,13 @@ Attribute *ClassLoader::attribute_loader(FILE *fp, u2 n) {
 			for(u4 j=0; j<a[i].info->length; j++)
 				a[i].info->bytes[j] = read_u1(fp);
 
-#ifdef TEST_ATTRIBUTE					
+#ifdef TEST_ATTRIBUTE
 			printf("INFO\n");
 			printf("info len %d\n",a[i].info->length);
 			for(u2 j=0; j<a[i].info->length; j++)
 				printf("%02X ",a[i].info->bytes[j]);
 			printf("\n");
-#endif		
+#endif
 		}
 	}
 	return a;
@@ -253,14 +258,14 @@ Attribute *ClassLoader::attribute_loader(FILE *fp, u2 n) {
 
 u1 read_u1(FILE* fp) {
 	u1 temp = 0;
-	
+
 	fread(&temp, sizeof(u1), 1, fp);
 	return temp;
 }
 
 u2 read_u2(FILE* fp) {
 	u2 temp = 0;
-	
+
 	for(int i=0; i<2; i++) {
 		temp <<= 8;
 		fread(&temp, sizeof(u1), 1, fp);
@@ -270,7 +275,7 @@ u2 read_u2(FILE* fp) {
 
 u4 read_u4(FILE* fp) {
 	u4 temp = 0;
-	
+
 	for(int i=0; i<4; i++) {
 		temp <<= 8;
 		fread(&temp, sizeof(u1), 1, fp);

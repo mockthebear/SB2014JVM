@@ -14,6 +14,7 @@ public:
 		Class *classref;
 		char array_type;
 	};
+	u4 superInst;
 	u4 data_count;
 	int *data_index;
 	u4	data_length;

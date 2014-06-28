@@ -12,14 +12,14 @@ class LocalVariableArray {
 public:
 	Operand *array;
 	u2 size;
-	
+
 	LocalVariableArray(u2);
 
-	void iinc(u1, u1);
-	
+	void iinc(u2, u1);
+
 	Operand load(u2 index);
 	void store(u2 index, Operand value);
-	
+
 	void set_param(Operand *, int, int);
 	void print();
 	void print_min();
