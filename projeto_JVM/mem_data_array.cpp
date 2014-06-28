@@ -2,7 +2,6 @@
 
 u4 make_fields_index(MemoryData *);
 u4 make_array_index(MemoryData *);
-void exception(char *);	
 
 MemoryDataArray::MemoryDataArray(int m) {
 	max  = m;
@@ -16,7 +15,7 @@ void MemoryDataArray::putfield(u4 ref, char *classname, char *fieldname, char *t
 	MemoryData *instance = (MemoryData *)ref;
 	
 	if(instance == NULL) {
-		exception((char *)"NullPointerException at MemoryDataArray.putfield");
+		exception("NullPointerException at MemoryDataArray.putfield");
 	}
 	int index = instance->classref->get_field_index(fieldname);
 	char *c_name = instance->classref->get_cp_this_class();
@@ -24,14 +23,14 @@ void MemoryDataArray::putfield(u4 ref, char *classname, char *fieldname, char *t
 	if( (strcmp(c_name, classname) != 0) || (index == -1) ) {
 		classname = instance->classref->get_cp_super_class();
 		if(strcmp(classname, CLASS_OBJECT) == 0 ) {			
-			exception((char *)"IllegalAccessError at MemoryDataArray.putfield");
+			exception("IllegalAccessError at MemoryDataArray.putfield");
 		}
 		ref = instance->superInst;
 		putfield(ref, classname, fieldname, type, value);
 		return;
 	}
 	if( isStatic( instance->classref->get_field_flags(index) ) ) {
-		exception((char *)"IncompatibleClassChangeError at MemoryDataArray.putfield");
+		exception("IncompatibleClassChangeError at MemoryDataArray.putfield");
 	}
 	char *f_type = instance->classref->get_field_type(index);
 	
@@ -63,7 +62,7 @@ void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *t
 	if( (strcmp(c_name, classname) != 0) || (index == -1) ) {
 		classname = instance->classref->get_cp_super_class();
 		if(strcmp(classname, CLASS_OBJECT) == 0 ) {			
-			exception((char *)"IllegalAccessError at MemoryDataArray.getfield");
+			exception("IllegalAccessError at MemoryDataArray.getfield");
 		}
 		ref = instance->superInst;
 		getfield(ref, classname, fieldname, type, value);
@@ -76,7 +75,7 @@ void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *t
 		exit(0);
 	}
 	if( isStatic( instance->classref->get_field_flags(index) ) ) {
-		exception((char *)"IncompatibleClassChangeError at MemoryDataArray.getfield");
+		exception("IncompatibleClassChangeError at MemoryDataArray.getfield");
 	}
 	instance->get_data(index, value, *f_type);
 }
@@ -256,9 +255,4 @@ u4 make_array_index(MemoryData *d) {
 		d->data_index[i] = i * inc;
 	}
 	return length;
-}
-
-void exception(char *message) {
-	printf("%s\n",message);
-	exit(0);
 }

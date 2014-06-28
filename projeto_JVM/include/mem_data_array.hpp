@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "definition.hpp"
+#include "exception.hpp"
 #include "mem_data.hpp"
 #include "access_flag.hpp"
 

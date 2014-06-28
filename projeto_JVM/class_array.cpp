@@ -10,44 +10,54 @@ ClassArray::ClassArray(int m) {
 }
 
 void ClassArray::putstatic(Class *ref, char *fieldname, char *type, u4 *value) {
-	int index;
-	char *f_type;
-	
-	index = ref->get_field_index(fieldname);
-	if(index == -1) {
-		printf("Error field index = -1: class_array.putstatic\n");
-		exit(0);
+	if(ref == NULL) {
+		exception("NullPointerException at ClassArray.putstatic");
 	}
-	f_type = ref->get_field_type(index);
+	int index = ref->get_field_index(fieldname);
+	
+	if(index == -1) {
+		char *supername = ref->get_cp_super_class();
+		if(strcmp(supername, CLASS_OBJECT) == 0 ) {			
+			exception("IllegalAccessError at ClassArray.putstatic");
+		}
+		ref = get_classref(supername);
+		putstatic(ref, fieldname, type, value);
+		return;
+	}
+	if( !isStatic(ref->get_field_flags(index)) ) {
+		exception("IncompatibleClassChangeError at ClassArray.putstatic");
+	}
+	char *f_type = ref->get_field_type(index);
 	
 	if( strcmp(f_type, type) != 0) {
 		printf("Error field type %s != %s: class_array.putstatic\n", f_type, type);
-		exit(0);
-	}
-	if( !isStatic(ref->get_field_flags(index)) ) {
-		printf("Error field is not static: class_array.putstatic\n");
 		exit(0);
 	}
 	ref->putstatic(index, value, *f_type);
 }
 
 void ClassArray::getstatic(Class *ref, char *fieldname, char *type, u4 *value) {
-	int index;
-	char *f_type;
-	
-	index = ref->get_field_index(fieldname);
-	if(index == -1) {
-		printf("Error field index = -1: class_array.getstatic\n");
-		exit(0);
+	if(ref == NULL) {
+		exception("NullPointerException at ClassArray.getstatic");
 	}
-	f_type = ref->get_field_type(index);
+	int index = ref->get_field_index(fieldname);
+	
+	if(index == -1) {
+		char *supername = ref->get_cp_super_class();
+		if(strcmp(supername, CLASS_OBJECT) == 0 ) {			
+			exception("IllegalAccessError at ClassArray.getstatic");
+		}
+		ref = get_classref(supername);
+		getstatic(ref, fieldname, type, value);
+		return;
+	}
+	if( !isStatic(ref->get_field_flags(index)) ) {
+		exception("IncompatibleClassChangeError at ClassArray.getstatic");
+	}
+	char *f_type = ref->get_field_type(index);
 	
 	if( strcmp(f_type, type) != 0) {
 		printf("Error field type %s != %s: class_array.getstatic\n", f_type, type);
-		exit(0);
-	}
-	if( !isStatic(ref->get_field_flags(index)) ) {
-		printf("Error field is not static: class_array.getstatic\n");
 		exit(0);
 	}
 	ref->getstatic(index, value, *f_type);
@@ -118,5 +128,3 @@ u4 make_field_index(Class *c) {
 	}
 	return length;
 }
-
-

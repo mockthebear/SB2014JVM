@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "definition.hpp"
+#include "exception.hpp"
 #include "class.hpp"
 #include "class_loader.hpp"
 #include "access_flag.hpp"

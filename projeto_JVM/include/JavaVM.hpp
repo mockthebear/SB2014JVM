@@ -5,6 +5,8 @@
 #include <stdlib.h>
 
 #include "definition.hpp"
+#include "exception.hpp"
+#include "access_flag.hpp"
 #include "memory.hpp"
 #include "stack_frame.hpp"
 #include "class.hpp"
