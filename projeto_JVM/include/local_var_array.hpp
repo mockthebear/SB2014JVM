@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "definition.hpp"
-#include "Operand.hpp"
+#include "operand.hpp"
 
 
 class LocalVariableArray {
