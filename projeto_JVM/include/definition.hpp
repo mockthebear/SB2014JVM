@@ -18,6 +18,8 @@
 
 #define TYPE_REF	'A'
 
+#define CLASS_OBJECT "java/lang/Object"
+
 typedef uint8_t		u1;
 typedef uint16_t	u2;
 typedef uint32_t	u4;

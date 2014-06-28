@@ -4,6 +4,7 @@
 #define MEMORY_SIZE 100
 
 void loadMain(char *);
+void clinit(Class *);
 u1 get1byte();
 u2 get2byte();
 u4 get4byte();
@@ -18,7 +19,7 @@ int main(int argc, char **argv) {
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
 
-	char name[] = "Teste";
+	char name[] = "C2";
 	loadMain(name);
 
 
@@ -26,16 +27,15 @@ int main(int argc, char **argv) {
 	while(frames->isEmpty()) {
 		u1 code = frames->current->getCode();
 		if (op[code] == NULL){
-           printf("[Error] Opcode [%X] Is nullptr: pc: %d\n",code,frames->current->getPC()-1);
-           printf("\nENTER para proseguir...\n");
-           getchar();
+			printf("[Error] Opcode [%X] Is nullptr: pc: %d\n",code,frames->current->getPC()-1);
+			return 0;
 		}else{
             printf("%d: [%X] ",frames->current->getPC()-1,code);
             op[code]();
             print();
-            printf("\nENTER para proseguir...\n");
-            getchar();
 		}
+		printf("ENTER para proseguir...\n");
+		getchar();
 	}
 
 	return 0;
@@ -49,10 +49,32 @@ void loadMain(char *classname) {
 	frames->pushMain(classRef);
 
 	print();
-
 	printf("Method main carregado!\n");
 	printf("iniciando JavaVM\n\n");
-	frames->pushClinit(classRef);
+	
+	clinit(classRef);
+}
+
+void clinit(Class *classRef) {
+	u1 code = 0x0;
+	u1 returnCode = 0xB1;
+	if ( frames->pushClinit(classRef) ) {
+		
+		while(code != returnCode) {
+			code = frames->current->getCode();
+			if (op[code] == NULL){
+				printf("[Error] Opcode [%X] Is nullptr: pc: %d\n",code,frames->current->getPC()-1);
+				exit(0);
+			} else {
+				printf("%d: [%X] ",frames->current->getPC()-1,code);
+				op[code]();
+				print();
+			}
+			printf("ENTER para proseguir...\n");
+			getchar();
+		}
+		printf("Inicializacao terminada\n");
+	}
 }
 
 void nop() {
@@ -1462,10 +1484,7 @@ void getstatic() {
 	Class *classRef = memory->get_classref(className);
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
-		if(frames->pushClinit(classRef)) {
-			frames->current->pcBack(3);
-			return;
-		}
+		clinit(classRef);
 	}
 	u4 value[2];
 
@@ -1490,10 +1509,7 @@ void putstatic() {
 	Class *classRef = memory->get_classref(className);
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
-		if(frames->pushClinit(classRef)) {
-			frames->current->pcBack(3);
-			return;
-		}
+		clinit(classRef);
 	}
 
 	u4 value[2];
@@ -1564,10 +1580,7 @@ void invokevirtual() {
 	Class *classRef = memory->get_classref(className);
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
-		if(frames->pushClinit(classRef)) {
-			frames->current->pcBack(3);
-			return;
-		}
+		clinit(classRef);
 	}
 
 	frames->invokevirtual(classRef, methodName, descriptor);
@@ -1586,10 +1599,7 @@ void invokespecial() {
 	Class *classRef = memory->get_classref(className);
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
-		if(frames->pushClinit(classRef)) {
-			frames->current->pcBack(3);
-			return;
-		}
+		clinit(classRef);
 	}
 
 	frames->invokespecial(classRef, methodName, descriptor);
@@ -1609,10 +1619,7 @@ void invokestatic() {
 	Class *classRef = memory->get_classref(className);
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
-		if(frames->pushClinit(classRef)) {
-			frames->current->pcBack(3);
-			return;
-		}
+		clinit(classRef);
 	}
 
 	frames->invokestatic(classRef, methodName, descriptor);
@@ -1621,6 +1628,23 @@ void invokestatic() {
 }
 void invokeinterface() {}
 void invokedynamic() {}
+
+u4 op_new_superInstance(char *supername, u4 superInst) {
+	if(strcmp(supername, CLASS_OBJECT) == 0) {
+		return superInst;
+	} else {
+		Class *superRef = memory->get_classref(supername);
+		if(superRef == NULL) {
+			superRef = memory->new_class(supername);
+			clinit(superRef);
+		}
+		supername = superRef->get_cp_super_class();
+		superInst = op_new_superInstance(supername, superInst);
+		superInst = memory->op_new(superRef, superInst);
+		return superInst;
+	}
+}
+
 void op_new() {
 	printf("new");
 
@@ -1632,13 +1656,12 @@ void op_new() {
 	Class *classRef = memory->get_classref(classname);
 	if(classRef == NULL) {
 		classRef = memory->new_class(classname);
-		if(frames->pushClinit(classRef)) {
-			frames->current->pcBack(3);
-			return;
-		}
+		clinit(classRef);
 	}
+	char *supername = classRef->get_cp_super_class();
+	u4 superInst = op_new_superInstance(supername, 0x0);
 
-	u4 instRef = memory->op_new(classRef);
+	u4 instRef = memory->op_new(classRef, superInst);
 	frames->current->pushOpStack(TYPE_REF, instRef);
 }
 
@@ -1666,10 +1689,7 @@ void anewarray() {
 	Class *classRef = memory->get_classref(classname);
 	if(classRef == NULL) {
 		classRef = memory->new_class(classname);
-		if(frames->pushClinit(classRef)) {
-			frames->current->pcBack(3);
-			return;
-		}
+		clinit(classRef);
 	}
 
 	u4 count = frames->current->popOpStack();
@@ -1826,10 +1846,7 @@ void multianewarray() {
 		classRef = memory->get_classref(classname);
 		if(classRef == NULL) {
 			classRef = memory->new_class(classname);
-			if(frames->pushClinit(classRef)) {
-				frames->current->pcBack(4);
-				return;
-			}
+			clinit(classRef);
 		}
 	}
 

@@ -2,7 +2,7 @@
 
 u4 make_fields_index(MemoryData *);
 u4 make_array_index(MemoryData *);
-	
+void exception(char *);	
 
 MemoryDataArray::MemoryDataArray(int m) {
 	max  = m;
@@ -14,26 +14,29 @@ MemoryDataArray::MemoryDataArray(int m) {
 
 void MemoryDataArray::putfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value) {
 	MemoryData *instance = (MemoryData *)ref;
-	int index = instance->classref->get_field_index(fieldname);
 	
+	if(instance == NULL) {
+		exception((char *)"NullPointerException at MemoryDataArray.putfield");
+	}
+	int index = instance->classref->get_field_index(fieldname);
 	char *c_name = instance->classref->get_cp_this_class();
 	
-	if(strcmp(c_name, classname) != 0) {
-		printf("Error class type %s != %s: mem_data_array.putfield\n", classname, c_name);
-		exit(0);
+	if( (strcmp(c_name, classname) != 0) || (index == -1) ) {
+		classname = instance->classref->get_cp_super_class();
+		if(strcmp(classname, CLASS_OBJECT) == 0 ) {			
+			exception((char *)"IllegalAccessError at MemoryDataArray.putfield");
+		}
+		ref = instance->superInst;
+		putfield(ref, classname, fieldname, type, value);
+		return;
 	}
-	if(index == -1) {
-		printf("Error field index = -1: class_array.putfield\n");
-		exit(0);
+	if( isStatic( instance->classref->get_field_flags(index) ) ) {
+		exception((char *)"IncompatibleClassChangeError at MemoryDataArray.putfield");
 	}
 	char *f_type = instance->classref->get_field_type(index);
 	
 	if(strcmp(f_type, type) != 0) {
 		printf("Error value type %s != %s: mem_data_array.putfield\n",type, f_type);
-		exit(0);
-	}
-	if( isStatic( instance->classref->get_field_flags(index) ) ) {
-		printf("Error field %s is static: mem_data_array.putfield\n", fieldname);
 		exit(0);
 	}
 	instance->put_data(index, value, *f_type);
@@ -50,13 +53,21 @@ void MemoryDataArray::putfield(u4 ref, char *classname, char *fieldname, char *t
 
 void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value) {
 	MemoryData *instance = (MemoryData *)ref;
-	int index = instance->classref->get_field_index(fieldname);
 	
+	if(instance == NULL) {
+		exception((char *)"NullPointerException at MemoryDataArray.getfield");
+	}
+	int index = instance->classref->get_field_index(fieldname);
 	char *c_name = instance->classref->get_cp_this_class();
 	
-	if(strcmp(c_name, classname) != 0) {
-		printf("Error class type %s != %s: mem_data_array.getfield\n", classname, c_name);
-		exit(0);
+	if( (strcmp(c_name, classname) != 0) || (index == -1) ) {
+		classname = instance->classref->get_cp_super_class();
+		if(strcmp(classname, CLASS_OBJECT) == 0 ) {			
+			exception((char *)"IllegalAccessError at MemoryDataArray.getfield");
+		}
+		ref = instance->superInst;
+		getfield(ref, classname, fieldname, type, value);
+		return;
 	}
 	char *f_type = instance->classref->get_field_type(index);
 	
@@ -65,8 +76,7 @@ void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *t
 		exit(0);
 	}
 	if( isStatic( instance->classref->get_field_flags(index) ) ) {
-		printf("Error field is static: mem_data_array.getfield\n");
-		exit(0);
+		exception((char *)"IncompatibleClassChangeError at MemoryDataArray.getfield");
 	}
 	instance->get_data(index, value, *f_type);
 }
@@ -86,7 +96,7 @@ u4 MemoryDataArray::arraylength(u4 ref) {
 	return length;
 }
 
-u4 MemoryDataArray::new_instance(Class *ref) {
+u4 MemoryDataArray::new_instance(Class *ref, u4 superInst) {
 	MemoryData *m;
 	
 	if( ref->magic != 0xCAFEBABE )  {
@@ -99,6 +109,7 @@ u4 MemoryDataArray::new_instance(Class *ref) {
 	
 	m->type = TYPE_CLASS;
 	m->classref = ref;
+	m->superInst = superInst;
 	
 	m->data_index = new int[ref->fields_count];
 	m->data_count = (ref->fields_count) - (ref->static_fields_count);
@@ -129,6 +140,7 @@ u4 MemoryDataArray::new_array(int *a_size, char *a_type, Class *ref) {
 	
 	m->type = TYPE_ARRAY;
 	m->array_type = a_type[1];
+	m->superInst = 0x0;
 	
 	m->data_index = new int[ a_size[0] ];
 	m->data_count = a_size[0];
@@ -142,7 +154,7 @@ u4 MemoryDataArray::new_array(int *a_size, char *a_type, Class *ref) {
 			exit(0);
 		}
 		for(u4 i=0; i<m->data_count; i++) {
-			m->data[i] = new_instance(ref);
+			m->data[i] = new_instance(ref, 0x0);
 		}
 	}
 	
@@ -166,6 +178,26 @@ u4 MemoryDataArray::new_array(int *a_size, char *a_type, Class *ref) {
 		}
 	}
 	return (u4)m;
+}
+
+char *MemoryDataArray::get_instance_class(u4 instref) {
+	MemoryData *instance = (MemoryData *)instref;
+	
+	if(instance->type != TYPE_CLASS) {
+		printf("Error not instance: mem_data_array.get_instance_class\n");
+		exit(0);
+	}
+	return instance->classref->get_cp_this_class();
+}
+
+char *MemoryDataArray::get_instance_super(u4 instref) {
+	MemoryData *instance = (MemoryData *)instref;
+	
+	if(instance->type != TYPE_CLASS) {
+		printf("Error not instance: mem_data_array.get_instance_class\n");
+		exit(0);
+	}
+	return instance->classref->get_cp_super_class();
 }
 
 void MemoryDataArray::print() {
@@ -224,4 +256,9 @@ u4 make_array_index(MemoryData *d) {
 		d->data_index[i] = i * inc;
 	}
 	return length;
+}
+
+void exception(char *message) {
+	printf("%s\n",message);
+	exit(0);
 }
