@@ -19,8 +19,8 @@ public:
 	
 	u4 op_new(Class *ref, u4 superInst);
 	
-	void putstatic(Class *ref, char *fieldname, char *type, u4 *value);
-	void getstatic(Class *ref, char *fieldname, char *type, u4 *value);
+	void putstatic(Class *ref, int index, char *type, u4 *value);
+	void getstatic(Class *ref, int index, char *type, u4 *value);
 	
 	void putfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value);
 	void getfield(u4 ref, char *classname, char *fieldname, char *type, u4 *value);

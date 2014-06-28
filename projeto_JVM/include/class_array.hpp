@@ -20,8 +20,8 @@ public:
 
 	ClassArray(int);
 	
-	void putstatic(Class *ref, char *fieldname, char *type, u4 *value);
-	void getstatic(Class *ref, char *fieldname, char *type, u4 *value);
+	void putstatic(Class *ref, int index, char *type, u4 *value);
+	void getstatic(Class *ref, int index, char *type, u4 *value);
 	
 	Class *get_classref(char *);
 	Class *new_class(char *);

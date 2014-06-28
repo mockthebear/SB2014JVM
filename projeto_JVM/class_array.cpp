@@ -9,20 +9,13 @@ ClassArray::ClassArray(int m) {
 	loader.temp = NULL;
 }
 
-void ClassArray::putstatic(Class *ref, char *fieldname, char *type, u4 *value) {
+void ClassArray::putstatic(Class *ref, int index , char *type, u4 *value) {
 	if(ref == NULL) {
 		exception("NullPointerException at ClassArray.putstatic");
 	}
-	int index = ref->get_field_index(fieldname);
 	
 	if(index == -1) {
-		char *supername = ref->get_cp_super_class();
-		if(strcmp(supername, CLASS_OBJECT) == 0 ) {			
-			exception("IllegalAccessError at ClassArray.putstatic");
-		}
-		ref = get_classref(supername);
-		putstatic(ref, fieldname, type, value);
-		return;
+		exception("IllegalAccessError at ClassArray.putstatic");		
 	}
 	if( !isStatic(ref->get_field_flags(index)) ) {
 		exception("IncompatibleClassChangeError at ClassArray.putstatic");
@@ -36,20 +29,13 @@ void ClassArray::putstatic(Class *ref, char *fieldname, char *type, u4 *value) {
 	ref->putstatic(index, value, *f_type);
 }
 
-void ClassArray::getstatic(Class *ref, char *fieldname, char *type, u4 *value) {
+void ClassArray::getstatic(Class *ref, int index, char *type, u4 *value) {
 	if(ref == NULL) {
 		exception("NullPointerException at ClassArray.getstatic");
 	}
-	int index = ref->get_field_index(fieldname);
 	
-	if(index == -1) {
-		char *supername = ref->get_cp_super_class();
-		if(strcmp(supername, CLASS_OBJECT) == 0 ) {			
-			exception("IllegalAccessError at ClassArray.getstatic");
-		}
-		ref = get_classref(supername);
-		getstatic(ref, fieldname, type, value);
-		return;
+	if(index == -1) {		
+		exception("NoSuchFieldError at ClassArray.getstatic");
 	}
 	if( !isStatic(ref->get_field_flags(index)) ) {
 		exception("IncompatibleClassChangeError at ClassArray.getstatic");
