@@ -1486,9 +1486,25 @@ void getstatic() {
 		classRef = memory->new_class(className);
 		clinit(classRef);
 	}
+	if(classRef == NULL) {
+		exception("NullPointerException at JavaVM.getstatic");
+	}
+	int index;
+	
+	className = classRef->get_cp_super_class();
+	while( (index = classRef->get_field_index(fieldName) == -1) ||
+		   (strcmp(className, CLASS_OBJECT) != 0) )
+	{
+		classRef = memory->get_classref(className);
+		if(classRef == NULL) {
+			classRef = memory->new_class(className);
+			clinit(classRef);
+		}
+		className = classRef->get_cp_super_class();
+	}
 	u4 value[2];
 
-	memory->getstatic(classRef, fieldName, fieldType, value);
+	memory->getstatic(classRef, index, fieldType, value);
 
 	frames->current->pushOpStack(*fieldType, value[0]);
 	if( (*fieldType == TYPE_LONG) || (*fieldType == TYPE_DOUBLE) ) {
@@ -1511,7 +1527,22 @@ void putstatic() {
 		classRef = memory->new_class(className);
 		clinit(classRef);
 	}
-
+	if(classRef == NULL) {
+		exception("NullPointerException at JavaVM.getstatic");
+	}
+	int index;
+	
+	className = classRef->get_cp_super_class();
+	while( (index = classRef->get_field_index(fieldName) == -1) ||
+		   (strcmp(className, CLASS_OBJECT) != 0) )
+	{
+		classRef = memory->get_classref(className);
+		if(classRef == NULL) {
+			classRef = memory->new_class(className);
+			clinit(classRef);
+		}
+		className = classRef->get_cp_super_class();
+	}
 	u4 value[2];
 
 	value[0] = frames->current->popOpStack();
@@ -1520,7 +1551,7 @@ void putstatic() {
 		value[0] = frames->current->popOpStack();
 	}
 
-	memory->putstatic(classRef, fieldName, fieldType, value);
+	memory->putstatic(classRef, index, fieldType, value);
 }
 
 void getfield() {

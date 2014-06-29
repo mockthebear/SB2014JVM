@@ -23,7 +23,7 @@ void MemoryDataArray::putfield(u4 ref, char *classname, char *fieldname, char *t
 	if( (strcmp(c_name, classname) != 0) || (index == -1) ) {
 		classname = instance->classref->get_cp_super_class();
 		if(strcmp(classname, CLASS_OBJECT) == 0 ) {			
-			exception("IllegalAccessError at MemoryDataArray.putfield");
+			exception("NoSuchFieldError at MemoryDataArray.putfield");
 		}
 		ref = instance->superInst;
 		putfield(ref, classname, fieldname, type, value);
@@ -62,7 +62,7 @@ void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *t
 	if( (strcmp(c_name, classname) != 0) || (index == -1) ) {
 		classname = instance->classref->get_cp_super_class();
 		if(strcmp(classname, CLASS_OBJECT) == 0 ) {			
-			exception("IllegalAccessError at MemoryDataArray.getfield");
+			exception("NoSuchFieldError at MemoryDataArray.getfield");
 		}
 		ref = instance->superInst;
 		getfield(ref, classname, fieldname, type, value);
