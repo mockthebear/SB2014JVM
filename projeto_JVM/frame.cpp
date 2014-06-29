@@ -1,16 +1,15 @@
 #include "frame.hpp"
 
-Frame::Frame(Class *r, Code *c, Exceptions *e, int eCount, char *rType) {
+Frame::Frame(Class *r, Code *c, char *m_name, char *descrip) {
 	pc = 0;
 	retpc = 0;
 	classref = r;
 	code = c;
-	exceptions_count = eCount;
-	exceptions = e;
-	returnType = rType;
+	methodname = m_name;
+	descriptor = descrip;
+	
 	opStack = new OperandStack(code->max_stack);
 	varArray = new LocalVariableArray(code->max_locals);
-	methodname = NULL;
 	wideFlag = false;
 }
 
@@ -800,6 +799,10 @@ char *Frame::get_method_descriptor(u2 cp_index) {
 	return classref->get_cp_method_descriptor(cp_index);
 }
 
+char *Frame::get_string(u2 cp_index) {
+	return classref->get_cp_utf8(cp_index);
+}
+
 u1 Frame::getCode() {
 	u1 c = code->code[pc];
 	pc++;
@@ -855,8 +858,8 @@ void Frame::clear() {
 void Frame::print() {
 	printf(">>Current frame\n");
 	printf("  method: %s.", classref->get_cp_this_class());
-	printf("%s ", methodname);
-	printf("return %s\n", returnType);
+	printf("%s", methodname);
+	printf(" %s\n", descriptor);
 	printf("  next pc: %d\n", pc);
 	opStack->print_min();
 	varArray->print_min();

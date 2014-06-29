@@ -23,7 +23,7 @@ __fadd:
 	fld  dword [eax-4]	; op1 = [op1]
 	fld  dword [eax+4]	; op2 = [op2]
 	faddp				; op1 += op2
-	fstp  dword [eax-4]	; [op1] = op1
+	fst  dword [eax-4]	; [op1] = op1
 	
 	;mov  eax, [eax-4]
 	

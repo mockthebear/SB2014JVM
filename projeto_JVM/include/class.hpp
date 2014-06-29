@@ -88,19 +88,23 @@ public:
 	char *get_cp_ref_name(u2);
 	char *get_cp_ref_descriptor(u2);
 	char *get_cp_utf8(u2);
-	
 	int get_cp_field_index(u2);
 	int get_cp_method_index(u2);
+	
 	int get_field_index(char *);
 	int get_method_index(char *, char *);
 	int get_method_main();
 	int get_method_clinit();
+	
 	u2 get_field_flags(int);
 	char *get_field_name(int);
 	char *get_field_type(int);
+	
+	u2 get_method_flags(int);
 	char *get_method_name(int);
 	char *get_method_descriptor(int);
 	Code *get_method_code(int);
+	
 		
 	void print();
 	void print_cp();

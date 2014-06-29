@@ -15,7 +15,7 @@ OBJECTS  = $(OBJECTS_ASM) $(OBJECTS_CPP) $(OBJECTS_C)
 DEPENDS  = $(OBJECTS_C:.obj=.d) $(OBJECTS_CPP:.obj=.d) $(OBJECTS_ASM:.obj=.d)
 
 ifeq ($(OS),Windows_NT)
-    REMOVE = rm
+    REMOVE = del
     NFLAGS += -fwin32 --PREFIX _
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),MINGW32_NT-6.3)

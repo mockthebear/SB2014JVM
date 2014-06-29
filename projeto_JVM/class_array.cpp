@@ -13,11 +13,9 @@ void ClassArray::putstatic(Class *ref, int index , char *type, u4 *value) {
 	if(ref == NULL) {
 		exception("NullPointerException at ClassArray.putstatic");
 	}
+	u2 flags = ref->get_field_flags(index);
 	
-	if(index == -1) {
-		exception("IllegalAccessError at ClassArray.putstatic");		
-	}
-	if( !isStatic(ref->get_field_flags(index)) ) {
+	if( !isStatic(flags) ) {
 		exception("IncompatibleClassChangeError at ClassArray.putstatic");
 	}
 	char *f_type = ref->get_field_type(index);
@@ -33,11 +31,9 @@ void ClassArray::getstatic(Class *ref, int index, char *type, u4 *value) {
 	if(ref == NULL) {
 		exception("NullPointerException at ClassArray.getstatic");
 	}
+	u2 flags = ref->get_field_flags(index);
 	
-	if(index == -1) {		
-		exception("NoSuchFieldError at ClassArray.getstatic");
-	}
-	if( !isStatic(ref->get_field_flags(index)) ) {
+	if( !isStatic(flags) ) {
 		exception("IncompatibleClassChangeError at ClassArray.getstatic");
 	}
 	char *f_type = ref->get_field_type(index);

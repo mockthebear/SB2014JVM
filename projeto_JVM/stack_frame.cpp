@@ -11,42 +11,68 @@ StackFrame::StackFrame(int m) {
 	current = &stack[0];
 }
 
-void StackFrame::invokevirtual(Class *ref, char *methodname, char *descriptor) {
+void StackFrame::invokevirtual(Class *classRef, int index, char *methodname, char *descriptor) {
+	if(classRef == NULL) {
+		exception("NullPointerException at StackFrame.invokevirtual");
+	}
 	int param_count;
 	Operand *param;
-
+	
 	param_count = countParam(descriptor);
 	param_count++;
 	param = current->popParam(param_count);
 
-	pushFrame(ref, methodname, descriptor);
+	u2 flags = classRef->get_method_flags(index);
+	
+	if(isStatic(flags)) {
+		exception("IncompatibleClassChangeError at StackFrame.invokespecial");
+	}
+	pushFrame(classRef, index, methodname, descriptor);
 
 	current->setParam(param, param_count, 0);
 }
 
-void StackFrame::invokestatic(Class *ref, char *methodname, char *descriptor) {
+void StackFrame::invokespecial(Class *classRef, int index, char *methodname, char *descriptor) {
+	if(classRef == NULL) {
+		exception("NullPointerException at StackFrame.invokespecial");
+	}
 	int param_count;
 	Operand *param;
-
-	param_count = countParam(descriptor);
-	param_count++;
-
-    param = current->popParam(param_count);
-
-	pushFrame(ref, methodname, descriptor,true);
-
-	current->setParam(param, param_count, 0);
-}
-
-void StackFrame::invokespecial(Class *classRef, char *methodname, char *descriptor) {
-	int param_count;
-	Operand *param;
-
+	
 	param_count = countParam(descriptor);
 	param_count++;
 	param = current->popParam(param_count);
 
-	pushFrame(classRef, methodname, descriptor);
+	u2 flags = classRef->get_method_flags(index);
+	
+	if(isStatic(flags)) {
+		exception("IncompatibleClassChangeError at StackFrame.invokespecial");
+	}
+	if(isAbstract(flags)) {
+		exception(" AbstractMethodError at StackFrame.invokespecial");
+	}
+	pushFrame(classRef, index, methodname, descriptor);
+
+	current->setParam(param, param_count, 0);
+}
+
+void StackFrame::invokestatic(Class *classRef, int index, char *methodname, char *descriptor) {
+	if(classRef == NULL) {
+		exception("NullPointerException at StackFrame.invokestatic");
+	}
+	int param_count;
+	Operand *param;
+	
+	param_count = countParam(descriptor);
+	param = current->popParam(param_count);
+
+	u2 flags = classRef->get_method_flags(index);
+	
+	if(!isStatic(flags)) {
+		exception("IncompatibleClassChangeError at StackFrame.invokestatic");
+	}
+	
+	pushFrame(classRef, index, methodname, descriptor);
 
 	current->setParam(param, param_count, 0);
 }
@@ -123,39 +149,14 @@ void StackFrame::athrow() {
 	}
 }
 
-void StackFrame::pushFrame(Class *ref, char *methodname, char *descriptor,bool isStaticFlag) {
+void StackFrame::pushFrame(Class *classRef, int index, char *methodname, char *descriptor) {
 	if(size == max) {
 		printf("Error stack over :stack_frame.pushFrame\n");
 		exit(0);
 	}
-	int index;
+	Code *code = classRef->get_method_code(index);
 
-
-	if(ref == NULL) {
-		printf("Error class ref is NULL :stack_frame.pushFrame\n");
-		exit(0);
-	}
-
-
-
-	index = ref->get_method_index(methodname, descriptor);
-
-	if(index < 0) {
-		printf("Error method %s:%s not found: stack_frame:pushFrame\n", methodname,descriptor);
-		exit(0);
-	}
-
-
-	Code *code = ref->get_method_code(index);
-	char *rType = getReturnType(descriptor);
-
-	if (isStaticFlag && isStatic(ref->methods[index].access_flags) ){
-        printf("Error method %s:%s is not static: stack_frame:pushFrame\n", methodname,descriptor);
-		exit(0);
-    }
-
-	Frame temp(ref, code, NULL, 0, rType);
-	temp.methodname = methodname;
+	Frame temp(classRef, code, methodname, descriptor);
 
 	current++;
 	*current = temp;
@@ -167,63 +168,56 @@ void StackFrame::popFrame() {
 	size--;
 }
 
-void StackFrame::pushMain(Class *ref) {
+void StackFrame::pushMain(Class *classRef) {
 	if(size == max) {
 		printf("Error stack over :stack_frame.pushFrame\n");
 		exit(0);
 	}
-	int index;
-
-	if(ref == NULL) {
-		printf("Error class ref is NULL :stack_frame.pushFrame\n");
+	if(classRef == NULL) {
+		printf("Error class classRef is NULL :stack_frame.pushFrame\n");
 		exit(0);
 	}
-	index = ref->get_method_main();
+	int index = classRef->get_method_main();
+	
 	if(index < 0) {
 		printf("Error method main not found: stack_frame:pushFrame\n");
 		exit(0);
 	}
-	char *descriptor = ref->get_method_descriptor(index);
-	char *name = ref->get_method_name(index);
-	char *rType = getReturnType(descriptor);
+	char *methodname = classRef->get_method_name(index);
+	char *descriptor = classRef->get_method_descriptor(index);
 
-	Code *code = ref->get_method_code(index);
-	Frame temp(ref, code, NULL, 0, rType);
-	temp.methodname = name;
-
-	current++;
-	*current = temp;
-	size++;
+	pushFrame(classRef, index, methodname, descriptor);
 }
 
-int StackFrame::pushClinit(Class *ref) {
+int StackFrame::pushClinit(Class *classRef) {
 	if(size == max) {
 		printf("Error stack over :stack_frame.pushFrame\n");
 		exit(0);
 	}
-	int index;
-
-	if(ref == NULL) {
-		printf("Error class ref is NULL :stack_frame.pushFrame\n");
+	if(classRef == NULL) {
+		printf("Error class classRef is NULL :stack_frame.pushFrame\n");
 		exit(0);
 	}
-	printf("Nova classe carregada. Inicializando classe.\n");
-	index = ref->get_method_clinit();
+	int index = classRef->get_method_clinit();
+	int clinitFlag = 1;
+	
 	if(index < 0) {
-		printf("<clinit> nao encontrado!\n");
+		clinitFlag = 0;
+	}
+	char *classname = classRef->get_cp_this_class();
+	if(strcmp(classname, CLASS_OBJECT) == 0) {
+		clinitFlag = 0;
+	}
+	if(!clinitFlag) {
 		return 0;
 	}
-	if(strcmp(ref->get_cp_this_class(), "java/lang/Object") == 0) {
-		return 0;
-	}
-	printf("<clinit> encontrado! Instrucao eh interrompida\n");
-	char *descriptor = ref->get_method_descriptor(index);
-	char *name = ref->get_method_name(index);
-	char *rType = getReturnType(descriptor);
+	printf("\nNova classe carregada. Inicializando classe\n");
+	
+	char *descriptor = classRef->get_method_descriptor(index);
+	char *methodname = classRef->get_method_name(index);
+	Code *code = classRef->get_method_code(index);
 
-	Code *code = ref->get_method_code(index);
-	Frame temp(ref, code, NULL, 0, rType);
-	temp.methodname = name;
+	Frame temp(classRef, code, methodname, descriptor);
 
 	current++;
 	*current = temp;

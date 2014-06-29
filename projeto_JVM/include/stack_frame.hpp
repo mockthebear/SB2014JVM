@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "definition.hpp"
+#include "exception.hpp"
 #include "frame.hpp"
 #include "class.hpp"
 #include "mem_data.hpp"
@@ -16,9 +18,9 @@ public:
 	Frame *current;
 	Frame *stack;
 
-	void invokevirtual(Class *ref, char *methodname, char *descriptor);
-	void invokespecial(Class *ref, char *methodname, char *descriptor);
-	void invokestatic(Class *ref, char *methodname, char *descriptor);
+	void invokevirtual(Class *ref, int index, char *methodname, char *descriptor);
+	void invokespecial(Class *ref, int index, char *methodname, char *descriptor);
+	void invokestatic(Class *ref, int index, char *methodname, char *descriptor);
 
 	void ireturn();
 	void lreturn();
@@ -30,7 +32,7 @@ public:
 	void athrow();
 
 	StackFrame(int);
-	void pushFrame(Class *ref, char *methodname, char *descriptor,bool isStaticFlag=false);
+	void pushFrame(Class *ref, int index, char *methodname, char *descriptor);
 	void popFrame();
 	void pushMain(Class *ref);
 	int pushClinit(Class *ref);

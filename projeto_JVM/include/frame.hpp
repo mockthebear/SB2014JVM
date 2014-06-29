@@ -19,17 +19,14 @@ public:
 	int retpc;
 	Class *classref;
 	Code *code;
-	int exceptions_count;
-	Exceptions *exceptions;
-	char *returnType;
+	char *methodname;
+	char *descriptor;
 	OperandStack *opStack;
 	LocalVariableArray *varArray;
-	char *methodname;
 
 	void setPC(int pc);
 
-	Frame(Class *r, Code *c, Exceptions *e, int eCount, char *rType);
-
+	Frame(Class *r, Code *c, char *m_name, char *descrip);
 
 	void bipush(u1);
 	void sipush(u2);
@@ -217,6 +214,8 @@ public:
 	char *get_method_class(u2 cp_index);
 	char *get_method_name(u2 cp_index);
 	char *get_method_descriptor(u2 cp_index);
+	char *get_string(u2 cp_index);
+	
 	u1 getCode();
 	int16_t getPC();
 	void pcNext();

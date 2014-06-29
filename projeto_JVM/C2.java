@@ -1,7 +1,7 @@
 
-public class C2 extends C3 {
+public class C2 {
 	long field_l2;
-	int field_i2;
+	int field_i2 = 21;
 	static int    static_i2;
 	//static float  static_f2 = 3.3F;
 	//static long   static_l2 = 333L;
@@ -9,8 +9,8 @@ public class C2 extends C3 {
 
 	static void main(String[] ags) {
 		C2 c = new C2();
-		c.field_i1 = 9;
-		c.field_i2 = c.field_i1;
+		c.field_i2 = 9;
+		//c.field_i2 = c.field_i1;
 		//c.metodo0();
 	}
 	
@@ -23,44 +23,21 @@ public class C2 extends C3 {
 			int i =12;
 		}
 	}
+	int metodoi() {
+		return 12;
+	}
+	float metodof() {
+		return 12.0F;
+	}
+	long metodol() {
+		return 12L;
+	}
+	double metodod() {
+		return 12.0D;
+	}
+	C2 metodoa() {
+		return new C2();
+	}
 	
-	void metodo1(int i, int j, float f, long l) {
-		long l2;
-		field_i2 = i;
-		field_l2 = l;
-		l2 = field_l2;
-	}
-	void metodo2(int i) {
-		if(i<0) {
-			i = 10;
-		} else {
-			i = 100;
-		}
-		for (int j=0;j<10;j++) {
-			i++;
-		}
-	}
-	void metodo3(int i) {
-		C2[] a;
-		a = new C2[i];
-		a[1].field_l2 = 32L;
-		a[0].field_l2 = a[1].field_l2;
-	}
-	void metodo4() {
-		double[] ad;
-		ad = new double[3];
-		ad[2] = 43.0D;
-	}
-	void metodo5() {
-		float[][][] af;
-		af = new float[2][2][2];
-	}
-	void metodo6() {
-		C1[][] af;
-		af = new C1[2][2];
-	}
-	void metodo7() {
-		field_l2 = 24L;
-	}
 	
 }

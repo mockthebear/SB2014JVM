@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
 
-	char name[] = "C2";
+	char name[] = "SwitchDemo";
 	loadMain(name);
 
 
@@ -1377,7 +1377,7 @@ void tableswitch()
 		{
 			target = get4byte();
 			vet[i-1] = target+pc;
-			frames->current->setPC(pc + target);
+			//frames->current->setPC(pc + target);
 		}
 		frames->current->setPC( vet[index-1]);
 		delete[] vet;
@@ -1480,27 +1480,33 @@ void getstatic() {
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
 	char *fieldType = frames->current->get_field_type(cp_index);
-
+	
+	if( (strcmp(fieldName, "out") == 0) && (strcmp(fieldType, "Ljava/io/PrintStream;") == 0)) {
+		return;
+	}
 	Class *classRef = memory->get_classref(className);
+	
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
 		clinit(classRef);
-	}
-	if(classRef == NULL) {
-		exception("NullPointerException at JavaVM.getstatic");
+		if(classRef == NULL) {
+			exception("NullPointerException at JavaVM.getstatic");
+		}
+		clinit(classRef);
 	}
 	int index;
+	char *superName = classRef->get_cp_super_class();
 	
-	className = classRef->get_cp_super_class();
-	while( (index = classRef->get_field_index(fieldName) == -1) ||
-		   (strcmp(className, CLASS_OBJECT) != 0) )
-	{
-		classRef = memory->get_classref(className);
+	while( (index = classRef->get_field_index(fieldName)) == -1) {
+		if(strcmp(superName, CLASS_OBJECT) == 0) {
+			exception("NoSuchFieldError at JavaVM.getstatic");
+		}
+		classRef = memory->get_classref(superName);
 		if(classRef == NULL) {
-			classRef = memory->new_class(className);
+			classRef = memory->new_class(superName);
 			clinit(classRef);
 		}
-		className = classRef->get_cp_super_class();
+		superName = classRef->get_cp_super_class();
 	}
 	u4 value[2];
 
@@ -1523,25 +1529,27 @@ void putstatic() {
 	char *fieldType = frames->current->get_field_type(cp_index);
 
 	Class *classRef = memory->get_classref(className);
+	
 	if(classRef == NULL) {
-		classRef = memory->new_class(className);
+		classRef = memory->new_class(className);		
+		if(classRef == NULL) {
+			exception("NullPointerException at JavaVM.putstatic");
+		}
 		clinit(classRef);
 	}
-	if(classRef == NULL) {
-		exception("NullPointerException at JavaVM.getstatic");
-	}
 	int index;
+	char *superName = classRef->get_cp_super_class();
 	
-	className = classRef->get_cp_super_class();
-	while( (index = classRef->get_field_index(fieldName) == -1) ||
-		   (strcmp(className, CLASS_OBJECT) != 0) )
-	{
-		classRef = memory->get_classref(className);
+	while( (index = classRef->get_field_index(fieldName)) == -1) {
+		if(strcmp(superName, CLASS_OBJECT) == 0) {
+			exception("NoSuchFieldError at JavaVM.putstatic");
+		}
+		classRef = memory->get_classref(superName);
 		if(classRef == NULL) {
-			classRef = memory->new_class(className);
+			classRef = memory->new_class(superName);
 			clinit(classRef);
 		}
-		className = classRef->get_cp_super_class();
+		superName = classRef->get_cp_super_class();
 	}
 	u4 value[2];
 
@@ -1607,14 +1615,33 @@ void invokevirtual() {
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
 	char *descriptor = frames->current->get_method_descriptor(cp_index);
-
+	
+	if( (strcmp(methodName, "println") == 0) || (strcmp(descriptor, "(Ljava/lang/String;)V") == 0) ) {
+		cp_index = (u2)frames->current->popOpStack();
+		char *string = frames->current->get_string(cp_index);
+		printf("println:\n%s\n\n", string);
+		return;
+	}
+	
 	Class *classRef = memory->get_classref(className);
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
 		clinit(classRef);
 	}
 
-	frames->invokevirtual(classRef, methodName, descriptor);
+	int index;
+	while( (index = classRef->get_method_index(methodName, descriptor)) == -1 ) {
+		char *superName = classRef->get_cp_super_class();
+		if(strcmp(superName, CLASS_OBJECT) == 0) {
+			exception("NoSuchMethodError at JavaVM.invokevirtual");
+		}
+		classRef = memory->get_classref(superName);
+		if(classRef == NULL) {
+			classRef = memory->new_class(superName);
+			clinit(classRef);
+		}
+	}
+	frames->invokevirtual(classRef, index, methodName, descriptor);
 }
 
 void invokespecial() {
@@ -1633,8 +1660,19 @@ void invokespecial() {
 		clinit(classRef);
 	}
 
-	frames->invokespecial(classRef, methodName, descriptor);
-
+	int index;
+	while( (index = classRef->get_method_index(methodName, descriptor)) == -1 ) {
+		char *superName = classRef->get_cp_super_class();
+		if(strcmp(superName, CLASS_OBJECT) == 0) {
+			exception("NoSuchMethodError at JavaVM.invokespecial");
+		}
+		classRef = memory->get_classref(superName);
+		if(classRef == NULL) {
+			classRef = memory->new_class(superName);
+			clinit(classRef);
+		}
+	}
+	frames->invokespecial(classRef, index, methodName, descriptor);
 }
 
 void invokestatic() {
@@ -1653,12 +1691,24 @@ void invokestatic() {
 		clinit(classRef);
 	}
 
-	frames->invokestatic(classRef, methodName, descriptor);
-
-
+	int index;
+	while( (index = classRef->get_method_index(methodName, descriptor)) == -1 ) {
+		char *superName = classRef->get_cp_super_class();
+		if(strcmp(superName, CLASS_OBJECT) == 0) {
+			exception("NoSuchMethodError at JavaVM.invokestatic");
+		}
+		classRef = memory->get_classref(superName);
+		if(classRef == NULL) {
+			classRef = memory->new_class(superName);
+			clinit(classRef);
+		}
+	}
+	frames->invokestatic(classRef, index, methodName, descriptor);
 }
 void invokeinterface() {}
-void invokedynamic() {}
+void invokedynamic() {
+    printf("invokedynamic[Unused]\n");
+}
 
 u4 op_new_superInstance(char *supername, u4 superInst) {
 	if(strcmp(supername, CLASS_OBJECT) == 0) {
@@ -1765,8 +1815,6 @@ void instanceof() {
 }
 
 int checkcast_check(u2 index) {
-
-
     cp_info T;
     Class *classref = frames->current->classref;
     if (index <= classref->cp_count){

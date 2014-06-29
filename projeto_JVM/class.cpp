@@ -213,6 +213,10 @@ char *Class::get_field_type(int index) {
 	return get_cp_utf8(cp_index);
 }
 
+u2 Class::get_method_flags(int index) {
+	return methods[index].access_flags;
+}
+
 char *Class::get_method_name(int index) {
 	u2 cp_index = methods[index].name_index;
 	return get_cp_utf8(cp_index);
