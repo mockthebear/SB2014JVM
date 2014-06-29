@@ -4,7 +4,7 @@ CC   = gcc
 CFLAGS   = -Wextra -g -m32
 NFLAGS   = 
 INCLUDE  = -Iinclude
-TARGET   = prog
+TARGET   = prog.exe
 SOURCES_ASM = $(wildcard *.asm)
 SOURCES_C   = $(wildcard *.c)
 SOURCES_CPP = $(wildcard *.cpp)
@@ -15,10 +15,14 @@ OBJECTS  = $(OBJECTS_ASM) $(OBJECTS_CPP) $(OBJECTS_C)
 DEPENDS  = $(OBJECTS_C:.obj=.d) $(OBJECTS_CPP:.obj=.d) $(OBJECTS_ASM:.obj=.d)
 
 ifeq ($(OS),Windows_NT)
-    REMOVE = del
-    NFLAGS += -fwin32 --PREFIX _
-else
     REMOVE = rm
+    NFLAGS += -fwin32 --PREFIX _
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),MINGW32_NT-6.3)
+		REMOVE = rm
+	endif
+else
+    REMOVE = rm -f
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
         NFLAGS += -felf32 
@@ -45,7 +49,7 @@ $(TARGET): $(OBJECTS)
 all: clean $(TARGET)
 
 clean:
-	$(REMOVE) -f $(OBJECTS) $(DEPENDS) $(TARGET)
+	$(REMOVE) $(OBJECTS) $(TARGET)
 	
 test:
 	echo $(OBJECTS)
