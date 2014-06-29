@@ -16,15 +16,15 @@ DEPENDS  = $(OBJECTS_C:.obj=.d) $(OBJECTS_CPP:.obj=.d) $(OBJECTS_ASM:.obj=.d)
 
 ifeq ($(OS),Windows_NT)
     REMOVE = del
-    NFLAGS += -fwin32
+    NFLAGS += -fwin32 --PREFIX _
 else
     REMOVE = rm
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
-        NFLAGS += -felf32
+        NFLAGS += -felf32 
     endif
     ifeq ($(UNAME_S),Darwin)
-        NFLAGS += -fmacho32
+        NFLAGS += -fmacho32 --PREFIX _
     endif
     
 endif

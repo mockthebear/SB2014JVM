@@ -5,9 +5,9 @@
 extern "C" {
 #endif 
 
-extern void _to_value32(void *, u4);
-extern u4 _get_byte(void *);
-extern u4 _get_high(void *);
+extern void __to_value32(void *, u4);
+extern u4 __get_byte(void *);
+extern u4 __get_high(void *);
 
 #ifdef __cplusplus
 }
@@ -30,30 +30,30 @@ void Operand::set_byte(u1 t, u4 b) {
 
 void Operand::set_value(u1 t, void* v) {
 	type = t;
-	bytes = _get_byte(v);
+	bytes = __get_byte(v);
 }
 
 void Operand::set_high(u1 t, void* v) {
 	type = t;
-	bytes = _get_high(v);
+	bytes = __get_high(v);
 }
 
 void Operand::set_low(u1 t, void* v) {
 	type = t;
-	bytes = _get_byte(v);
+	bytes = __get_byte(v);
 }
 
 int32_t Operand::to_int() {
 	int32_t i = 0;
 	
-	_to_value32(&i, bytes);
+	__to_value32(&i, bytes);
 	return i;
 }
 
 float Operand::to_float() {
 	float f = 0.0F;
 	
-	_to_value32(&f, bytes);
+	__to_value32(&f, bytes);
 	return f;
 }
 

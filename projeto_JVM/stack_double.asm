@@ -7,7 +7,7 @@ global __dadd
 global __dsub
 global __dmul
 global __ddiv
-global __drem
+global __opDrem
 global __dneg
 
 ;		 -24   -20	-16   -12	 -8	   -4	  0	   +4
@@ -149,7 +149,7 @@ __ddiv:
 	leave
 	ret
 
-__drem:
+__opDrem:
 	push ebp
 	mov  ebp, esp
 	sub  esp, 0x40

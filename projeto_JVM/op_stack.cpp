@@ -4,31 +4,32 @@
 extern "C" {
 #endif
 
-extern void _to_value64(void *, u4, u4);
+extern void __to_value64(void *, u4, u4);
 
-extern void _iadd(void *);
-extern void _isub(void *);
-extern void _imul(void *);
-extern void _idiv(void *);
-extern void _irem(void *);
-extern void _ineg(void *);
+extern void __iadd(void *);
+extern void __isub(void *);
+extern void __imul(void *);
+extern void __idiv(void *);
+extern void __irem(void *);
+extern void __ineg(void *);
 
-extern void _ladd(void *);
-extern void _lneg(void *);
+extern void __ladd(void *);
+extern void __lneg(void *);
 
-extern void _fadd(void *);
-extern void _fsub(void *);
-extern void _fmul(void *);
-extern void _fdiv(void *);
-extern void _frem(void *);
-extern void _fneg(void *);
+extern void __fadd(void *);
+extern void __fsub(void *);
+extern void __fmul(void *);
+extern void __fdiv(void *);
+extern void __frem(void *);
+extern void __fneg(void *);
 
-extern void _dadd(void *);
-extern void _dsub(void *);
-extern void _dmul(void *);
-extern void _ddiv(void *);
-extern void _drem(void *);
-extern void _dneg(void *);
+extern void __dadd(void *);
+extern void __dsub(void *);
+extern void __dmul(void *);
+extern void __ddiv(void *);
+extern void __opDrem(void * );
+//extern void __drem(void *); conflito no linux features.h:374->stdio.h:27
+extern void __dneg(void *);
 
 #ifdef __cplusplus
 }
@@ -237,7 +238,7 @@ int OperandStack::if_icmpeq() {
 	op2 = pop();
 	op1 = pop();
 	if( (op1.type != TYPE_INT) || (op2.type != TYPE_INT) ) {
-		printf("Error type int or ref :op_stack.f_icmpeq\n");
+		printf("Error type int or ref :op_stack.if_icmpeq\n");
 		exit(0);
 	}
 	if(op1.bytes == op2.bytes)
@@ -255,7 +256,7 @@ int OperandStack::if_icmpne() {
     op2 = pop();
     op1 = pop();
     if( (op1.type != TYPE_INT) || (op2.type != TYPE_INT) ) {
-        printf("Error type int or ref :op_stack.f_icmpne\n");
+        printf("Error type int or ref :op_stack.if_icmpne\n");
         exit(0);
     }
     if(op1.bytes != op2.bytes)
@@ -394,7 +395,7 @@ void OperandStack::iadd() {
 		printf("Error  :op_stack.iadd\n");
 		exit(0);
 	}
-	_iadd(top);
+	__iadd(top);
 	top--;
 	size--;
 }
@@ -404,7 +405,7 @@ void OperandStack::isub() {
 		printf("Error  :op_stack.isub\n");
 		exit(0);
 	}
-	_isub(top);
+	__isub(top);
 	top--;
 	size--;
 }
@@ -414,7 +415,7 @@ void OperandStack::imul() {
 		printf("Error  :op_stack.imul\n");
 		exit(0);
 	}
-	_imul(top);
+	__imul(top);
 	top--;
 	size--;
 }
@@ -428,7 +429,7 @@ void OperandStack::idiv() {
 		printf("Excecao de divisao por zero\n");
 		exit(0);
 	}
-	_idiv(top);
+	__idiv(top);
 	top--;
 	size--;
 }
@@ -438,7 +439,7 @@ void OperandStack::irem() {
 		printf("Error  :op_stack.irem\n");
 		exit(0);
 	}
-	_irem(top);
+	__irem(top);
 	top--;
 	size--;
 }
@@ -448,7 +449,7 @@ void OperandStack::ineg() {
 		printf("Error  :op_stack.ineg\n");
 		exit(0);
 	}
-	_ineg(top);
+	__ineg(top);
 }
 
 void OperandStack::ladd(){
@@ -456,7 +457,7 @@ void OperandStack::ladd(){
 		printf("Error  :op_stack.ladd\n");
 		exit(0);
 	}
-	_ladd(top);
+	__ladd(top);
 	top-=2;
 	size-=2;
 }
@@ -544,7 +545,7 @@ void OperandStack::lneg(){
 		printf("Error  :op_stack.lneg\n");
 		exit(0);
 	}
-	_lneg(top);
+	__lneg(top);
 }
 
 void OperandStack::fadd(){
@@ -552,7 +553,7 @@ void OperandStack::fadd(){
 		printf("Error  :op_stack.fadd\n");
 		exit(0);
 	}
-	_fadd(top);
+	__fadd(top);
 	top--;
 	size--;
 }
@@ -562,7 +563,7 @@ void OperandStack::fsub(){
 		printf("Error  :op_stack.fsub\n");
 		exit(0);
 	}
-	_fsub(top);
+	__fsub(top);
 	top--;
 	size--;
 }
@@ -572,7 +573,7 @@ void OperandStack::fmul(){
 		printf("Error  :op_stack.fmul\n");
 		exit(0);
 	}
-	_fmul(top);
+	__fmul(top);
 	top--;
 	size--;
 }
@@ -586,7 +587,7 @@ void OperandStack::fdiv(){
 		printf("Excecao de divisao por zero\n");
 		exit(0);
 	}
-	_fdiv(top);
+	__fdiv(top);
 	top--;
 	size--;
 }
@@ -600,7 +601,7 @@ void OperandStack::frem(){
 		printf("Excecao de divisao por zero\n");
 		exit(0);
 	}
-	_frem(top);
+	__frem(top);
 	top--;
 	size--;
 }
@@ -610,7 +611,7 @@ void OperandStack::fneg(){
 		printf("Error  :op_stack.fneg\n");
 		exit(0);
 	}
-	_fneg(top);
+	__fneg(top);
 	top--;
 	size--;
 }
@@ -620,7 +621,7 @@ void OperandStack::dadd(){
 		printf("Error  :op_stack.dadd\n");
 		exit(0);
 	}
-	_dadd(top);
+	__dadd(top);
 	top-=2;
 	size-=2;
 }
@@ -630,7 +631,7 @@ void OperandStack::dsub(){
 		printf("Error  :op_stack.dsub\n");
 		exit(0);
 	}
-	_dsub(top);
+	__dsub(top);
 	top-=2;
 	size-=2;
 }
@@ -640,7 +641,7 @@ void OperandStack::dmul(){
 		printf("Error  :op_stack.dmul\n");
 		exit(0);
 	}
-	_dmul(top);
+	__dmul(top);
 	top-=2;
 	size-=2;
 }
@@ -654,7 +655,7 @@ void OperandStack::ddiv(){
 		printf("Excecao de divisao por zero\n");
 		exit(0);
 	}
-	_ddiv(top);
+	__ddiv(top);
 	top-=2;
 	size-=2;
 }
@@ -668,7 +669,7 @@ void OperandStack::drem(){
 		printf("Excecao de divisao por zero\n");
 		exit(0);
 	}
-	_drem(top);
+	__opDrem(top);
 	top-=2;
 	size-=2;
 }
@@ -678,7 +679,7 @@ void OperandStack::dneg(){
 		printf("Error  :op_stack.dneg\n");
 		exit(0);
 	}
-	_dneg(top);
+	__dneg(top);
 }
 
 void OperandStack::i2l() {
@@ -978,14 +979,14 @@ void OperandStack::print_min() {
 int64_t to_long(u4 high, u4 low) {
 	int64_t l = 0L;
 
-	_to_value64(&l, high, low);
+	__to_value64(&l, high, low);
 	return l;
 }
 
 double to_double(u4 high, u4 low) {
 	double d = 0.0;
 
-	_to_value64(&d, high, low);
+	__to_value64(&d, high, low);
 	return d;
 }
 
