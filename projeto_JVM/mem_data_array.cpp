@@ -200,25 +200,11 @@ char *MemoryDataArray::get_instance_super(u4 instref) {
 }
 
 void MemoryDataArray::print() {
-	printf("MemoryDataArray\n");
-	printf("max: %d\t",max);
-	printf("size:%d\n",size);
-	for(int i=0; i<size; i++) {
-		//printf("[%p] %c,",data[i],data[i]->type);
-		printf("%d.[%p]\n",i,data[i]);
-		data[i]->print();
-		printf("\n");
-	}
-	printf("\n");
-}
-
-void MemoryDataArray::print_min() {
 	printf(">Instances & Arrays\n");
 	printf("  size: %d\n",size);
 	for(int i=0; i<size; i++) {
 		printf("  [%p] ",data[i]);
-		data[i]->print_min();
-		//printf(", ");
+		data[i]->print();
 	}
 	printf("\n");
 }

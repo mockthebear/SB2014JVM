@@ -36,21 +36,12 @@ void LocalVariableArray::set_param(Operand *param, int count, int ini) {
 }
 
 void LocalVariableArray::print() {
-	printf("size %d\n", size);
-	for(int i=0; i<size; i++) {
-		printf("[%d] ",i);
-		array[i].print();
-	}
-}
-
-
-void LocalVariableArray::print_min() {
 	printf(">Local Variables\n");
 	printf("  size: %d\n", size);
 	printf("  ");
 	for(int i=0; i<size; i++) {
 		printf("[%d] ",i);
-		array[i].print_min();
+		array[i].print();
 	}
 	printf("\n");
 }

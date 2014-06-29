@@ -952,26 +952,13 @@ Operand *OperandStack::pop_param(int count) {
 }
 
 void OperandStack::print() {
-	printf(">OperandStack\n");
-	printf("max: %d ", max);
-	printf("size: %d\n", size);
-
-	for(int i=size-1; i>=0; i--) {
-		printf("\t");
-		stack[i].print();
-	}
-	printf("\tbase\n");
-
-}
-
-void OperandStack::print_min() {
 	printf(">Operand Stack\n");
 	printf("  max: %d ", max);
 	printf("size: %d\n", size);
 	printf("  ");
 	for(u2 i=1; i<=size; i++) {
 		printf("[%d] ",i);
-		stack[i].print_min();
+		stack[i].print();
 	}
 	printf("\n");
 }

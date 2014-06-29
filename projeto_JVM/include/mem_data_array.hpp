@@ -27,7 +27,6 @@ public:
 	char *get_instance_super(u4 instref);
 	
 	void print();
-	void print_min();
 };
 
 #endif

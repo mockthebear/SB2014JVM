@@ -24,7 +24,6 @@ public:
 	void get_data(int, u4 *, char);
 	
 	void print();
-	void print_min();
 };
 
 #endif

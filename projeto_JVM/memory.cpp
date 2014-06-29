@@ -257,7 +257,7 @@ Class *Memory::new_class(char *name) {
 void Memory::print() {
 	printf(">>Memory\n");
 	classes->print();
-	data->print_min();
+	data->print();
 }
 
 void test_array(const char *func, MemoryData *array, int index) {

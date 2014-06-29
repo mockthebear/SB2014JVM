@@ -858,11 +858,11 @@ void Frame::clear() {
 void Frame::print() {
 	printf(">>Current frame\n");
 	printf("  method: %s.", classref->get_cp_this_class());
-	printf("%s", methodname);
-	printf(" %s\n", descriptor);
+	printf("%s:", methodname);
+	printf("%s\n", descriptor);
 	printf("  next pc: %d\n", pc);
-	opStack->print_min();
-	varArray->print_min();
+	opStack->print();
+	varArray->print();
 }
 
 void Frame::setPC(int pc)

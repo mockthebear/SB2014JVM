@@ -35,8 +35,6 @@ public:
 	float to_float();
 	
 	void print();
-	static void print_w(Operand, Operand);
-	void print_min();
 };
 
 

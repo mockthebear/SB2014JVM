@@ -22,7 +22,6 @@ public:
 
 	void set_param(Operand *, int, int);
 	void print();
-	void print_min();
 };
 
 #endif

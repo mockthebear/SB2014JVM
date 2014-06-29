@@ -136,7 +136,6 @@ public:
 	Operand *pop_param(int);
 
 	void print();
-	void print_min();
 };
 
 #endif

@@ -58,26 +58,5 @@ float Operand::to_float() {
 }
 
 void Operand::print() {
-	printf("[%c] %08X ", type, bytes);
-	switch(type) {
-		case TYPE_INT:
-			printf("int(%d)", to_int());
-			break;
-		case TYPE_FLOAT:
-			printf("float(%f)", to_float());
-			break;
-		default:
-			break;
-	}
-	printf("\n");
-}
-
-void Operand::print_w(Operand high, Operand low) {
-	printf("[%c] %08X%08X ", high.type, high.bytes, low.bytes);
-
-	printf("\n");
-}
-
-void Operand::print_min() {
 	printf("(%c)%08X ", type, bytes);
 }
