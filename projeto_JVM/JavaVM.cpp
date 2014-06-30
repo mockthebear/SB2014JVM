@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
 
-	char name[] = "AImpl";
+	char name[] = "C3";
 	loadMain(name);
 
 
@@ -193,7 +193,7 @@ void ldc() {
 	printf("ldc");
 
 	u2 cp_index = get1byte();
-	printf(" %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	frames->current->ldc(cp_index);
 }
@@ -202,7 +202,7 @@ void ldc_w() {
 	printf("ldc_w");
 
 	u2 cp_index = get2byte();
-	printf(" %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	frames->current->ldc_w(cp_index);
 }
@@ -211,7 +211,7 @@ void ldc2_w() {
 	printf("ldc2_w");
 
 	u2 cp_index = get2byte();
-	printf(" %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	frames->current->ldc2_w(cp_index);
 }
@@ -1475,7 +1475,7 @@ void getstatic() {
 	printf("getstatic");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -1523,7 +1523,7 @@ void putstatic() {
 	printf("putstatic");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -1567,7 +1567,7 @@ void getfield() {
 	printf("getfield");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -1589,7 +1589,7 @@ void putfield() {
 	printf("putfield");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -1611,7 +1611,7 @@ void invokevirtual() {
 	printf("invokevirtual");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -1649,7 +1649,7 @@ void invokespecial() {
 	printf("invokespecial");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -1680,7 +1680,7 @@ void invokestatic() {
 	printf("invokestatic");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -1706,6 +1706,7 @@ void invokestatic() {
 	}
 	frames->invokestatic(classRef, index, methodName, descriptor);
 }
+
 void invokeinterface() {
 	printf("invokeinterface");
 	
@@ -1713,19 +1714,19 @@ void invokeinterface() {
 	u1 paramCount = get1byte();
 	u1 zero = get1byte();
 	
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
-	char *intName  = frames->current->get_imethod_class(cp_index);
+	char *interfaceName  = frames->current->get_imethod_class(cp_index);
 	char *methodName = frames->current->get_imethod_name(cp_index);
 	char *descriptor = frames->current->get_imethod_descriptor(cp_index);
 
-	Class *intRef = memory->get_classref(intName);
+	Class *intRef = memory->get_classref(interfaceName);
 	if(intRef == NULL) {
-		intRef = memory->new_class(intName);
+		intRef = memory->new_class(interfaceName);
 		clinit(intRef);
 	}
 	if(!isInterface(intRef->access_flags)) {
-		exception("NotInterface at JavaVM.invokeinterface");
+		exception("IncompatibleClassChangeError at JavaVM.invokeinterface");
 	}
 	int index;
 	
@@ -1742,48 +1743,19 @@ void invokeinterface() {
 		exception("NoSuchMethodError at JavaVM.invokeinterface");
 	}
 	
-	frames->invokeinterface(paramCount, methodName, descriptor);
-	/*
-	Class *classRef
-	while( (classRef->get_method_index(methodName, descriptor)) == -1 ) {
-		char *superName = classRef->get_cp_super_class();
-		if(strcmp(superName, CLASS_OBJECT) == 0) {
-			exception("NoSuchMethodError at JavaVM.invokeinterface");
-		}
-		classRef = memory->get_classref(superName);
-		if(classRef == NULL) {
-			classRef = memory->new_class(superName);
-			clinit(classRef);
-		}
-	}
-	*/
+	frames->invokeinterface(interfaceName, paramCount, methodName, descriptor);
 }
 
 void invokedynamic() {
     printf("invokedynamic[Unused]\n");
 }
 
-MemoryData *op_new_superInstance(char *supername, MemoryData *superInst) {
-	if(strcmp(supername, CLASS_OBJECT) == 0) {
-		return superInst;
-	} else {
-		Class *superRef = memory->get_classref(supername);
-		if(superRef == NULL) {
-			superRef = memory->new_class(supername);
-			clinit(superRef);
-		}
-		supername = superRef->get_cp_super_class();
-		superInst = op_new_superInstance(supername, superInst);
-		superInst = memory->op_new(superRef, superInst);
-		return superInst;
-	}
-}
 
 void op_new() {
 	printf("new");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *classname = frames->current->get_class_name(cp_index);
 
@@ -1793,9 +1765,17 @@ void op_new() {
 		clinit(classRef);
 	}
 	char *supername = classRef->get_cp_super_class();
-	MemoryData *superInst = op_new_superInstance(supername, NULL);
-
-	u4 instRef = (u4)memory->op_new(classRef, superInst);
+	
+	while(strcmp(supername, CLASS_OBJECT) != 0) {
+		Class *superRef = memory->get_classref(supername);
+		if(superRef == NULL) {
+			superRef = memory->new_class(supername);
+			clinit(superRef);
+		}
+		supername = superRef->get_cp_super_class();
+	}
+	
+	u4 instRef = (u4)memory->op_new(classRef, NULL);
 	frames->current->pushOpStack(TYPE_REF, instRef);
 }
 
@@ -1816,19 +1796,21 @@ void anewarray() {
 	printf("anewarray");
 
 	u2 cp_index = get2byte();
-	printf("  %d\n",cp_index);
+	printf("  #%d\n",cp_index);
 
 	char *classname = frames->current->get_class_name(cp_index);
 
+	/*
 	Class *classRef = memory->get_classref(classname);
 	if(classRef == NULL) {
 		classRef = memory->new_class(classname);
 		clinit(classRef);
 	}
+	*/
 
 	u4 count = frames->current->popOpStack();
 	u4 arrayRef;
-	arrayRef = memory->anewarray(count, classname, classRef);
+	arrayRef = memory->anewarray(count, classname);
 	frames->current->pushOpStack(TYPE_REF, arrayRef);
 }
 
@@ -1846,7 +1828,115 @@ void athrow() {
 
 
 int checkcast_check(u2 index);
+int checkInterfaces(Class *classS, char *classnameT) {
+	
+	if(classS->isInterface(classnameT)) {
+		return 1;
+	} else {
+		for(int i; i<classS->interfaces_count; i++) {
+			char *supernameS = classS->get_interface_name(i);
+			Class *superS = memory->get_classref(supernameS);
+			
+			if(superS == NULL) {
+				superS = memory->new_class(supernameS);
+				clinit(superS);
+			}
+			if(checkInterfaces(superS, classnameT)) {
+				return 1;
+			}
+		}
+		return 0;
+	}
+}
 
+void checkcast() {
+    printf("checkcast");
+    u2 cp_index = get2byte();
+    printf("  #%d\n",cp_index);
+	
+	MemoryData *objectref = (MemoryData *)frames->current->getOpStackTop(); 
+	char *classnameT = frames->current->get_class_name(cp_index);
+	
+	if(objectref->type == TYPE_CLASS) {
+		/* S eh classe ou interface */
+		Class *classS = objectref->classref;
+		char *classnameS = classS->get_cp_this_class();
+		
+		if( !isInterface(classS->access_flags) ) {
+			/* S eh classe */
+			if(classnameT[0] != TYPE_ARRAY) {
+				/* T eh classe ou interface */
+				Class *classT = memory->get_classref(classnameT);
+				
+				if(!isInterface(classT->access_flags)) {
+					/* T eh classe */
+					/* Verifica se S igual a T  */
+					while( strcmp(classnameS, classnameT) != 0 ) {
+						/* Senao compara os superclasses de S com T */
+						classnameS = classS->get_cp_super_class();
+						/* Classe Object retorna super_class NULL  */
+						if(classnameS == NULL) {
+							exception("ClassCastException at JavaVM.checkcast");
+						}
+						classS = memory->get_classref(classnameS);
+						if(classS == NULL) {
+							classS = memory->new_class(classnameS);
+							clinit(classS);
+						}
+					}
+					return;
+				} else {
+					/* T eh interface */
+					/* Verifica se S implementa T */
+					while( !classS->isInterface(classnameT) ) {
+						/* Senao verifica se tem um superclasse de S que implemnta T */
+						classnameS = classS->get_cp_super_class();
+						/* Classe Object nao tem interface  */
+						if( strcmp(classnameS, CLASS_OBJECT) == 0) {
+							exception("ClassCastException at JavaVM.checkcast");
+						}
+						classS = memory->get_classref(classnameS);
+						if(classS == NULL) {
+							classS = memory->new_class(classnameS);
+							clinit(classS);
+						}
+					}
+					return;
+				}
+			} else {
+				exception("ClassCastException at JavaVM.checkcast");
+			}
+		} else {
+			/* S eh interface */
+			if(*classnameT != TYPE_ARRAY) {
+				/* T eh classe ou interface */
+				Class *classT = memory->get_classref(classnameT);
+				
+				if(!isInterface(classT->access_flags)) {
+					/* T eh classe */
+					/* T deve ser classe Object */
+					if( strcmp(classnameT, CLASS_OBJECT) != 0) {
+						exception("ClassCastException at JavaVM.checkcast");
+					}
+					return;
+				} else {
+					/* T eh interface */
+					/* Verifica se S igual a T  */
+					if( strcmp(classnameS, classnameT) != 0 ) {
+						/* Senao verifica se T eh superinterface de S  */
+						if(!checkInterfaces(classS, classnameT)) {									
+							exception("ClassCastException at JavaVM.checkcast");
+						}
+					}
+					return;
+				}
+			}
+		}
+	} else {
+		
+	}
+}
+/*
 void checkcast() {
     printf("checkcast");
     u2 index = get2byte();
@@ -1858,7 +1948,7 @@ void checkcast() {
     }
 
 }
-
+*/
 void instanceof() {
     printf("instanceof");
     u2 index = get2byte();
@@ -1964,34 +2054,18 @@ void multianewarray() {
 
 	u2 cp_index = get2byte();
 	int dim = get1byte();
-	printf("  %d %d\n",cp_index,dim);
+	printf("  #%d %d\n",cp_index,dim);
 
 	char *arrayType = frames->current->get_class_name(cp_index);
-
-	char *classname = new char[strlen(arrayType)];
-	strcpy(classname, arrayType+dim);
-
-	Class *classRef = NULL;
-	if(*classname == TYPE_CLASS) {
-		classname[strlen(classname)-1] = '\0';
-		classname++;
-		classRef = memory->get_classref(classname);
-		if(classRef == NULL) {
-			classRef = memory->new_class(classname);
-			clinit(classRef);
-		}
-	}
-
 	int32_t *count = new int32_t[dim];
+	
 	for(int i=dim-1; i>=0; i--) {
 		count[i] = (int)frames->current->popOpStack();
 	}
 	u4 arrayRef;
-	printf("%s\n", arrayType);
-	arrayRef = memory->multianewarray(count, arrayType, classRef);
-	frames->current->pushOpStack(TYPE_REF, arrayRef);
 
-	delete[] classname;
+	arrayRef = memory->multianewarray(count, arrayType);
+	frames->current->pushOpStack(TYPE_REF, arrayRef);
 }
 
 void ifnull() {
@@ -2037,6 +2111,7 @@ void jsr_w() {
 	pc += branch;
 	frames->current->op_goto(pc);
 }
+
 void breakpoint() {
 	printf("breakpoint\n");
 }

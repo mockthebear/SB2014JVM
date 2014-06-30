@@ -1,5 +1,5 @@
 
-public class C2 {
+public class C2  {
 	long field_l2;
 	int field_i2 = 21;
 	static int    static_i2;
@@ -39,5 +39,7 @@ public class C2 {
 		return new C2();
 	}
 	
-	
+	void metodop() {
+		System.out.println("Hello!");
+	}
 }

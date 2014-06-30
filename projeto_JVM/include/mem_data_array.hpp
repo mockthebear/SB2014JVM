@@ -23,7 +23,7 @@ public:
 	u4 arraylength(u4);
 	
 	MemoryData *new_instance(Class *, MemoryData *);
-	u4 new_array(int *, char *, Class *);
+	u4 new_array(int *, char *);
 	char *get_instance_class(u4 instref);
 	char *get_instance_super(u4 instref);
 	

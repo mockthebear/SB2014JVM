@@ -32,7 +32,7 @@ void MemoryData::print() {
 		printf("    super: [%p]", superInst);
 		max = classref->fields_count;
 	} else {
-		printf("%c", array_type);
+		printf("%s", array_type);
 	}
 	printf("\n");
 	printf("    data/field: %d\n",data_count);
@@ -44,7 +44,7 @@ void MemoryData::print() {
 			if(type == TYPE_CLASS) {
 				d_type = *( classref->get_field_type(i) );
 			} else {
-				d_type = array_type;
+				d_type = *array_type;
 			}
 			printf("[%d] ",data_index[i]);
 			printf("(%c) ",d_type);

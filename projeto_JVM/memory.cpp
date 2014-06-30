@@ -9,10 +9,38 @@ Memory::Memory(int c_array_size, int m_array_size) {
 	data = new MemoryDataArray(m_array_size);
 }
 
-MemoryData *Memory::op_new(Class *ref, MemoryData *superInst) {
+MemoryData *Memory::op_new_superInstance(char *supername, MemoryData *superInst) {
+	if(strcmp(supername, CLASS_OBJECT) == 0) {
+		return superInst;
+	} else {
+		Class *superRef = get_classref(supername);
+		if(superRef == NULL) {
+			exception("NullPointerException at Memory.op_new_superInstance\n");
+		}
+		supername = superRef->get_cp_super_class();
+		superInst = op_new_superInstance(supername, superInst);
+		superInst = op_new_instance(superRef, superInst);
+		return superInst;
+	}
+}
+
+MemoryData *Memory::op_new_instance(Class *ref, MemoryData *superInst) {
 	MemoryData *instance;
 	
+	char *supername = ref->get_cp_super_class();
+	
 	instance = data->new_instance(ref, superInst);
+	return instance;
+}
+
+MemoryData *Memory::op_new(Class *ref, MemoryData *superInst) {
+	MemoryData *instance;
+	char *supername = ref->get_cp_super_class();
+	
+	superInst = op_new_superInstance(supername, superInst);
+	
+	instance = op_new_instance(ref, superInst);
+	
 	return instance;
 }
 
@@ -32,41 +60,59 @@ void Memory::getfield(u4 ref, char *classname, char *fieldname, char *type, u4 *
 	return data->getfield(ref, classname, fieldname, type, value);
 }
 
-u4 Memory::newarray(int size, u1 type) {
+u4 Memory::newarray(int size, u1 a_type) {
 	enum {A_BOOL = 4, A_CHAR, A_FLOAT, A_DOUBLE, A_BYTE, A_SHORT, A_INT, A_LONG};
 	u4 array;
-	char a_type[2] = {'[', 0};
+	char *type = new char;
 
-	if( (type == A_BOOL) || (type == A_CHAR) ||
-		(type == A_BYTE) || (type == A_SHORT) ||
-		(type == A_INT) ) {
+	if( (a_type == A_BOOL) || (a_type == A_CHAR) ||
+		(a_type == A_BYTE) || (a_type == A_SHORT) ||
+		(a_type == A_INT) ) {
 		
-		a_type[1] = TYPE_INT;
-	} else if(type == A_LONG) {
-		a_type[1] = TYPE_LONG;
-	} else if(type == A_FLOAT) {
-		a_type[1] = TYPE_FLOAT;
-	} else if(type == A_DOUBLE) {
-		a_type[1] = TYPE_DOUBLE;
+		*type = TYPE_INT;
+	} else if(a_type == A_LONG) {
+		*type = TYPE_LONG;
+	} else if(a_type == A_FLOAT) {
+		*type = TYPE_FLOAT;
+	} else if(a_type == A_DOUBLE) {
+		*type = TYPE_DOUBLE;
 	}
-	array = data->new_array(&size, a_type, NULL);
+	array = data->new_array(&size, type);
 	return array;
 }
 
-u4 Memory::anewarray(int size, char *type, Class *ref) {
+u4 Memory::anewarray(int size, char *classname) {
 	u4 array;
-	char a_type[2] = {'[', TYPE_CLASS};
+	int length = strlen(classname) + 1;
+	char *type = (char *)calloc(length,sizeof(char));;
 	
-	array = data->new_array(&size, a_type, ref);
+	*type = TYPE_CLASS;
+	strcat(type, classname);
+	
+	array = data->new_array(&size, type);
 	return array;
 }
 
-u4 Memory::multianewarray(int *size, char *type, Class *ref) {
+u4 Memory::multianewarray(int *size, char *a_type) {
 	u4 array;
+	int length = strlen(a_type+1);
+	char *type = (char *)calloc(length,sizeof(char));
+	char *temp = type;
 	
-	array = data->new_array(size, type, ref);
+	a_type++;
+	while(*a_type == TYPE_ARRAY)
+		*(temp++) = *(a_type++);
+
+	if(*a_type == TYPE_CLASS) {
+		while(*a_type != ';')
+			*(temp++) = *(a_type++);
+	} else {
+		*temp = *a_type;
+	}
+	array = data->new_array(size, type);
 	return array;
 }
+
 
 u4 Memory::arraylength(u4 ref) {
 	return data->arraylength(ref);
@@ -113,13 +159,13 @@ void Memory::aaload(u4 ref, int index, u4 *data) {
 	
 	array = (MemoryData *)ref;
 	test_array("aaload", array, index);
-	if( (TYPE_CLASS != array->array_type) && (TYPE_ARRAY != array->array_type) ) {
-		printf("Error type L/[ != %c: memory.aaload\n",array->array_type);
+	if( (TYPE_CLASS != *(array->array_type)) && (TYPE_ARRAY != *(array->array_type)) ) {
+		printf("Error type L/[ != %c: memory.aaload\n",*(array->array_type));
 		exit(0);
 	}
-	if(array->array_type == TYPE_CLASS)
+	if(*(array->array_type) == TYPE_CLASS)
 		array->get_data(index, data, TYPE_CLASS);
-	if(array->array_type == TYPE_ARRAY)
+	if(*(array->array_type) == TYPE_ARRAY)
 		array->get_data(index, data, TYPE_ARRAY);
 }
 
@@ -128,13 +174,13 @@ void Memory::baload(u4 ref, int index, u4 *data) {
 	
 	array = (MemoryData *)ref;
 	test_array("baload", array, index);
-	if( (TYPE_BOOL != array->array_type) && (TYPE_BYTE != array->array_type) ) {
-		printf("Error type B/Z != %c: memory.baload\n",array->array_type);
+	if( (TYPE_BOOL != *(array->array_type)) && (TYPE_BYTE != *(array->array_type)) ) {
+		printf("Error type B/Z != %c: memory.baload\n",*(array->array_type));
 		exit(0);
 	}
-	if(array->array_type == TYPE_BOOL)
+	if(*(array->array_type) == TYPE_BOOL)
 		array->get_data(index, data, TYPE_BOOL);
-	else if(array->array_type == TYPE_BYTE)
+	else if(*(array->array_type) == TYPE_BYTE)
 		array->get_data(index, data, TYPE_BYTE);
 	data[0] &= 0xFF;
 }
@@ -200,13 +246,13 @@ void Memory::aastore(u4 ref, int index, u4 *data) {
 	
 	array = (MemoryData *)ref;
 	test_array("aastore", array, index);
-	if( (TYPE_CLASS != array->array_type) && (TYPE_ARRAY != array->array_type) ) {
-		printf("Error type L/[ != %c: memory.aastore\n",array->array_type);
+	if( (TYPE_CLASS != *(array->array_type)) && (TYPE_ARRAY != *(array->array_type)) ) {
+		printf("Error type L/[ != %c: memory.aastore\n",*(array->array_type));
 		exit(0);
 	}
-	if(array->array_type == TYPE_CLASS)
+	if(*(array->array_type) == TYPE_CLASS)
 		array->put_data(index, data, TYPE_CLASS);
-	if(array->array_type == TYPE_ARRAY)
+	if(*(array->array_type) == TYPE_ARRAY)
 		array->put_data(index, data, TYPE_ARRAY);	
 }
 
@@ -215,14 +261,14 @@ void Memory::bastore(u4 ref, int index, u4 *data) {
 	
 	array = (MemoryData *)ref;
 	test_array("bastore", array, index);
-	if( (TYPE_BOOL != array->array_type) && (TYPE_BYTE != array->array_type) ) {
-		printf("Error type B/Z != %c: memory.bastore\n",array->array_type);
+	if( (TYPE_BOOL != *(array->array_type)) && (TYPE_BYTE != *(array->array_type)) ) {
+		printf("Error type B/Z != %c: memory.bastore\n",*(array->array_type));
 		exit(0);
 	}
 	data[0] &= 0xFF;
-	if(array->array_type == TYPE_BOOL)
+	if(*(array->array_type) == TYPE_BOOL)
 		array->put_data(index, data, TYPE_BOOL);
-	else if(array->array_type == TYPE_BYTE)
+	else if(*(array->array_type) == TYPE_BYTE)
 		array->put_data(index, data, TYPE_BYTE);
 }
 
@@ -271,8 +317,8 @@ void test_array(const char *func, MemoryData *array, int index) {
 	}
 }
 void test_type(const char *func, MemoryData *array, char type) {
-	if(type != array->array_type) {
-		printf("Error type %c != %c: memory.%s\n",type,array->array_type,func);
+	if(type != *(array->array_type)) {
+		printf("Error type %c != %c: memory.%s\n",type,*(array->array_type),func);
 		exit(0);
 	}
 }

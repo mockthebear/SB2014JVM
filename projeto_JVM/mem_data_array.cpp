@@ -89,7 +89,7 @@ u4 MemoryDataArray::arraylength(u4 ref) {
 		exit(0);
 	}
 	length = array->data_count;
-	if(array->array_type == TYPE_ARRAY) {
+	if(*(array->array_type) == TYPE_ARRAY) {
 		length *= arraylength(array->data[ array->data_index[0] ]);
 	}
 	return length;
@@ -126,36 +126,21 @@ MemoryData *MemoryDataArray::new_instance(Class *ref, MemoryData *superInst) {
 	return m;
 }
 
-u4 MemoryDataArray::new_array(int *a_size, char *a_type, Class *ref) {
+u4 MemoryDataArray::new_array(int *a_size, char *a_type) {
 	MemoryData *m ;
 	
-	if(a_type[0] != TYPE_ARRAY) {
-		printf("Error not array type %c: mem_data_array.new_array",a_type[0]);
-		exit(0);
-	}
 	m = new MemoryData;
 	data[size] = m;
 	size++;
 	
 	m->type = TYPE_ARRAY;
-	m->array_type = a_type[1];
-	m->superInst = 0x0;
+	m->array_type = a_type;
 	
 	m->data_index = new int[ a_size[0] ];
 	m->data_count = a_size[0];
 	
 	m->data_length = make_array_index(m);
 	m->data = (u4 *)calloc(m->data_length, sizeof(u4));
-	
-	if(a_type[1] == TYPE_CLASS) {
-		if(ref == NULL) {
-			printf("Error class ref null %s: mem_data_array.new_array\n",a_type);
-			exit(0);
-		}
-		for(u4 i=0; i<m->data_count; i++) {
-			m->data[i] = (u4)new_instance(ref, NULL);
-		}
-	}
 	
 //#define TEST_NEW_ARRAY
 #ifdef TEST_NEW_ARRAY
@@ -166,9 +151,9 @@ u4 MemoryDataArray::new_array(int *a_size, char *a_type, Class *ref) {
 	printf("\n");
 #endif
 
-	if(a_type[1] == TYPE_ARRAY) {
+	if(*(m->array_type) == TYPE_ARRAY) {
 		for(u4 i=0;i<m->data_count; i++) {
-			m->data[i] = new_array(a_size+1, a_type+1, ref);
+			m->data[i] = new_array(a_size+1, a_type+1);
 			
 #ifdef TEST_NEW_ARRAY
 			printf("add get [%d] %08X",i,m->data[i]);
@@ -230,7 +215,7 @@ u4 make_array_index(MemoryData *d) {
 	u4 length = 0;
 	int inc;
 	
-	if( (d->array_type != TYPE_LONG) && (d->array_type != TYPE_DOUBLE) ) {
+	if( (*(d->array_type) != TYPE_LONG) && (*(d->array_type) != TYPE_DOUBLE) ) {
 		inc = 1;
 		length = d->data_count;
 	} else {

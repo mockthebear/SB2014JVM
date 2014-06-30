@@ -61,7 +61,10 @@ char *Class::get_cp_this_class() {
 }
 
 char *Class::get_cp_super_class() {
-	return get_cp_class_name(super_class);
+	if(super_class > 0)
+		return get_cp_class_name(super_class);
+	else
+		return NULL;
 }
 
 char *Class::get_cp_class_name(u2 cp_index) {

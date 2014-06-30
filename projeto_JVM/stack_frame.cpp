@@ -76,7 +76,7 @@ void StackFrame::invokestatic(Class *classRef, int index, char *methodname, char
 	current->setParam(param, param_count, 0);
 }
 
-void StackFrame::invokeinterface(int param_count, char *methodname, char *descriptor) {
+void StackFrame::invokeinterface(char *interfacename, int param_count, char *methodname, char *descriptor) {
 	Operand *param;
 	
 	param = current->popParam(param_count);
@@ -88,13 +88,20 @@ void StackFrame::invokeinterface(int param_count, char *methodname, char *descri
 	while( (index = classRef->get_method_index(methodname, descriptor)) == -1) {
 		instRef = instRef->superInst;
 		if(instRef == NULL) {
-			exception("at StackFrame.invokespecial");
+			exception("at StackFrame.invokeinterface");
 		}
 		classRef = instRef->classref;
 	}
+	if(!classRef->isInterface(interfacename)) {
+		exception("IncompatibleClassChangeError at StackFrame.invokeinterface");
+	}
 	u2 flags = classRef->get_method_flags(index);
-	if(isStatic(flags)) {
-		exception("IncompatibleClassChangeError at StackFrame.invokestatic");
+	
+	if(!isPublic(flags)) {
+		exception("IllegalAccessError at StackFrame.invokeinterface");
+	}
+	if(isAbstract(flags)) {
+		exception("AbstractMethodError at StackFrame.invokeinterface");
 	}
 	
 	pushFrame(classRef, index, methodname, descriptor);

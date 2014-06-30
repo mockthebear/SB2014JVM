@@ -11,10 +11,14 @@ class MemoryData {
 public:
 	u4 type;
 	union {
-		Class *classref;
-		char array_type;
+		struct {
+			Class *classref;
+			MemoryData *superInst;
+		};
+		struct {
+			char *array_type;
+		};
 	};
-	MemoryData *superInst;
 	u4 data_count;
 	int *data_index;
 	u4	data_length;
