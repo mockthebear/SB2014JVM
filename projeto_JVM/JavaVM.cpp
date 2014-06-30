@@ -5,9 +5,14 @@
 
 void loadMain(char *);
 void clinit(Class *);
+
+int checkInterfaces(Class *classS, char *classnameT);
+int checkType(MemoryData *objectref, char *classnameT);
+
 u1 get1byte();
 u2 get2byte();
 u4 get4byte();
+int isPrimitive(char *type);
 void print();
 
 static StackFrame *frames;
@@ -1828,8 +1833,8 @@ void athrow() {
 
 
 int checkcast_check(u2 index);
-int checkInterfaces(Class *classS, char *classnameT) {
-	
+
+int checkInterfaces(Class *classS, char *classnameT) {	
 	if(classS->isInterface(classnameT)) {
 		return 1;
 	} else {
@@ -1849,14 +1854,8 @@ int checkInterfaces(Class *classS, char *classnameT) {
 	}
 }
 
-void checkcast() {
-    printf("checkcast");
-    u2 cp_index = get2byte();
-    printf("  #%d\n",cp_index);
-	
-	MemoryData *objectref = (MemoryData *)frames->current->getOpStackTop(); 
-	char *classnameT = frames->current->get_class_name(cp_index);
-	
+int checkType(MemoryData *objectref, char *classnameT) {
+
 	if(objectref->type == TYPE_CLASS) {
 		/* S eh classe ou interface */
 		Class *classS = objectref->classref;
@@ -1867,7 +1866,10 @@ void checkcast() {
 			if(classnameT[0] != TYPE_ARRAY) {
 				/* T eh classe ou interface */
 				Class *classT = memory->get_classref(classnameT);
-				
+				if(classT == NULL) {
+					classT = memory->new_class(classnameT);
+					clinit(classT);
+				}
 				if(!isInterface(classT->access_flags)) {
 					/* T eh classe */
 					/* Verifica se S igual a T  */
@@ -1876,7 +1878,7 @@ void checkcast() {
 						classnameS = classS->get_cp_super_class();
 						/* Classe Object retorna super_class NULL  */
 						if(classnameS == NULL) {
-							exception("ClassCastException at JavaVM.checkcast");
+							return 0;
 						}
 						classS = memory->get_classref(classnameS);
 						if(classS == NULL) {
@@ -1884,7 +1886,7 @@ void checkcast() {
 							clinit(classS);
 						}
 					}
-					return;
+					return 1;
 				} else {
 					/* T eh interface */
 					/* Verifica se S implementa T */
@@ -1893,7 +1895,7 @@ void checkcast() {
 						classnameS = classS->get_cp_super_class();
 						/* Classe Object nao tem interface  */
 						if( strcmp(classnameS, CLASS_OBJECT) == 0) {
-							exception("ClassCastException at JavaVM.checkcast");
+							return 0;
 						}
 						classS = memory->get_classref(classnameS);
 						if(classS == NULL) {
@@ -1901,7 +1903,7 @@ void checkcast() {
 							clinit(classS);
 						}
 					}
-					return;
+					return 1;
 				}
 			} else {
 				exception("ClassCastException at JavaVM.checkcast");
@@ -1916,26 +1918,125 @@ void checkcast() {
 					/* T eh classe */
 					/* T deve ser classe Object */
 					if( strcmp(classnameT, CLASS_OBJECT) != 0) {
-						exception("ClassCastException at JavaVM.checkcast");
+						return 0;
 					}
-					return;
+					return 1;
 				} else {
 					/* T eh interface */
 					/* Verifica se S igual a T  */
 					if( strcmp(classnameS, classnameT) != 0 ) {
 						/* Senao verifica se T eh superinterface de S  */
 						if(!checkInterfaces(classS, classnameT)) {									
-							exception("ClassCastException at JavaVM.checkcast");
+							return 0;
 						}
 					}
-					return;
+					return 1;
 				}
 			}
 		}
 	} else {
-		
+		/* S eh array */
+		if(*classnameT != TYPE_ARRAY) {
+			/* T eh classe ou interface */
+			if( strcmp(classnameT, CLASS_OBJECT) == 0 ) {
+				/* T eh classe Object */
+				return 1;
+			} else {
+				Class *classT = memory->get_classref(classnameT);
+				if(classT == NULL) {
+					classT = memory->new_class(classnameT);
+					clinit(classT);
+				}
+				/* Verifica se T eh interface */
+				if(!isInterface(classT->access_flags)) {
+					/* T eh classe mas nao eh Object */
+					return 0;
+				} else {
+					/* T eh interface */
+					/* Nesse JVM array nao implementa interface */
+					return 0;
+				}
+			}
+		} else {
+			/* T eh array */
+			if(strcmp(objectref->array_type, classnameT) == 0) {
+				/* S e T sao arrays de mesmo tipo e dimencao */
+				return 1;
+			} else {
+				/* S e T sao arrays de tipo ou dimencao diferente */
+				char *typeS = objectref->array_type;
+				char *typeT = classnameT;
+				
+				while(*typeS == TYPE_ARRAY)
+					typeS++;
+					
+				while(*typeT == TYPE_ARRAY)
+					typeT++;
+				if(typeT[strlen(typeT)] == ';')
+					typeT[strlen(typeT)] = '\0';
+					
+				if(strcmp(typeS, typeT) == 0) {
+					/* S e T sao arrays de mesmo tipo */
+					return 1;
+				}
+				if( (*typeS !=  TYPE_CLASS) && ( isPrimitive(typeT) ) ) {
+					/* S ou T ou os dois sao de tipo primitivos e nao sao iguasis */
+					return 0;
+				}
+				/* S e T sao classes diferentes */
+				Class *classRef = memory->get_classref(typeS);
+				if(classRef == NULL) {
+					classRef = memory->new_class(typeS);
+					clinit(classRef);
+				}
+				char *superName = classRef->get_cp_super_class();
+				
+				while( strcmp(superName, typeT) != 0) {
+					if(strcmp(superName, CLASS_OBJECT) == 0) {
+						/* T nao eh superclasse de S */
+						return 0;
+					}
+					classRef = memory->get_classref(superName);
+					if(classRef == NULL) {
+						classRef = memory->new_class(superName);
+						clinit(classRef);
+					}
+					superName = classRef->get_cp_super_class();
+				}
+				/* T eh superclasse de S */
+				return 1;
+			}
+		}
 	}
 }
+
+void checkcast() {
+    printf("checkcast");
+    u2 cp_index = get2byte();
+    printf("  #%d\n",cp_index);
+	
+	MemoryData *objectref = (MemoryData *)frames->current->getOpStackTop(); 
+	char *classnameT = frames->current->get_class_name(cp_index);
+	
+	u4 result = checkType(objectref, classnameT);
+	
+	if( !result )
+		exception("ClassCastException at JavaVM.checkcast");
+}
+
+void instanceof() {
+    printf("checkcast");
+    u2 cp_index = get2byte();
+    printf("  #%d\n",cp_index);
+	
+	MemoryData *objectref = (MemoryData *)frames->current->popOpStack(); 
+	char *classnameT = frames->current->get_class_name(cp_index);
+	
+	u4 result = checkType(objectref, classnameT);
+	
+	frames->current->pushOpStack(TYPE_INT, result);
+}
+
 /*
 void checkcast() {
     printf("checkcast");
@@ -1948,7 +2049,6 @@ void checkcast() {
     }
 
 }
-*/
 void instanceof() {
     printf("instanceof");
     u2 index = get2byte();
@@ -2038,6 +2138,7 @@ int checkcast_check(u2 index) {
     return 0;
 }
 
+*/
 void monitorenter() {
     printf("monitorenter[Unused]\n");
 }
@@ -2148,6 +2249,21 @@ u4 get4byte() {
 	bytes<<=8;
 	bytes |= frames->current->getCode();
 	return bytes;
+}
+
+int isPrimitive(char *type) {
+	if(strlen(type) > 1)
+		return 0;
+	if(*type == TYPE_INT)
+		return 1;
+	if(*type == TYPE_LONG)
+		return 1;
+	if(*type == TYPE_FLOAT)
+		return 1;
+	if(*type == TYPE_DOUBLE)
+		return 1;
+	
+	return 0;
 }
 
 void print() {
