@@ -4,8 +4,11 @@ public class C3{
 	static int		static_i2;
 	
 	static public void main(String[] ags) {
+		float f;
+		
+		f = 3/0;
 		C3 c = new C3();
-		c.metodo31();
+		c.metodo32();
 	}
 	static int metodo(int i) {
 		static_i2 = i + 2;
@@ -24,11 +27,6 @@ public class C3{
 	}
 	void metodo32() {	
 		C2[] ca = new C2[2];
-		for(int i=0;i<2; i++) {
-			ca[i] = new C2();
-			//for(int j=0;j<3; j++)
-				//ca[i][j] = new C2();
-		}
-		//ca[1][1].metodop();
+		ca[0].metodo0();
 	}
 }

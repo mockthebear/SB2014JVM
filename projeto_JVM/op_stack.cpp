@@ -426,8 +426,7 @@ void OperandStack::idiv() {
 		exit(0);
 	}
 	if(top->bytes == 0x0) {
-		printf("Excecao de divisao por zero\n");
-		exit(0);
+		exception("ArithmeticException: / by zero at OpStack.idiv");
 	}
 	__idiv(top);
 	top--;
@@ -438,6 +437,9 @@ void OperandStack::irem() {
 	if(size < 2) {
 		printf("Error  :op_stack.irem\n");
 		exit(0);
+	}
+	if(top->bytes == 0x0) {
+		exception("ArithmeticException: / by zero at OpStack.irem");
 	}
 	__irem(top);
 	top--;
@@ -508,8 +510,7 @@ void OperandStack::ldiv(){
     }
 
 	if( (opH.bytes == 0x0) && (opL.bytes==0x0) ) {
-		printf("Excecao de divisao por zero\n");
-		exit(0);
+		exception("ArithmeticException: / by zero at OpStack.ldiv");
 	}
 	int64_t resultado = to_long( (top-1)->bytes, (top)->bytes ) / to_long(opH.bytes, opL.bytes);
 	(top-1)->set_high(TYPE_LONG, &resultado);
@@ -532,8 +533,7 @@ void OperandStack::lrem(){
     }
 
 	if( (opH.bytes == 0x0) && (opL.bytes==0x0) ) {
-		printf("Excecao de divisao por zero\n");
-		exit(0);
+		exception("ArithmeticException: / by zero at OpStack.lrem");
 	}
 	int64_t resultado = to_long( (top-1)->bytes, (top)->bytes ) % to_long(opH.bytes, opL.bytes);
 	(top-1)->set_high(TYPE_LONG, &resultado);
@@ -584,8 +584,7 @@ void OperandStack::fdiv(){
 		exit(0);
 	}
 	if(top->bytes == 0x0) {
-		printf("Excecao de divisao por zero\n");
-		exit(0);
+		exception("ArithmeticException: / by zero at OpStack.fdiv");
 	}
 	__fdiv(top);
 	top--;
@@ -598,8 +597,7 @@ void OperandStack::frem(){
 		exit(0);
 	}
 	if(top->bytes == 0x0) {
-		printf("Excecao de divisao por zero\n");
-		exit(0);
+		exception("ArithmeticException: / by zero at OpStack.frem");
 	}
 	__frem(top);
 	top--;
@@ -652,8 +650,7 @@ void OperandStack::ddiv(){
 		exit(0);
 	}
 	if( ( (top-1)->bytes == 0x0 ) && (top->bytes==0x0) ) {
-		printf("Excecao de divisao por zero\n");
-		exit(0);
+		exception("ArithmeticException: / by zero at OpStack.ddiv");
 	}
 	__ddiv(top);
 	top-=2;
@@ -666,8 +663,7 @@ void OperandStack::drem(){
 		exit(0);
 	}
 	if( ( (top-1)->bytes == 0x0 ) && (top->bytes==0x0) ) {
-		printf("Excecao de divisao por zero\n");
-		exit(0);
+		exception("ArithmeticException: / by zero at OpStack.drem");
 	}
 	__opDrem(top);
 	top-=2;

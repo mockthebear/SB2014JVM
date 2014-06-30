@@ -20,7 +20,10 @@ void StackFrame::invokevirtual(Class *classRef, int index, char *methodname, cha
 	param_count = countParam(descriptor);
 	param_count++;
 	param = current->popParam(param_count);
-
+	
+	if(param[0].bytes == 0x0) {
+		exception("NullPointerException at StackFrame.invokevirtual");
+	}
 	u2 flags = classRef->get_method_flags(index);
 	
 	if(isStatic(flags)) {
@@ -41,7 +44,10 @@ void StackFrame::invokespecial(Class *classRef, int index, char *methodname, cha
 	param_count = countParam(descriptor);
 	param_count++;
 	param = current->popParam(param_count);
-
+	
+	if(param[0].bytes == 0x0) {
+		exception("NullPointerException at StackFrame.invokespecial");
+	}
 	u2 flags = classRef->get_method_flags(index);
 	
 	if(isStatic(flags)) {
@@ -64,7 +70,8 @@ void StackFrame::invokestatic(Class *classRef, int index, char *methodname, char
 	
 	param_count = countParam(descriptor);
 	param = current->popParam(param_count);
-
+	
+	
 	u2 flags = classRef->get_method_flags(index);
 	
 	if(!isStatic(flags)) {
@@ -80,6 +87,9 @@ void StackFrame::invokeinterface(char *interfacename, int param_count, char *met
 	Operand *param;
 	
 	param = current->popParam(param_count);
+	if(param[0].bytes == 0x0) {
+		exception("NullPointerException at StackFrame.invokeinterface");
+	}
 	MemoryData *instRef = (MemoryData *)param->bytes;
 	Class *classRef = instRef->classref;
 	

@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "definition.hpp"
+#include "exception.hpp"
 #include "operand.hpp"
 
 class OperandStack {
