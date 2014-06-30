@@ -9,10 +9,10 @@ void clinit(Class *);
 int checkInterfaces(Class *classS, char *classnameT);
 int checkType(MemoryData *objectref, char *classnameT);
 
+int isPrimitive(char *type);
 u1 get1byte();
 u2 get2byte();
 u4 get4byte();
-int isPrimitive(char *type);
 void print();
 
 static StackFrame *frames;
@@ -2225,6 +2225,21 @@ void impdep2() {
 	printf("impdep2\n");
 }
 
+int isPrimitive(char *type) {
+	if(strlen(type) > 1)
+		return 0;
+	if(*type == TYPE_INT)
+		return 1;
+	if(*type == TYPE_LONG)
+		return 1;
+	if(*type == TYPE_FLOAT)
+		return 1;
+	if(*type == TYPE_DOUBLE)
+		return 1;
+	
+	return 0;
+}
+
 u1 get1byte() {
 	return frames->current->getCode();
 }
@@ -2249,21 +2264,6 @@ u4 get4byte() {
 	bytes<<=8;
 	bytes |= frames->current->getCode();
 	return bytes;
-}
-
-int isPrimitive(char *type) {
-	if(strlen(type) > 1)
-		return 0;
-	if(*type == TYPE_INT)
-		return 1;
-	if(*type == TYPE_LONG)
-		return 1;
-	if(*type == TYPE_FLOAT)
-		return 1;
-	if(*type == TYPE_DOUBLE)
-		return 1;
-	
-	return 0;
 }
 
 void print() {
