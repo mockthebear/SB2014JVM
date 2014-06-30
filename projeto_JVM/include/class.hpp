@@ -84,6 +84,9 @@ public:
 	char *get_cp_method_class(u2);
 	char *get_cp_method_name(u2);
 	char *get_cp_method_descriptor(u2);
+	char *get_cp_imethod_class(u2);
+	char *get_cp_imethod_name(u2);
+	char *get_cp_imethod_descriptor(u2);
 	char *get_cp_ref_class(u2);
 	char *get_cp_ref_name(u2);
 	char *get_cp_ref_descriptor(u2);
@@ -105,6 +108,9 @@ public:
 	char *get_method_descriptor(int);
 	Code *get_method_code(int);
 	
+	char *get_interface_name(int);
+	
+	bool isInterface(char *);
 		
 	void print();
 	void print_cp();

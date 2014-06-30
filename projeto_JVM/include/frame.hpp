@@ -214,6 +214,9 @@ public:
 	char *get_method_class(u2 cp_index);
 	char *get_method_name(u2 cp_index);
 	char *get_method_descriptor(u2 cp_index);
+	char *get_imethod_class(u2 cp_index);
+	char *get_imethod_name(u2 cp_index);
+	char *get_imethod_descriptor(u2 cp_index);
 	char *get_string(u2 cp_index);
 	
 	u1 getCode();

@@ -17,7 +17,7 @@ public:
 	
 	Memory(int c_size, int d_size);
 	
-	u4 op_new(Class *ref, u4 superInst);
+	MemoryData *op_new(Class *ref, MemoryData *superInst);
 	
 	void putstatic(Class *ref, int index, char *type, u4 *value);
 	void getstatic(Class *ref, int index, char *type, u4 *value);

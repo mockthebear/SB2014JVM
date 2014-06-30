@@ -29,7 +29,7 @@ void MemoryData::print() {
 	u2 max= data_count;
 	if(type == TYPE_CLASS){
 		printf("%s\n", classref->get_cp_this_class());
-		printf("    super: [%08X]", superInst);
+		printf("    super: [%p]", superInst);
 		max = classref->fields_count;
 	} else {
 		printf("%c", array_type);

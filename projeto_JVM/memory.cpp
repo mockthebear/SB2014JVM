@@ -9,8 +9,8 @@ Memory::Memory(int c_array_size, int m_array_size) {
 	data = new MemoryDataArray(m_array_size);
 }
 
-u4 Memory::op_new(Class *ref, u4 superInst) {
-	u4 instance;
+MemoryData *Memory::op_new(Class *ref, MemoryData *superInst) {
+	MemoryData *instance;
 	
 	instance = data->new_instance(ref, superInst);
 	return instance;

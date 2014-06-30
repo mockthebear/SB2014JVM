@@ -10,6 +10,7 @@
 #include "class.hpp"
 #include "mem_data.hpp"
 #include "operand.hpp"
+#include "access_flag.hpp"
 
 class StackFrame {
 public:
@@ -21,7 +22,8 @@ public:
 	void invokevirtual(Class *ref, int index, char *methodname, char *descriptor);
 	void invokespecial(Class *ref, int index, char *methodname, char *descriptor);
 	void invokestatic(Class *ref, int index, char *methodname, char *descriptor);
-
+	void invokeinterface(int param_count, char *methodname, char *descriptor);
+	
 	void ireturn();
 	void lreturn();
 	void freturn();

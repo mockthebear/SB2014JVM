@@ -799,6 +799,18 @@ char *Frame::get_method_descriptor(u2 cp_index) {
 	return classref->get_cp_method_descriptor(cp_index);
 }
 
+char *Frame::get_imethod_class(u2 cp_index) {
+	return classref->get_cp_imethod_class(cp_index);
+}
+
+char *Frame::get_imethod_name(u2 cp_index) {
+	return classref->get_cp_imethod_name(cp_index);
+}
+
+char *Frame::get_imethod_descriptor(u2 cp_index) {
+	return classref->get_cp_imethod_descriptor(cp_index);
+}
+
 char *Frame::get_string(u2 cp_index) {
 	return classref->get_cp_utf8(cp_index);
 }

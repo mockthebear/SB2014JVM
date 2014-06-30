@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
 
-	char name[] = "SwitchDemo";
+	char name[] = "AImpl";
 	loadMain(name);
 
 
@@ -1482,6 +1482,7 @@ void getstatic() {
 	char *fieldType = frames->current->get_field_type(cp_index);
 	
 	if( (strcmp(fieldName, "out") == 0) && (strcmp(fieldType, "Ljava/io/PrintStream;") == 0)) {
+		printf("get out:java/io/PrintStream\n");
 		return;
 	}
 	Class *classRef = memory->get_classref(className);
@@ -1705,12 +1706,64 @@ void invokestatic() {
 	}
 	frames->invokestatic(classRef, index, methodName, descriptor);
 }
-void invokeinterface() {}
+void invokeinterface() {
+	printf("invokeinterface");
+	
+	u2 cp_index = get2byte();
+	u1 paramCount = get1byte();
+	u1 zero = get1byte();
+	
+	printf("  %d\n",cp_index);
+
+	char *intName  = frames->current->get_imethod_class(cp_index);
+	char *methodName = frames->current->get_imethod_name(cp_index);
+	char *descriptor = frames->current->get_imethod_descriptor(cp_index);
+
+	Class *intRef = memory->get_classref(intName);
+	if(intRef == NULL) {
+		intRef = memory->new_class(intName);
+		clinit(intRef);
+	}
+	if(!isInterface(intRef->access_flags)) {
+		exception("NotInterface at JavaVM.invokeinterface");
+	}
+	int index;
+	
+	for(int i=0; (i < intRef->interfaces_count) &&
+				 ( ( index = intRef->get_method_index(methodName, descriptor) ) == -1 ); i++ ) {
+		char *superIntName = intRef->get_interface_name(i);
+		intRef = memory->get_classref(superIntName);
+		if(intRef == NULL) {
+			intRef = memory->new_class(superIntName);
+			clinit(intRef);
+		}
+	}
+	if(index == -1) {
+		exception("NoSuchMethodError at JavaVM.invokeinterface");
+	}
+	
+	frames->invokeinterface(paramCount, methodName, descriptor);
+	/*
+	Class *classRef
+	while( (classRef->get_method_index(methodName, descriptor)) == -1 ) {
+		char *superName = classRef->get_cp_super_class();
+		if(strcmp(superName, CLASS_OBJECT) == 0) {
+			exception("NoSuchMethodError at JavaVM.invokeinterface");
+		}
+		classRef = memory->get_classref(superName);
+		if(classRef == NULL) {
+			classRef = memory->new_class(superName);
+			clinit(classRef);
+		}
+	}
+	*/
+}
+
 void invokedynamic() {
     printf("invokedynamic[Unused]\n");
 }
 
-u4 op_new_superInstance(char *supername, u4 superInst) {
+MemoryData *op_new_superInstance(char *supername, MemoryData *superInst) {
 	if(strcmp(supername, CLASS_OBJECT) == 0) {
 		return superInst;
 	} else {
@@ -1740,9 +1793,9 @@ void op_new() {
 		clinit(classRef);
 	}
 	char *supername = classRef->get_cp_super_class();
-	u4 superInst = op_new_superInstance(supername, 0x0);
+	MemoryData *superInst = op_new_superInstance(supername, NULL);
 
-	u4 instRef = memory->op_new(classRef, superInst);
+	u4 instRef = (u4)memory->op_new(classRef, superInst);
 	frames->current->pushOpStack(TYPE_REF, instRef);
 }
 

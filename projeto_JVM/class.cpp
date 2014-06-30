@@ -96,7 +96,22 @@ char *Class::get_cp_method_name(u2 cp_index) {
 }
 
 char *Class::get_cp_method_descriptor(u2 cp_index) {
-	test_cp("get_cp_field_descriptor", TAG_METHOD, cp_index, this);
+	test_cp("get_cp_method_descriptor", TAG_METHOD, cp_index, this);
+	return get_cp_ref_descriptor(cp_index);
+}
+
+char *Class::get_cp_imethod_class(u2 cp_index) {
+	test_cp("get_cp_imethod_class", TAG_IMETHOD, cp_index, this);
+	return get_cp_ref_class(cp_index);
+}
+
+char *Class::get_cp_imethod_name(u2 cp_index) {
+	test_cp("get_cp_imethod_name", TAG_IMETHOD, cp_index, this);
+	return get_cp_ref_name(cp_index);
+}
+
+char *Class::get_cp_imethod_descriptor(u2 cp_index) {
+	test_cp("get_cp_imethod_descriptor", TAG_IMETHOD, cp_index, this);
 	return get_cp_ref_descriptor(cp_index);
 }
 
@@ -165,8 +180,8 @@ int Class::get_method_index(char *name, char *descriptor) {
 	int index = -1;
 	
 	for(int i=0; i<methods_count; i++) {
-		if( (strcmp((char *)name, (char *)get_method_name(i)) == 0) &&
-			(strcmp((char *)descriptor, (char *)get_method_descriptor(i)) == 0) )
+		if( (strcmp(name, get_method_name(i)) == 0) &&
+			(strcmp(descriptor, get_method_descriptor(i)) == 0) )
 		{
 			index = i;
 			break;
@@ -229,11 +244,32 @@ char *Class::get_method_descriptor(int index) {
 
 Code *Class::get_method_code(int index) {
 	Attribute a = methods[index].attributes[0];
-	if( strcmp( (char *)get_cp_utf8(a.name_index), "Code" ) != 0 ) {
+	if( strcmp( get_cp_utf8(a.name_index), "Code" ) != 0 ) {
 		printf("Error attribute[0] not code: class.get_method_code");
 		exit(0);
 	}
 	return a.code;
+}
+
+char *Class::get_interface_name(int index) {
+	if(index>0 || index<interfaces_count) {
+		printf("Error index value: class.get_interface_name");
+		exit(0);
+	}
+	u2  cp_index = interfaces[index];
+	return get_cp_class_name(cp_index);
+}
+
+bool Class::isInterface(char *interface) {
+	bool result = false;
+	for(int i=0; i<interfaces_count; i++) {
+		if(strcmp( interface, get_interface_name(i) ) == 0) {
+			result = true;
+			break;
+		}
+	}
+	
+	return result;
 }
 
 /* Print */

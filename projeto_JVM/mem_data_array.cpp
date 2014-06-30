@@ -25,7 +25,7 @@ void MemoryDataArray::putfield(u4 ref, char *classname, char *fieldname, char *t
 		if(strcmp(classname, CLASS_OBJECT) == 0 ) {			
 			exception("NoSuchFieldError at MemoryDataArray.putfield");
 		}
-		ref = instance->superInst;
+		ref = (u4)instance->superInst;
 		putfield(ref, classname, fieldname, type, value);
 		return;
 	}
@@ -64,7 +64,7 @@ void MemoryDataArray::getfield(u4 ref, char *classname, char *fieldname, char *t
 		if(strcmp(classname, CLASS_OBJECT) == 0 ) {			
 			exception("NoSuchFieldError at MemoryDataArray.getfield");
 		}
-		ref = instance->superInst;
+		ref = (u4)instance->superInst;
 		getfield(ref, classname, fieldname, type, value);
 		return;
 	}
@@ -95,7 +95,7 @@ u4 MemoryDataArray::arraylength(u4 ref) {
 	return length;
 }
 
-u4 MemoryDataArray::new_instance(Class *ref, u4 superInst) {
+MemoryData *MemoryDataArray::new_instance(Class *ref, MemoryData *superInst) {
 	MemoryData *m;
 	
 	if( ref->magic != 0xCAFEBABE )  {
@@ -123,7 +123,7 @@ u4 MemoryDataArray::new_instance(Class *ref, u4 superInst) {
 	printf("instance addr %p\n", m);
 #endif
 
-	return (u4)m;
+	return m;
 }
 
 u4 MemoryDataArray::new_array(int *a_size, char *a_type, Class *ref) {
@@ -153,7 +153,7 @@ u4 MemoryDataArray::new_array(int *a_size, char *a_type, Class *ref) {
 			exit(0);
 		}
 		for(u4 i=0; i<m->data_count; i++) {
-			m->data[i] = new_instance(ref, 0x0);
+			m->data[i] = (u4)new_instance(ref, NULL);
 		}
 	}
 	
