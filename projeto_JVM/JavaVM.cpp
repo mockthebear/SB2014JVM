@@ -23,11 +23,13 @@ int main(int argc, char **argv) {
 
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
-
-	char name[] = "C3";
-	loadMain(name);
-
-
+	
+	if(argc < 2) {
+		printf("Nenhum arquivo passado.\n");
+		return 0;
+	}
+	
+	loadMain(argv[1]);
 
 	while(frames->isEmpty()) {
 		u1 code = frames->current->getCode();
