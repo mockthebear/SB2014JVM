@@ -21,7 +21,7 @@ void StackFrame::invokeprintln(char *descriptor) {
 			printf("%lld", current->popLong());
 		} else if(*descriptor == TYPE_DOUBLE) {
 			printf("%.4lf", current->popDouble());
-		} else if(strstr(descriptor, "(java/lang/String;") == 0 ) {
+		} else if(strstr(descriptor, "Ljava/lang/String;") == descriptor ) {
 			u2 cp_index = (u2)current->popOpStack();
 			char *string = current->get_string(cp_index);
 			printf("%s", string);
