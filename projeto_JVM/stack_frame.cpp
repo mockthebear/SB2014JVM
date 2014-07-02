@@ -15,6 +15,18 @@ void StackFrame::invokeprintln(char *descriptor) {
 	while(*descriptor != ')') {
 		if (*descriptor == TYPE_INT) {
 			printf("%d", current->popInt());
+		} else if(*descriptor == TYPE_CHAR) {
+			printf("%c", (char)current->popInt());
+		} else if(*descriptor == TYPE_BYTE) {
+			printf("%d", (u1)current->popInt());
+		} else if(*descriptor == TYPE_BOOL) {
+			u1 b = (u1)current->popInt();
+			if(b)
+				printf("true");
+			else
+				printf("false");
+		} else if(*descriptor == TYPE_SHORT) {
+			printf("%d", (short)current->popInt());
 		} else if(*descriptor == TYPE_FLOAT) {
 			printf("%.4f", current->popFloat());
 		} else if(*descriptor == TYPE_LONG) {
@@ -314,7 +326,15 @@ int countParam(char *descriptor) {
 
 	descriptor++;
 	while(*descriptor != ')') {
-		if(*descriptor == TYPE_CLASS) {
+		if(*descriptor == TYPE_ARRAY) {
+			count++;
+			descriptor++;
+			if(*descriptor == TYPE_CLASS) {
+				while(*descriptor != ';') {
+					descriptor++;
+				}
+			}
+		} else if(*descriptor == TYPE_CLASS) {
 			count++;
 			while(*descriptor != ';') {
 				descriptor++;

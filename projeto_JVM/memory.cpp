@@ -65,10 +65,15 @@ u4 Memory::newarray(int size, u1 a_type) {
 	u4 array;
 	char *type = new char[2];
 
-	if( (a_type == A_BOOL) || (a_type == A_CHAR) ||
-		(a_type == A_BYTE) || (a_type == A_SHORT) ||
-		(a_type == A_INT) ) {
-		
+	if(a_type == A_BOOL) {
+		*type = TYPE_BOOL;
+	} else if(a_type == A_CHAR) {
+		*type = TYPE_CHAR;
+	} else if(a_type == A_BYTE) {
+		*type = TYPE_BYTE;
+	} else if(a_type == A_SHORT) {
+		*type = TYPE_SHORT;
+	} else if(a_type == A_INT) {
 		*type = TYPE_INT;
 	} else if(a_type == A_LONG) {
 		*type = TYPE_LONG;
@@ -175,10 +180,12 @@ void Memory::baload(u4 ref, int index, u4 *data) {
 	
 	array = (MemoryData *)ref;
 	test_array("baload", array, index);
+	
 	if( (TYPE_BOOL != *(array->array_type)) && (TYPE_BYTE != *(array->array_type)) ) {
 		printf("Error type B/Z != %c: memory.baload\n",*(array->array_type));
 		exit(0);
 	}
+	//test_type("baload", array, TYPE_INT);
 	if(*(array->array_type) == TYPE_BOOL)
 		array->get_data(index, data, TYPE_BOOL);
 	else if(*(array->array_type) == TYPE_BYTE)
