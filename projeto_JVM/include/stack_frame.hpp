@@ -18,7 +18,9 @@ public:
 	int size;
 	Frame *current;
 	Frame *stack;
-
+	
+	void invokeprintln(char *descriptor);
+	
 	void invokevirtual(Class *ref, int index, char *methodname, char *descriptor);
 	void invokespecial(Class *ref, int index, char *methodname, char *descriptor);
 	void invokestatic(Class *ref, int index, char *methodname, char *descriptor);

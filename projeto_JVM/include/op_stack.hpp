@@ -136,6 +136,11 @@ public:
 	Operand pop();
 	Operand *pop_param(int);
 
+	int32_t pop_i();
+	int64_t pop_l();
+	float pop_f();
+	double pop_d();
+	
 	void print();
 };
 

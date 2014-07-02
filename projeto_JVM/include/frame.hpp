@@ -230,6 +230,11 @@ public:
 	u4 popOpStack();
 	u4 getOpStackTop();
 	void clear();
+	
+	int32_t popInt();
+	int64_t popLong();
+	float popFloat();
+	double popDouble();
 
 	void print();
 };

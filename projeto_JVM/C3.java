@@ -4,11 +4,8 @@ public class C3{
 	static int		static_i2;
 	
 	static public void main(String[] ags) {
-		float f;
-		
-		f = 3/0;
 		C3 c = new C3();
-		c.metodo32();
+		c.metodo33();
 	}
 	static int metodo(int i) {
 		static_i2 = i + 2;
@@ -28,5 +25,18 @@ public class C3{
 	void metodo32() {	
 		C2[] ca = new C2[2];
 		ca[0].metodo0();
+	}
+	void metodo33() {	
+		int[] array = new int[10];
+		for(int i=0;i<10; i++) {
+			array[i] = i*2;
+		}
+		metodo34(array);
+	}
+	void metodo34(int[] array) {
+		for(int i=0;i<10; i++) {
+			System.out.println("X");
+			System.out.println(array[i]);
+		}
 	}
 }

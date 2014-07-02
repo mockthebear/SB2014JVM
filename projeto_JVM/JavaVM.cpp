@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
 	
 	if(argc < 2) {
-		printf("Nenhum arquivo passado.\n");
+		//printf("Nenhum arquivo passado.\n");
 		return 0;
 	}
 	
@@ -34,30 +34,30 @@ int main(int argc, char **argv) {
 	while(frames->isEmpty()) {
 		u1 code = frames->current->getCode();
 		if (op[code] == NULL){
-			printf("[Error] Opcode [%X] Is nullptr: pc: %d\n",code,frames->current->getPC()-1);
+			//printf("[Error] Opcode [%X] Is nullptr: pc: %d\n",code,frames->current->getPC()-1);
 			return 0;
 		}else{
-            printf("%d: [%X] ",frames->current->getPC()-1,code);
+            ////printf("%d: [%X] ",frames->current->getPC()-1,code);
             op[code]();
-            print();
+            //print();
 		}
-		printf("ENTER para proseguir...\n");
-		getchar();
+		////printf("ENTER para proseguir...\n");
+		//getchar();
 	}
 
 	return 0;
 }
 
 void loadMain(char *classname) {
-	printf("load main\n");
+	//printf("load main\n");
 	Class *classRef;
 	classRef = memory->new_class(classname);
 
 	frames->pushMain(classRef);
 
 	print();
-	printf("Method main carregado!\n");
-	printf("iniciando JavaVM\n\n");
+	//printf("Method main carregado!\n");
+	//printf("iniciando JavaVM\n\n");
 	
 	clinit(classRef);
 }
@@ -70,161 +70,161 @@ void clinit(Class *classRef) {
 		while(code != returnCode) {
 			code = frames->current->getCode();
 			if (op[code] == NULL){
-				printf("[Error] Opcode [%X] Is nullptr: pc: %d\n",code,frames->current->getPC()-1);
+				//printf("[Error] Opcode [%X] Is nullptr: pc: %d\n",code,frames->current->getPC()-1);
 				exit(0);
 			} else {
-				printf("%d: [%X] ",frames->current->getPC()-1,code);
+				//printf("%d: [%X] ",frames->current->getPC()-1,code);
 				op[code]();
 				print();
 			}
-			printf("ENTER para proseguir...\n");
+			//printf("ENTER para proseguir...\n");
 			getchar();
 		}
-		printf("Inicializacao terminada\n");
+		//printf("Inicializacao terminada\n");
 	}
 }
 
 void nop() {
-	printf("nop\n");
+	//printf("nop\n");
 }
 
 void aconst_null() {
-	printf("aconst_null\n");
+	//printf("aconst_null\n");
 
 	frames->current->aconst_null();
 }
 
 void iconst_m1() {
-	printf("iconst_m1\n");
+	//printf("iconst_m1\n");
 
 	frames->current->iconst_m1();
 }
 
 void iconst_0() {
-	printf("iconst_0\n");
+	//printf("iconst_0\n");
 
 	frames->current->iconst_0();
 }
 
 void iconst_1() {
-	printf("iconst_1\n");
+	//printf("iconst_1\n");
 
 	frames->current->iconst_1();
 }
 
 void iconst_2() {
-	printf("iconst_2\n");
+	//printf("iconst_2\n");
 
 	frames->current->iconst_2();
 }
 
 void iconst_3() {
-	printf("iconst_3\n");
+	//printf("iconst_3\n");
 
 	frames->current->iconst_3();
 }
 
 void iconst_4() {
-	printf("iconst_4\n");
+	//printf("iconst_4\n");
 
 	frames->current->iconst_4();
 }
 
 void iconst_5() {
-	printf("iconst_5\n");
+	//printf("iconst_5\n");
 
 	frames->current->iconst_5();
 }
 
 void lconst_0() {
-	printf("lconst_0\n");
+	//printf("lconst_0\n");
 
 	frames->current->lconst_0();
 }
 
 void lconst_1() {
-	printf("lconst_1\n");
+	//printf("lconst_1\n");
 
 	frames->current->lconst_1();
 }
 
 void fconst_0() {
-	printf("fconst_0\n");
+	//printf("fconst_0\n");
 
 	frames->current->fconst_0();
 }
 
 void fconst_1() {
-	printf("fconst_1\n");
+	//printf("fconst_1\n");
 
 	frames->current->fconst_1();
 }
 
 void fconst_2() {
-	printf("fconst_2\n");
+	//printf("fconst_2\n");
 
 	frames->current->fconst_2();
 }
 
 void dconst_0() {
-	printf("dconst_0\n");
+	//printf("dconst_0\n");
 
 	frames->current->dconst_0();
 }
 
 void dconst_1() {
-	printf("dconst_1\n");
+	//printf("dconst_1\n");
 
 	frames->current->dconst_1();
 }
 
 void bipush() {
-	printf("bipush");
+	//printf("bipush");
 
 	u1 byte = get1byte();
-	printf(" %d\n",byte);
+	//printf(" %d\n",byte);
 
 	frames->current->bipush(byte);
 }
 
 void sipush() {
-	printf("sipush");
+	//printf("sipush");
 
 	u2 bytes = get2byte();
-	printf(" %d\n",bytes);
+	//printf(" %d\n",bytes);
 
 	frames->current->sipush(bytes);
 }
 
 void ldc() {
-	printf("ldc");
+	//printf("ldc");
 
 	u2 cp_index = get1byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	frames->current->ldc(cp_index);
 }
 
 void ldc_w() {
-	printf("ldc_w");
+	//printf("ldc_w");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	frames->current->ldc_w(cp_index);
 }
 
 void ldc2_w() {
-	printf("ldc2_w");
+	//printf("ldc2_w");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	frames->current->ldc2_w(cp_index);
 }
 
 void iload() {
-	printf("iload");
+	//printf("iload");
 
 	u2 index;
 	if (frames->current->wideFlag){
@@ -233,13 +233,13 @@ void iload() {
 	}else{
         index = get1byte();
 	}
-	printf(" %d\n",index);
+	//printf(" %d\n",index);
 
 	frames->current->iload(index);
 }
 
 void lload() {
-	printf("lload");
+	//printf("lload");
     u2 index;
 	if (frames->current->wideFlag){
         frames->current->wideFlag = false;
@@ -247,13 +247,13 @@ void lload() {
 	}else{
         index = get1byte();
 	}
-	printf(" %d\n",index);
+	//printf(" %d\n",index);
 
 	frames->current->lload(index);
 }
 
 void fload() {
-	printf("fload\n");
+	//printf("fload\n");
     u2 index;
 	if (frames->current->wideFlag){
         frames->current->wideFlag = false;
@@ -266,7 +266,7 @@ void fload() {
 }
 
 void dload() {
-	printf("dload\n");
+	//printf("dload\n");
     u2 index;
 	if (frames->current->wideFlag){
         frames->current->wideFlag = false;
@@ -279,7 +279,7 @@ void dload() {
 }
 
 void aload() {
-	printf("aload\n");
+	//printf("aload\n");
     u2 index;
 	if (frames->current->wideFlag){
         frames->current->wideFlag = false;
@@ -292,128 +292,128 @@ void aload() {
 }
 
 void iload_0() {
-	printf("iload_0\n");
+	//printf("iload_0\n");
 
 	frames->current->iload_0();
 }
 
 void iload_1() {
-	printf("iload_1\n");
+	//printf("iload_1\n");
 
 	frames->current->iload_1();
 }
 
 void iload_2() {
-	printf("iload_2\n");
+	//printf("iload_2\n");
 
 	frames->current->iload_2();
 }
 
 void iload_3() {
-	printf("iload_3\n");
+	//printf("iload_3\n");
 
 	frames->current->iload_3();
 }
 
 void lload_0() {
-	printf("lload_0\n");
+	//printf("lload_0\n");
 
 	frames->current->lload_0();
 }
 
 void lload_1() {
-	printf("lload_1\n");
+	//printf("lload_1\n");
 
 	frames->current->lload_1();
 }
 
 void lload_2() {
-	printf("lload_2\n");
+	//printf("lload_2\n");
 
 	frames->current->lload_2();
 }
 
 void lload_3() {
-	printf("lload_3\n");
+	//printf("lload_3\n");
 
 	frames->current->lload_3();
 }
 
 
 void fload_0() {
-	printf("fload_0\n");
+	//printf("fload_0\n");
 
 	frames->current->fload_0();
 }
 
 void fload_1() {
-	printf("fload_1\n");
+	//printf("fload_1\n");
 
 	frames->current->fload_1();
 }
 
 void fload_2() {
-	printf("fload_2\n");
+	//printf("fload_2\n");
 
 	frames->current->fload_2();
 }
 
 void fload_3() {
-	printf("fload_3\n");
+	//printf("fload_3\n");
 
 	frames->current->fload_3();
 }
 
 void dload_0() {
-	printf("dload_0\n");
+	//printf("dload_0\n");
 
 	frames->current->dload_0();
 }
 
 void dload_1() {
-	printf("dload_1\n");
+	//printf("dload_1\n");
 
 	frames->current->dload_1();
 }
 
 void dload_2() {
-	printf("dload_2\n");
+	//printf("dload_2\n");
 
 	frames->current->dload_2();
 }
 
 void dload_3() {
-	printf("dload_3\n");
+	//printf("dload_3\n");
 
 	frames->current->dload_3();
 }
 
 void aload_0() {
-	printf("aload_0\n");
+	//printf("aload_0\n");
 
 	frames->current->aload_0();
 }
 
 void aload_1() {
-	printf("aload_1\n");
+	//printf("aload_1\n");
 
 	frames->current->aload_1();
 }
 
 void aload_2() {
-	printf("aload_2\n");
+	//printf("aload_2\n");
 
 	frames->current->aload_2();
 }
 
 void aload_3() {
-	printf("aload_3\n");
+	//printf("aload_3\n");
 
 	frames->current->aload_3();
 }
 
 void iaload() {
-	printf("iaload\n");
+	//printf("iaload\n");
 
 	u4 index = frames->current->popOpStack();
 	u4 arrayRef = frames->current->popOpStack();
@@ -424,7 +424,7 @@ void iaload() {
 }
 
 void laload() {
-	printf("laload\n");
+	//printf("laload\n");
 
 	u4 index = frames->current->popOpStack();
 	u4 arrayRef = frames->current->popOpStack();
@@ -436,7 +436,7 @@ void laload() {
 }
 
 void faload() {
-	printf("faload\n");
+	//printf("faload\n");
 
 	u4 index = frames->current->popOpStack();
 	u4 arrayRef = frames->current->popOpStack();
@@ -447,7 +447,7 @@ void faload() {
 }
 
 void daload() {
-	printf("daload\n");
+	//printf("daload\n");
 
 	u4 index = frames->current->popOpStack();
 	u4 arrayRef = frames->current->popOpStack();
@@ -459,7 +459,7 @@ void daload() {
 }
 
 void aaload() {
-	printf("aaload\n");
+	//printf("aaload\n");
 
 	u4 index = frames->current->popOpStack();
 	u4 arrayRef = frames->current->popOpStack();
@@ -470,7 +470,7 @@ void aaload() {
 }
 
 void baload() {
-	printf("baload\n");
+	//printf("baload\n");
 
 	u4 index = frames->current->popOpStack();
 	u4 arrayRef = frames->current->popOpStack();
@@ -481,7 +481,7 @@ void baload() {
 }
 
 void caload() {
-	printf("caload\n");
+	//printf("caload\n");
 
 	u4 index = frames->current->popOpStack();
 	u4 arrayRef = frames->current->popOpStack();
@@ -492,7 +492,7 @@ void caload() {
 }
 
 void saload() {
-	printf("saload\n");
+	//printf("saload\n");
 
 	u4 index = frames->current->popOpStack();
 	u4 arrayRef = frames->current->popOpStack();
@@ -503,7 +503,7 @@ void saload() {
 }
 
 void istore() {
-	printf("istore");
+	//printf("istore");
 
 	u2 index;
 	if (frames->current->wideFlag){
@@ -512,13 +512,13 @@ void istore() {
 	}else{
         index = get1byte();
 	}
-	printf("  %d\n",index);
+	//printf("  %d\n",index);
 	
 	frames->current->istore(index);
 }
 
 void lstore() {
-	printf("lstore");
+	//printf("lstore");
 
 	u2 index;
 	if (frames->current->wideFlag){
@@ -527,13 +527,13 @@ void lstore() {
 	}else{
         index = get1byte();
 	}
-	printf("  %d\n",index);
+	//printf("  %d\n",index);
 
 	frames->current->lstore(index);
 }
 
 void fstore() {
-	printf("fstore");
+	//printf("fstore");
 
 	u2 index;
 	if (frames->current->wideFlag){
@@ -542,13 +542,13 @@ void fstore() {
 	}else{
         index = get1byte();
 	}
-	printf("  %d\n",index);
+	//printf("  %d\n",index);
 
 	frames->current->fstore(index);
 }
 
 void dstore() {
-	printf("dstore");
+	//printf("dstore");
 
 	u2 index;
 	if (frames->current->wideFlag){
@@ -557,13 +557,13 @@ void dstore() {
 	}else{
         index = get1byte();
 	}
-	printf("  %d\n",index);
+	//printf("  %d\n",index);
 
 	frames->current->dstore(index);
 }
 
 void astore() {
-	printf("astore ");
+	//printf("astore ");
 
 	u2 index;
 	if (frames->current->wideFlag){
@@ -572,110 +572,110 @@ void astore() {
 	}else{
         index = get1byte();
 	}
-	printf("  %d\n",index);
+	//printf("  %d\n",index);
 
 	frames->current->astore(index);
 }
 
 void istore_0() {
-	printf("istore_0\n");
+	//printf("istore_0\n");
 
 	frames->current->istore_0();
 }
 
 void istore_1() {
-	printf("istore_1\n");
+	//printf("istore_1\n");
 
 	frames->current->istore_1();
 }
 
 void istore_2() {
-	printf("istore_2\n");
+	//printf("istore_2\n");
 
 	frames->current->istore_2();
 }
 
 void istore_3() {
-	printf("istore_3\n");
+	//printf("istore_3\n");
 
 	frames->current->istore_3();
 }
 
 void lstore_0() {
-	printf("lstore_0\n");
+	//printf("lstore_0\n");
 
 	frames->current->lstore_0();
 }
 
 void lstore_1() {
-	printf("lstore_1\n");
+	//printf("lstore_1\n");
 
 	frames->current->lstore_1();
 }
 
 void lstore_2() {
-	printf("lstore_2\n");
+	//printf("lstore_2\n");
 
 	frames->current->lstore_2();
 }
 
 void lstore_3() {
-	printf("lstore_3\n");
+	//printf("lstore_3\n");
 
 	frames->current->lstore_3();
 }
 
 
 void fstore_0() {
-	printf("fstore_0\n");
+	//printf("fstore_0\n");
 
 	frames->current->fstore_0();
 }
 
 void fstore_1() {
-	printf("fstore_1\n");
+	//printf("fstore_1\n");
 
 	frames->current->fstore_1();
 }
 
 void fstore_2() {
-	printf("fstore_2\n");
+	//printf("fstore_2\n");
 
 	frames->current->fstore_2();
 }
 
 void fstore_3() {
-	printf("fstore_3\n");
+	//printf("fstore_3\n");
 
 	frames->current->fstore_3();
 }
 
 void dstore_0() {
-	printf("dstore_0\n");
+	//printf("dstore_0\n");
 
 	frames->current->dstore_0();
 }
 
 void dstore_1() {
-	printf("dstore_1\n");
+	//printf("dstore_1\n");
 
 	frames->current->dstore_1();
 }
 
 void dstore_2() {
-	printf("dstore_2\n");
+	//printf("dstore_2\n");
 
 	frames->current->dstore_2();
 }
 
 void dstore_3() {
-	printf("dstore_3\n");
+	//printf("dstore_3\n");
 
 	frames->current->dstore_3();
 }
 
 void astore_0() {
-	printf("astore_0\n");
+	//printf("astore_0\n");
 
 	frames->current->astore_0();
 
@@ -683,25 +683,25 @@ void astore_0() {
 }
 
 void astore_1() {
-	printf("astore_1\n");
+	//printf("astore_1\n");
 
 	frames->current->astore_1();
 }
 
 void astore_2() {
-	printf("astore_2\n");
+	//printf("astore_2\n");
 
 	frames->current->astore_2();
 }
 
 void astore_3() {
-	printf("astore_3\n");
+	//printf("astore_3\n");
 
 	frames->current->astore_3();
 }
 
 void iastore() {
-	printf("iastore\n");
+	//printf("iastore\n");
 
 	u4 value = frames->current->popOpStack();
 	u4 index = frames->current->popOpStack();
@@ -711,7 +711,7 @@ void iastore() {
 }
 
 void lastore() {
-	printf("lastore\n");
+	//printf("lastore\n");
 
 	u4 value[2];
 	value[1]= frames->current->popOpStack();
@@ -723,7 +723,7 @@ void lastore() {
 }
 
 void fastore() {
-	printf("fastore\n");
+	//printf("fastore\n");
 
 	u4 value = frames->current->popOpStack();
 	u4 index = frames->current->popOpStack();
@@ -733,7 +733,7 @@ void fastore() {
 }
 
 void dastore() {
-	printf("dastore\n");
+	//printf("dastore\n");
 
 	u4 value[2];
 	value[1]= frames->current->popOpStack();
@@ -745,7 +745,7 @@ void dastore() {
 }
 
 void aastore() {
-	printf("aastore\n");
+	//printf("aastore\n");
 
 	u4 value = frames->current->popOpStack();
 	u4 index = frames->current->popOpStack();
@@ -755,7 +755,7 @@ void aastore() {
 }
 
 void bastore() {
-	printf("bastore\n");
+	//printf("bastore\n");
 
 	u4 value = frames->current->popOpStack();
 	u4 index = frames->current->popOpStack();
@@ -765,7 +765,7 @@ void bastore() {
 }
 
 void castore() {
-	printf("castore\n");
+	//printf("castore\n");
 
 	u4 value = frames->current->popOpStack();
 	u4 index = frames->current->popOpStack();
@@ -775,7 +775,7 @@ void castore() {
 }
 
 void sastore() {
-	printf("sastore\n");
+	//printf("sastore\n");
 
 	u4 value = frames->current->popOpStack();
 	u4 index = frames->current->popOpStack();
@@ -785,266 +785,266 @@ void sastore() {
 }
 
 void pop() {
-	printf("pop\n");
+	//printf("pop\n");
 
 	frames->current->pop();
 }
 
 void pop2() {
-	printf("pop2\n");
+	//printf("pop2\n");
 
 	frames->current->pop2();
 }
 
 void dup() {
-	printf("dup\n");
+	//printf("dup\n");
 
 	frames->current->dup();
 }
 
 void dup_x1() {
-    printf("dup_x1\n");
+    //printf("dup_x1\n");
 	
 	frames->current->dup_x1();
 }
 
 void dup_x2() {
-    printf("dup_x2\n");
+    //printf("dup_x2\n");
 	
 	frames->current->dup_x2();
 }
 
 void dup2() {
-    printf("dup2\n");
+    //printf("dup2\n");
 	
 	frames->current->dup2();
 }
 
 void dup2_x1() {
-    printf("dup2_x1\n");
+    //printf("dup2_x1\n");
 	
 	frames->current->dup2_x1();
 }
 
 void dup2_x2() {
-    printf("dup2_x2\n");
+    //printf("dup2_x2\n");
 	
 	frames->current->dup2_x2();
 }
 
 void swap() {
-	printf("swap\n");
+	//printf("swap\n");
 
 	frames->current->swap();
 
 }
 
 void iadd() {
-	printf("iadd\n");
+	//printf("iadd\n");
 
 	frames->current->iadd();
 }
 
 void ladd() {
-	printf("ladd\n");
+	//printf("ladd\n");
 
 	frames->current->ladd();
 }
 
 
 void fadd() {
-	printf("fadd\n");
+	//printf("fadd\n");
 
 	frames->current->fadd();
 }
 
 void dadd() {
-	printf("dadd\n");
+	//printf("dadd\n");
 
 	frames->current->dadd();
 }
 
 void isub() {
-	printf("isub\n");
+	//printf("isub\n");
 
 	frames->current->isub();
 }
 
 void lsub() {
-	printf("lsub\n");
+	//printf("lsub\n");
 
 	frames->current->lsub();
 }
 
 void fsub() {
-	printf("fsub\n");
+	//printf("fsub\n");
 
 	frames->current->fsub();
 }
 
 void dsub() {
-	printf("dsub\n");
+	//printf("dsub\n");
 
 	frames->current->dsub();
 }
 
 void imul() {
-	printf("imul\n");
+	//printf("imul\n");
 
 	frames->current->imul();
 }
 
 void lmul() {
-	printf("lmul\n");
+	//printf("lmul\n");
 
 	frames->current->lmul();
 }
 
 void fmul() {
-	printf("fmul\n");
+	//printf("fmul\n");
 
 	frames->current->fmul();
 }
 
 void dmul() {
-	printf("dmul\n");
+	//printf("dmul\n");
 
 	frames->current->dmul();
 }
 
 void idiv() {
-	printf("idiv\n");
+	//printf("idiv\n");
 
 	frames->current->idiv();
 }
 
 void ldiv() {
-	printf("ldiv\n");
+	//printf("ldiv\n");
 
 	frames->current->ldiv();
 }
 
 void fdiv() {
-	printf("fdiv\n");
+	//printf("fdiv\n");
 
 	frames->current->fdiv();
 }
 
 void ddiv() {
-	printf("ddiv\n");
+	//printf("ddiv\n");
 
 	frames->current->ddiv();
 }
 
 void irem() {
-	printf("irem\n");
+	//printf("irem\n");
 
 	frames->current->irem();
 }
 
 void lrem() {
-	printf("lrem\n");
+	//printf("lrem\n");
 
 	frames->current->lrem();
 }
 
 void frem() {
-	printf("frem\n");
+	//printf("frem\n");
 
 	frames->current->frem();
 }
 
 void drem() {
-	printf("drem\n");
+	//printf("drem\n");
 
 	frames->current->drem();
 }
 
 void ineg() {
-	printf("ineg\n");
+	//printf("ineg\n");
 
 	frames->current->ineg();
 }
 
 void lneg() {
-	printf("lneg\n");
+	//printf("lneg\n");
 
 	frames->current->lneg();
 }
 
 void fneg() {
-	printf("fneg\n");
+	//printf("fneg\n");
 
 	frames->current->fneg();
 }
 
 void dneg() {
-	printf("dneg\n");
+	//printf("dneg\n");
 
 	frames->current->dneg();
 }
 
 void ishl() {
-    printf("ishl\n");
+    //printf("ishl\n");
 	frames->current->ishl();
 }
 
 void lshl() {
-    printf("lshl\n");
+    //printf("lshl\n");
 	frames->current->lshl();
 }
 
 void ishr(){
-    printf("ishr\n");
+    //printf("ishr\n");
 	frames->current->ishr();
 }
 
 void lshr() {
-    printf("lshr\n");
+    //printf("lshr\n");
 	frames->current->lshr();
 }
 
 void iushr() {
-    printf("iushr\n");
+    //printf("iushr\n");
 	frames->current->iushr();
 }
 
 void lushr() {
-    printf("lushr\n");
+    //printf("lushr\n");
 	frames->current->lushr();
 }
 
 void iand() {
-    printf("iand\n");
+    //printf("iand\n");
 	frames->current->iand();
 }
 
 void land(){
-	printf("land\n");
+	//printf("land\n");
 	frames->current->land();
 }
 
 void ior() {
-    printf("ior\n");
+    //printf("ior\n");
 	frames->current->ior();
 }
 
 void lor() {
-	printf("lor\n");
+	//printf("lor\n");
 	frames->current->lor();
 }
 void ixor() {
-    printf("ixor\n");
+    //printf("ixor\n");
 	frames->current->ixor();
 }
 
 void lxor() {
-	printf("lxor\n");
+	//printf("lxor\n");
 	frames->current->lxor();
 }
 
 void iinc() {
-	printf("iinc");
+	//printf("iinc");
     u2 index;
 	if (frames->current->wideFlag){
         frames->current->wideFlag = false;
@@ -1052,113 +1052,113 @@ void iinc() {
 	}else{
         index = get1byte();
 	}
-	printf("  %d\n",index);
+	//printf("  %d\n",index);
 	u1 value = get1byte();
 
 	frames->current->iinc(index, value);
 }
 
 void i2l() {
-    printf("i2l\n");
+    //printf("i2l\n");
 	frames->current->i2l();
 }
 
 void i2f() {
-    printf("i2f\n");
+    //printf("i2f\n");
 	frames->current->i2f();
 }
 
 void i2d() {
-    printf("i2d\n");
+    //printf("i2d\n");
 	frames->current->i2d();
 }
 
 void l2i() {
-    printf("l2i\n");
+    //printf("l2i\n");
 	frames->current->l2i();
 }
 
 void l2f() {
-    printf("l2f\n");
+    //printf("l2f\n");
 	frames->current->l2f();
 }
 
 void l2d() {
-    printf("l2d\n");
+    //printf("l2d\n");
 	frames->current->l2d();
 }
 
 void f2i() {
-    printf("f2i\n");
+    //printf("f2i\n");
 	frames->current->f2i();
 }
 void f2l() {
-    printf("f2l\n");
+    //printf("f2l\n");
 	frames->current->f2l();
 }
 
 void f2d() {
-    printf("f2d\n");
+    //printf("f2d\n");
 	frames->current->f2d();
 }
 
 void d2i() {
-        printf("d2i\n");
+        //printf("d2i\n");
 	frames->current->d2i();
 }
 
 void d2l() {
-    printf("d2l\n");
+    //printf("d2l\n");
 	frames->current->d2l();
 }
 
 void d2f() {
-    printf("d2f\n");
+    //printf("d2f\n");
 	frames->current->d2f();
 }
 
 void i2b() {
-    printf("i2b\n");
+    //printf("i2b\n");
 	frames->current->i2b();
 }
 
 void i2c() {
-    printf("i2c\n");
+    //printf("i2c\n");
 	frames->current->i2c();
 }
 
 void i2s() {
-    printf("i2s\n");
+    //printf("i2s\n");
 	frames->current->i2s();
 }
 
 void lcmp() {
-    printf("lcmp\n");
+    //printf("lcmp\n");
 	frames->current->lcmp();
 }
 
 void fcmpl() {
-    printf("lcmp\n");
+    //printf("lcmp\n");
 	frames->current->fcmpl();
 }
 
 void fcmpg() {
-    printf("fcmpg\n");
+    //printf("fcmpg\n");
 	frames->current->fcmpg();
 }
 
 void dcmpl() {
-    printf("dcmpl\n");
+    //printf("dcmpl\n");
 	frames->current->dcmpl();
 }
 
 void dcmpg() {
-    printf("dcmpg\n");
+    //printf("dcmpg\n");
 	frames->current->dcmpg();
 }
 
 void ifeq() {
-	printf("ifeq\n");
+	//printf("ifeq\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1169,7 +1169,7 @@ void ifeq() {
 }
 
 void ifne() {
-	printf("ifne\n");
+	//printf("ifne\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1180,7 +1180,7 @@ void ifne() {
 }
 
 void iflt() {
-	printf("iflt\n");
+	//printf("iflt\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1191,7 +1191,7 @@ void iflt() {
 }
 
 void ifge() {
-	printf("ifge\n");
+	//printf("ifge\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1202,7 +1202,7 @@ void ifge() {
 }
 
 void ifgt() {
-	printf("ifgt\n");
+	//printf("ifgt\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1213,7 +1213,7 @@ void ifgt() {
 }
 
 void ifle() {
-	printf("ifle\n");
+	//printf("ifle\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1224,7 +1224,7 @@ void ifle() {
 }
 
 void if_icmpeq() {
-	printf("if_icmpeq\n");
+	//printf("if_icmpeq\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1235,7 +1235,7 @@ void if_icmpeq() {
 }
 
 void if_icmpne() {
-	printf("if_icmpne\n");
+	//printf("if_icmpne\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1246,7 +1246,7 @@ void if_icmpne() {
 }
 
 void if_icmplt() {
-	printf("if_icmplt\n");
+	//printf("if_icmplt\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1257,7 +1257,7 @@ void if_icmplt() {
 }
 
 void if_icmpge() {
-	printf("if_icmpge\n");
+	//printf("if_icmpge\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1268,7 +1268,7 @@ void if_icmpge() {
 }
 
 void if_icmpgt() {
-	printf("if_icmpgt\n");
+	//printf("if_icmpgt\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1279,7 +1279,7 @@ void if_icmpgt() {
 }
 
 void if_icmple() {
-	printf("if_icmple\n");
+	//printf("if_icmple\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1290,7 +1290,7 @@ void if_icmple() {
 }
 
 void if_acmpeq() {
-	printf("if_acmpeq\n");
+	//printf("if_acmpeq\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1301,7 +1301,7 @@ void if_acmpeq() {
 }
 
 void if_acmpne() {
-	printf("if_acmpne\n");
+	//printf("if_acmpne\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1312,7 +1312,7 @@ void if_acmpne() {
 }
 
 void op_goto() {
-	printf("op_goto\n");
+	//printf("op_goto\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1324,7 +1324,7 @@ void op_goto() {
 }
 
 void jsr() {
-    printf("jsr\n");
+    //printf("jsr\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -1335,7 +1335,7 @@ void jsr() {
 
 }
 void ret() {
-    printf("ret\n");
+    //printf("ret\n");
     u2 index;
     if (frames->current->wideFlag){
         frames->current->wideFlag = false;
@@ -1352,7 +1352,7 @@ void ret() {
 }
 void tableswitch()
 {
-	printf("tableswitch\n");
+	//printf("tableswitch\n");
 	u4 index 	= frames->current->popOpStack(),
 		pc    	= frames->current->getPC()-1 ,
 		i 	= 0,
@@ -1394,7 +1394,7 @@ void tableswitch()
 
 void lookupswitch()
 {
-	printf("lookupswitch\n");
+	//printf("lookupswitch\n");
 
 	int32_t 	key = frames->current->popOpStack(),
 			_default,
@@ -1409,15 +1409,15 @@ void lookupswitch()
 	if (padding != 0)
 		padding = 4 - padding;
 
-   // printf("Pc: %d\n",pc);
+   // //printf("Pc: %d\n",pc);
 
 	for (i = 1; i < padding; i++)
 		get1byte();
 	_default = get4byte();
-	//printf("Default: %d\n",_default);
+	////printf("Default: %d\n",_default);
 
 	npairs   = get4byte();
-	//printf("npairs: %d\n",npairs);
+	////printf("npairs: %d\n",npairs);
 
 	if (npairs >= 0)
 	{
@@ -1428,7 +1428,7 @@ void lookupswitch()
 			get4byte();
 
 
-			//printf("Vet[%d] = %d \n",i,vet[i-1]);
+			////printf("Vet[%d] = %d \n",i,vet[i-1]);
 			if (vet[i-1] == key)
 				tmp = pc + key;
 		}
@@ -1437,59 +1437,59 @@ void lookupswitch()
 		else
 			pc = pc + tmp;
 		frames->current->setPC(pc);
-		//printf("Final pc: %d\n",pc);
+		////printf("Final pc: %d\n",pc);
 		delete[] vet;
 	}
 }
 
 void ireturn() {
-	printf("ireturn\n");
+	//printf("ireturn\n");
 
 	frames->ireturn();
 }
 
 void lreturn() {
-	printf("lreturn\n");
+	//printf("lreturn\n");
 
 	frames->lreturn();
 }
 
 void freturn() {
-	printf("freturn\n");
+	//printf("freturn\n");
 
 	frames->freturn();
 }
 
 void dreturn() {
-	printf("dreturn\n");
+	//printf("dreturn\n");
 
 	frames->dreturn();
 }
 
 void areturn() {
-	printf("areturn\n");
+	//printf("areturn\n");
 
 	frames->areturn();
 }
 
 void op_return() {
-	printf("return\n");
+	//printf("return\n");
 
 	frames->op_return();
 }
 
 void getstatic() {
-	printf("getstatic");
+	//printf("getstatic");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
 	char *fieldType = frames->current->get_field_type(cp_index);
 	
 	if( (strcmp(fieldName, "out") == 0) && (strcmp(fieldType, "Ljava/io/PrintStream;") == 0)) {
-		printf("get out:java/io/PrintStream\n");
+		//printf("get out:java/io/PrintStream\n");
 		return;
 	}
 	Class *classRef = memory->get_classref(className);
@@ -1527,10 +1527,10 @@ void getstatic() {
 }
 
 void putstatic() {
-	printf("putstatic");
+	//printf("putstatic");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -1571,10 +1571,10 @@ void putstatic() {
 }
 
 void getfield() {
-	printf("getfield");
+	//printf("getfield");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -1593,10 +1593,10 @@ void getfield() {
 }
 
 void putfield() {
-	printf("putfield");
+	//printf("putfield");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *className = frames->current->get_field_class(cp_index);
 	char *fieldName = frames->current->get_field_name(cp_index);
@@ -1615,19 +1615,18 @@ void putfield() {
 }
 
 void invokevirtual() {
-	printf("invokevirtual");
+	//printf("invokevirtual");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
 	char *descriptor = frames->current->get_method_descriptor(cp_index);
 	
-	if( (strcmp(methodName, "println") == 0) || (strcmp(descriptor, "(Ljava/lang/String;)V") == 0) ) {
-		cp_index = (u2)frames->current->popOpStack();
-		char *string = frames->current->get_string(cp_index);
-		printf("println:\n%s\n\n", string);
+	if( (strcmp(methodName, "println") == 0) && (strcmp(className, "java/io/PrintStream") == 0) ) {
+		frames->invokeprintln(descriptor);
+		
 		return;
 	}
 	
@@ -1653,10 +1652,10 @@ void invokevirtual() {
 }
 
 void invokespecial() {
-	printf("invokespecial");
+	//printf("invokespecial");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -1684,10 +1683,10 @@ void invokespecial() {
 }
 
 void invokestatic() {
-	printf("invokestatic");
+	//printf("invokestatic");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
@@ -1715,13 +1714,13 @@ void invokestatic() {
 }
 
 void invokeinterface() {
-	printf("invokeinterface");
+	//printf("invokeinterface");
 	
 	u2 cp_index = get2byte();
 	u1 paramCount = get1byte();
 	u1 zero = get1byte();
 	
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *interfaceName  = frames->current->get_imethod_class(cp_index);
 	char *methodName = frames->current->get_imethod_name(cp_index);
@@ -1754,15 +1753,15 @@ void invokeinterface() {
 }
 
 void invokedynamic() {
-    printf("invokedynamic[Unused]\n");
+    //printf("invokedynamic[Unused]\n");
 }
 
 
 void op_new() {
-	printf("new");
+	//printf("new");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *classname = frames->current->get_class_name(cp_index);
 
@@ -1787,10 +1786,10 @@ void op_new() {
 }
 
 void newarray() {
-	printf("newarray");
+	//printf("newarray");
 
 	u1 atype = get1byte();
-	printf("  %d\n",atype);
+	//printf("  %d\n",atype);
 
 	u4 count = frames->current->popOpStack();
 	u4 arrayRef;
@@ -1800,10 +1799,10 @@ void newarray() {
 }
 
 void anewarray() {
-	printf("anewarray");
+	//printf("anewarray");
 
 	u2 cp_index = get2byte();
-	printf("  #%d\n",cp_index);
+	//printf("  #%d\n",cp_index);
 
 	char *classname = frames->current->get_class_name(cp_index);
 
@@ -1822,13 +1821,13 @@ void anewarray() {
 }
 
 void arraylength() {
-    printf("arraylength\n");
+    //printf("arraylength\n");
     u4 ref = frames->current->popOpStack();
     u4 ret = memory->arraylength(ref);
     frames->current->pushOpStack(TYPE_INT,ret);
 }
 void athrow() {
-	printf("athrow\n");
+	//printf("athrow\n");
 	
 	frames->athrow();
 }
@@ -2013,9 +2012,9 @@ int checkType(MemoryData *objectref, char *classnameT) {
 }
 
 void checkcast() {
-    printf("checkcast");
+    //printf("checkcast");
     u2 cp_index = get2byte();
-    printf("  #%d\n",cp_index);
+    //printf("  #%d\n",cp_index);
 	
 	MemoryData *objectref = (MemoryData *)frames->current->getOpStackTop(); 
 	char *classnameT = frames->current->get_class_name(cp_index);
@@ -2027,9 +2026,9 @@ void checkcast() {
 }
 
 void instanceof() {
-    printf("checkcast");
+    //printf("checkcast");
     u2 cp_index = get2byte();
-    printf("  #%d\n",cp_index);
+    //printf("  #%d\n",cp_index);
 	
 	MemoryData *objectref = (MemoryData *)frames->current->popOpStack(); 
 	char *classnameT = frames->current->get_class_name(cp_index);
@@ -2041,20 +2040,20 @@ void instanceof() {
 
 /*
 void checkcast() {
-    printf("checkcast");
+    //printf("checkcast");
     u2 index = get2byte();
-    printf("  %d\n",index);
+    //printf("  %d\n",index);
     int ret = checkcast_check(index);
     if (ret == 0){
-        printf("Error on cast!\n");
+        //printf("Error on cast!\n");
         exit(0);
     }
 
 }
 void instanceof() {
-    printf("instanceof");
+    //printf("instanceof");
     u2 index = get2byte();
-    printf("  %d\n",index);
+    //printf("  %d\n",index);
     int ret = checkcast_check(index);
     frames->current->pushOpStack(TYPE_INT,ret);
 }
@@ -2133,7 +2132,7 @@ int checkcast_check(u2 index) {
             }
 
         }else{
-            printf("[Error] fame.checkcast -> index %d is not method or class\n",op.bytes);
+            //printf("[Error] fame.checkcast -> index %d is not method or class\n",op.bytes);
             exit(0);
         }
     }
@@ -2142,22 +2141,22 @@ int checkcast_check(u2 index) {
 
 */
 void monitorenter() {
-    printf("monitorenter[Unused]\n");
+    //printf("monitorenter[Unused]\n");
 }
 void monitorexit() {
-    printf("monitorexit[Unused]\n");
+    //printf("monitorexit[Unused]\n");
 }
 void wide() {
-    printf("wide\n");
+    //printf("wide\n");
     frames->current->wideFlag = true;
 }
 
 void multianewarray() {
-	printf("multianewarray");
+	//printf("multianewarray");
 
 	u2 cp_index = get2byte();
 	int dim = get1byte();
-	printf("  #%d %d\n",cp_index,dim);
+	//printf("  #%d %d\n",cp_index,dim);
 
 	char *arrayType = frames->current->get_class_name(cp_index);
 	int32_t *count = new int32_t[dim];
@@ -2172,7 +2171,7 @@ void multianewarray() {
 }
 
 void ifnull() {
-	printf("ifnull\n");
+	//printf("ifnull\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -2183,7 +2182,7 @@ void ifnull() {
 }
 
 void ifnonnull() {
-	printf("ifnonnull\n");
+	//printf("ifnonnull\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -2194,7 +2193,7 @@ void ifnonnull() {
 }
 
 void goto_w() {
-	printf("goto_w\n");
+	//printf("goto_w\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -2205,7 +2204,7 @@ void goto_w() {
 }
 
 void jsr_w() {
-    printf("jsr\n");
+    //printf("jsr\n");
 
 	int16_t pc = frames->current->getPC()-1;
 
@@ -2216,15 +2215,15 @@ void jsr_w() {
 }
 
 void breakpoint() {
-	printf("breakpoint\n");
+	//printf("breakpoint\n");
 }
 
 void impdep() {
-	printf("impdep\n");
+	//printf("impdep\n");
 }
 
 void impdep2() {
-	printf("impdep2\n");
+	//printf("impdep2\n");
 }
 
 int isPrimitive(char *type) {
@@ -2270,7 +2269,7 @@ u4 get4byte() {
 
 void print() {
 	frames->print();
-	printf("\n");
+	//printf("\n");
 	memory->print();
-	printf("\n");
+	//printf("\n");
 }

@@ -959,20 +959,6 @@ void OperandStack::print() {
 	printf("\n");
 }
 
-int64_t to_long(u4 high, u4 low) {
-	int64_t l = 0L;
-
-	__to_value64(&l, high, low);
-	return l;
-}
-
-double to_double(u4 high, u4 low) {
-	double d = 0.0;
-
-	__to_value64(&d, high, low);
-	return d;
-}
-
 void OperandStack::dup_x1(){
     Operand op1, op2;
     op1 = pop();
@@ -1389,4 +1375,40 @@ void OperandStack::lxor(){
 
     push(opH);
     push(opL);
+}
+
+int32_t OperandStack::pop_i() {
+	Operand op = pop();
+	return op.to_int();
+}
+
+int64_t OperandStack::pop_l() {
+	Operand opL = pop();
+	Operand opH = pop();
+	return to_long(opH.bytes, opL.bytes);
+}
+
+float OperandStack::pop_f() {
+	Operand op = pop();
+	return op.to_float();
+}
+
+double OperandStack::pop_d() {
+	Operand opL = pop();
+	Operand opH = pop();
+	return to_double(opH.bytes, opL.bytes);
+}
+
+int64_t to_long(u4 high, u4 low) {
+	int64_t l = 0L;
+
+	__to_value64(&l, high, low);
+	return l;
+}
+
+double to_double(u4 high, u4 low) {
+	double d = 0.0;
+
+	__to_value64(&d, high, low);
+	return d;
 }

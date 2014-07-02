@@ -63,7 +63,7 @@ void Memory::getfield(u4 ref, char *classname, char *fieldname, char *type, u4 *
 u4 Memory::newarray(int size, u1 a_type) {
 	enum {A_BOOL = 4, A_CHAR, A_FLOAT, A_DOUBLE, A_BYTE, A_SHORT, A_INT, A_LONG};
 	u4 array;
-	char *type = new char;
+	char *type = new char[2];
 
 	if( (a_type == A_BOOL) || (a_type == A_CHAR) ||
 		(a_type == A_BYTE) || (a_type == A_SHORT) ||
@@ -77,6 +77,7 @@ u4 Memory::newarray(int size, u1 a_type) {
 	} else if(a_type == A_DOUBLE) {
 		*type = TYPE_DOUBLE;
 	}
+	type[1] = '\0';
 	array = data->new_array(&size, type);
 	return array;
 }

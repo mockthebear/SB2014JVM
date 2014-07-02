@@ -10,11 +10,35 @@ StackFrame::StackFrame(int m) {
 	current = &stack[0];
 }
 
+void StackFrame::invokeprintln(char *descriptor) {
+	descriptor++;
+	while(*descriptor != ')') {
+		if (*descriptor == TYPE_INT) {
+			printf("%d", current->popInt());
+		} else if(*descriptor == TYPE_FLOAT) {
+			printf("%.4f", current->popFloat());
+		} else if(*descriptor == TYPE_LONG) {
+			printf("%lld", current->popLong());
+		} else if(*descriptor == TYPE_DOUBLE) {
+			printf("%.4lf", current->popDouble());
+		} else if(strstr(descriptor, "(java/lang/String;") == 0 ) {
+			u2 cp_index = (u2)current->popOpStack();
+			char *string = current->get_string(cp_index);
+			printf("%s", string);
+			while(*descriptor != ';')
+				descriptor++;
+		}
+		descriptor++;
+	}
+	printf("\n");
+	return;	
+}
+
 void StackFrame::invokevirtual(Class *classRef, int index, char *methodname, char *descriptor) {
 	if(classRef == NULL) {
 		exception("NullPointerException at StackFrame.invokevirtual");
 	}
-	int param_count;
+	int param_count;	
 	Operand *param;
 	
 	param_count = countParam(descriptor);
@@ -298,7 +322,7 @@ int countParam(char *descriptor) {
 		} else if( (*descriptor == TYPE_LONG) ||
 				   (*descriptor == TYPE_DOUBLE) ) {
 			count += 2;
-		} else {
+		} else if (*descriptor != TYPE_ARRAY) {
 			count++;
 		}
 		descriptor++;

@@ -867,6 +867,22 @@ void Frame::clear() {
 	opStack->clear();
 }
 
+int32_t Frame::popInt() {
+	return opStack->pop_i();
+}
+
+int64_t Frame::popLong() {
+	return opStack->pop_l();
+}
+
+float Frame::popFloat() {
+	return opStack->pop_f();
+}
+
+double Frame::popDouble() {
+	return opStack->pop_d();
+}
+
 void Frame::print() {
 	printf(">>Current frame\n");
 	printf("  method: %s.", classref->get_cp_this_class());
