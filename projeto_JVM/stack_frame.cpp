@@ -18,7 +18,7 @@ void StackFrame::invokeprintln(char *descriptor) {
 		} else if(*descriptor == TYPE_CHAR) {
 			printf("%c", (char)current->popInt());
 		} else if(*descriptor == TYPE_BYTE) {
-			printf("%d", (u1)current->popInt());
+			printf("%d", (int8_t)current->popInt() );
 		} else if(*descriptor == TYPE_BOOL) {
 			u1 b = (u1)current->popInt();
 			if(b)
@@ -33,10 +33,14 @@ void StackFrame::invokeprintln(char *descriptor) {
 			printf("%lld", current->popLong());
 		} else if(*descriptor == TYPE_DOUBLE) {
 			printf("%.4lf", current->popDouble());
-		} else if(strstr(descriptor, "Ljava/lang/String;") == descriptor ) {
+		}  else if(strstr(descriptor, "Ljava/lang/String;") == descriptor ) {
 			u2 cp_index = (u2)current->popOpStack();
 			char *string = current->get_string(cp_index);
 			printf("%s", string);
+			while(*descriptor != ';')
+				descriptor++;
+		} else if( *descriptor == TYPE_CLASS ) {
+			printf("%08X", current->popOpStack());
 			while(*descriptor != ';')
 				descriptor++;
 		}

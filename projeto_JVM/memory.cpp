@@ -190,7 +190,9 @@ void Memory::baload(u4 ref, int index, u4 *data) {
 		array->get_data(index, data, TYPE_BOOL);
 	else if(*(array->array_type) == TYPE_BYTE)
 		array->get_data(index, data, TYPE_BYTE);
-	data[0] &= 0xFF;
+	
+	if(data[0] & 0x80)
+		data[0] |= 0xFFFFFF00;
 }
 
 void Memory::caload(u4 ref, int index, u4 *data) {
@@ -210,7 +212,9 @@ void Memory::saload(u4 ref, int index, u4 *data) {
 	test_array("saload", array, index);
 	test_type("saload", array, TYPE_SHORT);
 	array->get_data(index, data, TYPE_SHORT);
-	data[0] &= 0xFFFF;
+	
+	if(data[0] & 0x8000)
+		data[0] |= 0xFFFF0000;
 }
 
 void Memory::iastore(u4 ref, int index, u4 *data) {

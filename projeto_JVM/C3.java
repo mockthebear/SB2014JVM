@@ -27,13 +27,13 @@ public class C3{
 		ca[0].metodo0();
 	}
 	void metodo33() {	
-		double[] array = new double[10];
+		C1[] array = new C1[10];
 		for(int i=0;i<10; i++) {
-			array[i] = 22.03D;
+			array[i] = new C1();
 		}
 		metodo34(array);
 	}
-	void metodo34(double[] array) {
+	void metodo34(C1[] array) {
 		for(int i=0;i<10; i++) {
 			System.out.println("X");
 			System.out.println(array[i]);

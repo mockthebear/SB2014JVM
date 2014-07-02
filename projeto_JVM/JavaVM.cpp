@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 		}else{
             printf("%d: [%X] ",frames->current->getPC()-1,code);
             op[code]();
-           // print();
+			print();
 		}
 		//printf("ENTER para proseguir...\n");
 		//getchar();
@@ -77,10 +77,10 @@ void clinit(Class *classRef) {
 				op[code]();
 				print();
 			}
-			printf("ENTER para proseguir...\n");
-			getchar();
+			//printf("ENTER para proseguir...\n");
+			//getchar();
 		}
-		printf("Inicializacao terminada\n");
+		//printf("Inicializacao terminada\n");
 	}
 }
 
