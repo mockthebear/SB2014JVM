@@ -237,6 +237,7 @@ public:
 	double popDouble();
 
 	void print();
+	void printCode();
 };
 
 

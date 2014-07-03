@@ -893,6 +893,10 @@ void Frame::print() {
 	varArray->print();
 }
 
+void Frame::printCode() {
+	printf("%d: [%X] ",pc-1,code->code[pc-1]);
+}
+
 void Frame::setPC(int pc)
 {
 	this->pc = pc;

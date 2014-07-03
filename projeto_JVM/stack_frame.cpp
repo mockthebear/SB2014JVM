@@ -293,7 +293,6 @@ int StackFrame::pushClinit(Class *classRef) {
 	if(!clinitFlag) {
 		return 0;
 	}
-	printf("\nNova classe carregada. Inicializando classe\n");
 	
 	char *descriptor = classRef->get_method_descriptor(index);
 	char *methodname = classRef->get_method_name(index);
