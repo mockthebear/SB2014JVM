@@ -100,7 +100,7 @@ void clinit(Class *classRef) {
 		
 	if ( frames->pushClinit(classRef) ) {
 		if(printEnable)
-			printf("\nNova classe carregada. Inicializando classe\n");
+			printf("\nInicializando nova classe carregada.\n");
 		while(code != returnCode) {
 			code = frames->current->getCode();
 			if (op[code] == NULL){

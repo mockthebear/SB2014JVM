@@ -34,8 +34,7 @@ void StackFrame::invokeprintln(char *descriptor) {
 		} else if(*descriptor == TYPE_DOUBLE) {
 			printf("%.4lf", current->popDouble());
 		}  else if(strstr(descriptor, "Ljava/lang/String;") == descriptor ) {
-			u2 cp_index = (u2)current->popOpStack();
-			char *string = current->get_string(cp_index);
+			char *string = (char *)current->popOpStack();
 			printf("%s", string);
 			while(*descriptor != ';')
 				descriptor++;

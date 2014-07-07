@@ -26,6 +26,7 @@ void Frame::ldc(u2 cp_index) {
 	u4 byte = classref->get_cp_bytes(cp_index);
 	Operand op;
 	if(tag == TAG_STRING) {
+		byte = (u4)get_string(byte);
         op.set_byte( TYPE_REF , byte);
 	} else if(tag == TAG_INTEGER) {
 		op.set_byte(TYPE_INT, byte);
