@@ -235,7 +235,7 @@ public:
 	int64_t popLong();
 	float popFloat();
 	double popDouble();
-	char popChar();
+	u2 popChar();
 	int8_t popByte();
 	int16_t popShort();
 

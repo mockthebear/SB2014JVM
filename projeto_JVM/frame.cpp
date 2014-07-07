@@ -884,8 +884,8 @@ double Frame::popDouble() {
 	return opStack->pop_d();
 }
 
-char Frame::popChar() {
-	return (char)opStack->pop_i();
+u2 Frame::popChar() {
+	return (u2)opStack->pop_i();
 }
 
 int8_t Frame::popByte() {

@@ -731,7 +731,10 @@ void OperandStack::i2b() {
 		printf("Error  :op_stack.i2b\n");
 		exit(0);
 	}
-	top->bytes &= 0xFF;
+	if(top->bytes&0x80)
+		top->bytes |= 0xFFFFFF00;
+	else
+		top->bytes &= 0xFF;
 }
 
 void OperandStack::i2c() {
@@ -739,7 +742,7 @@ void OperandStack::i2c() {
 		printf("Error  :op_stack.i2c\n");
 		exit(0);
 	}
-	top->bytes &= 0xFF;
+	top->bytes &= 0xFFFF;
 }
 
 void OperandStack::i2s() {
@@ -747,7 +750,10 @@ void OperandStack::i2s() {
 		printf("Error  :op_stack.i2s\n");
 		exit(0);
 	}
-	top->bytes &= 0xFFFF;
+	if(top->bytes&0x8000)
+		top->bytes |= 0xFFFF0000;
+	else
+		top->bytes &= 0xFFFF;
 }
 
 void OperandStack::l2i(){
@@ -758,7 +764,7 @@ void OperandStack::l2i(){
         exit(0);
     }
 
-    pop();
+    (void)pop();
 
     opL.type = TYPE_INT;
     push(opL);
@@ -772,12 +778,12 @@ void OperandStack::l2f(){
         printf("Error type not long: :op_stack.l2f\n");
         exit(0);
     }
+	int64_t l = to_long(opH.bytes, opL.bytes);
+    float f = (float) l;
 
-    float l2f = (float)((int64_t)to_long(opH.bytes, opL.bytes));
-
-    opL.type = TYPE_FLOAT;
-    opL.bytes = (u4)l2f;
-    push(opL);
+	Operand op;
+    op.set_value(TYPE_FLOAT, &f);
+    push(op);
 }
 
 void OperandStack::l2d(){
@@ -788,70 +794,67 @@ void OperandStack::l2d(){
         printf("Error type not long: :op_stack.l2d\n");
         exit(0);
     }
+	int64_t l = to_long(opH.bytes, opL.bytes);
+    double d = (double) l;
 
-    double l2d = (double)((int64_t)to_long(opH.bytes, opL.bytes));
-
-    opL.type = TYPE_DOUBLE;
-    opL.bytes = (u4)l2d;
-
-    opH.type = TYPE_DOUBLE;
-    opH.bytes = (u4)((uint64_t)l2d>>32);
+    opH.set_high(TYPE_DOUBLE, &d);
+    opL.set_low(TYPE_DOUBLE, &d);
 
     push(opH);
     push(opL);
 }
 
 void OperandStack::f2i(){
-    Operand op1 = pop();
+    Operand op = pop();
 
-    if(op1.type != TYPE_FLOAT) {
+    if(op.type != TYPE_FLOAT) {
         printf("Error type not float: :op_stack.f2i\n");
         exit(0);
     }
-
-    op1.type = TYPE_INT;
-    op1.bytes = (u4)((int32_t)op1.bytes);
-
-    push(op1);
+	float f = op.to_float();
+	int32_t i = (int32_t) f;
+    
+	op.set_value(TYPE_INT, &i);
+	
+    push(op);
 }
 
 void OperandStack::f2l(){
-    Operand opL = pop();
-    Operand opH;
+    Operand op = pop();
 
-    if(opL.type != TYPE_FLOAT) {
+    if(op.type != TYPE_FLOAT) {
         printf("Error type not float: :op_stack.f2l\n");
         exit(0);
     }
-
-    int64_t f2l = (int64_t)((float)opL.bytes);
-
-    opL.type = TYPE_LONG;
-    opL.bytes = (u4)f2l;
-
-    opH.type = TYPE_LONG;
-    opH.bytes = (u4)((uint64_t)f2l>>32);
+	float f = op.to_float();
+	int64_t l = (int64_t) f;
+	
+    Operand opH;
+	Operand opL;
+	
+    opH.set_high(TYPE_LONG, &l);
+    opL.set_low(TYPE_LONG, &l);
 
     push(opH);
     push(opL);
 }
 
 void OperandStack::f2d(){
-    Operand opL = pop();
-    Operand opH;
+    Operand op = pop();
 
-    if(opL.type != TYPE_FLOAT) {
+    if(op.type != TYPE_FLOAT) {
         printf("Error type not float: :op_stack.f2d\n");
         exit(0);
     }
+	float f = op.to_float();
+	double d = (double) f;
 
-    double f2d = (double)((float)opL.bytes);
 
-    opL.type = TYPE_DOUBLE;
-    opL.bytes = (u4)f2d;
-
-    opH.type = TYPE_DOUBLE;
-    opH.bytes = (u4)((uint64_t)f2d>>32);
+    Operand opL;
+    Operand opH;
+	
+    opH.set_high(TYPE_DOUBLE, &d);
+    opL.set_low(TYPE_DOUBLE, &d);
 
     push(opH);
     push(opL);

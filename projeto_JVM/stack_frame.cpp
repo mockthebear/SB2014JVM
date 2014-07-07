@@ -26,13 +26,13 @@ void StackFrame::invokeprintln(char *descriptor) {
 			else
 				printf("false");
 		} else if(*descriptor == TYPE_SHORT) {
-			printf("%d", current->popShort());
+			printf("%s", current->popShort());
 		} else if(*descriptor == TYPE_FLOAT) {
 			printf("%.4f", current->popFloat());
 		} else if(*descriptor == TYPE_LONG) {
 			printf("%lld", current->popLong());
 		} else if(*descriptor == TYPE_DOUBLE) {
-			printf("%.4lf", current->popDouble());
+			printf("%.4f", current->popDouble());
 		}  else if(strstr(descriptor, "Ljava/lang/String;") == descriptor ) {
 			char *string = (char *)current->popOpStack();
 			printf("%s", string);
