@@ -484,7 +484,7 @@ void OperandStack::lmul(){
     opL = pop();
     opH = pop();//multiplicador
 
-    if((opL.type != TYPE_INT) || (opH.type != TYPE_INT) || ((top)->type != TYPE_INT) || ((top-1)->type != TYPE_INT) ) {
+    if((opH.type != TYPE_LONG) || ((top-1)->type != TYPE_LONG) ) {
         printf("Error type not int: :op_stack.lmul\n");
         exit(0);
     }
@@ -605,13 +605,11 @@ void OperandStack::frem(){
 }
 
 void OperandStack::fneg(){
-	if(size < 2) {
+	if(size < 1) {
 		printf("Error  :op_stack.fneg\n");
 		exit(0);
 	}
 	__fneg(top);
-	top--;
-	size--;
 }
 
 void OperandStack::dadd(){
@@ -622,6 +620,7 @@ void OperandStack::dadd(){
 	__dadd(top);
 	top-=2;
 	size-=2;
+	printf("dadd %lf\n", to_double((top-1)->bytes, top->bytes));
 }
 
 void OperandStack::dsub(){
@@ -866,11 +865,13 @@ void OperandStack::d2i(){
         printf("Error type not double: :op_stack.d2i\n");
         exit(0);
     }
+	double d = to_double(opH.bytes, opL.bytes);
+    int32_t i = (int32_t) d;
 
-    opL.bytes = (u4)(int32_t)((double)to_long(opH.bytes, opL.bytes));
-
-    opL.type = TYPE_INT;
-    push(opL);
+	Operand op;
+	op.set_value(TYPE_INT, &i);
+	
+    push(op);
 }
 
 void OperandStack::d2l(){
@@ -882,13 +883,11 @@ void OperandStack::d2l(){
         exit(0);
     }
 
-    long d2l = (long)((double)to_long(opH.bytes, opL.bytes));
+    double d = to_double(opH.bytes, opL.bytes);
+	int64_t l = (int64_t) d;
 
-    opL.type = TYPE_LONG;
-    opL.bytes = (u4)d2l;
-
-    opH.type = TYPE_LONG;
-    opH.bytes = (u4)((uint64_t)d2l>>32);
+    opH.set_high(TYPE_LONG, &l);
+    opL.set_low(TYPE_LONG, &l);
 
     push(opH);
     push(opL);
@@ -902,11 +901,13 @@ void OperandStack::d2f(){
         printf("Error type not double: :op_stack.d2f\n");
         exit(0);
     }
+	double d = to_double(opH.bytes, opL.bytes);
+    float f = (float) d;
 
-    opL.bytes = (u4)(float)((double)to_long(opH.bytes, opL.bytes));
-
-    opL.type = TYPE_FLOAT;
-    push(opL);
+	Operand op;
+	op.set_value(TYPE_FLOAT, &f);
+	
+    push(op);
 }
 
 /* OPERACAO GERAL */
@@ -934,16 +935,19 @@ Operand OperandStack::pop() {
 }
 
 Operand *OperandStack::pop_param(int count) {
-	if(size == 0) {
-		printf("Error stack empty :op_stack.pop_param\n");
-		exit(0);
-	}
-	Operand *op;
+	Operand *op = NULL;
+	
+	if(count > 0) { 
+		if(size == 0) {
+			printf("Error stack empty :op_stack.pop_param\n");
+			exit(0);
+		}
 
-	top -= (count-1);
-	op = top;
-	top--;
-	size -= count;
+		top -= (count-1);
+		op = top;
+		top--;
+		size -= count;
+	}
 	return op;
 }
 
@@ -1314,7 +1318,7 @@ void OperandStack::ior(){
         exit(0);
     }
 
-    opReturn.bytes = (int32_t)op2.bytes + (int32_t)op1.bytes;
+    opReturn.bytes = (int32_t)op2.bytes | (int32_t)op1.bytes;
 
     push(opReturn);
 }

@@ -38,7 +38,7 @@ __dadd:
 	fld  qword [buff]	; op2 = [buff]
 	
 	faddp				; op1 += op2
-	fst qword [buff]	; [buff] = op1
+	fstp qword [buff]	; [buff] = op1
 	
 	mov  ecx, [buff+4]	; high [op1] = high [buff]
 	mov [eax-20], ecx
@@ -71,7 +71,7 @@ __dsub:
 	fld  qword [buff]	; op2 = [buff]
 	
 	fsubp				; op1 -= op2
-	fst qword [buff]	; [buff] = op1
+	fstp qword [buff]	; [buff] = op1
 	
 	mov  ecx, [buff+4]	; high [op1] = high [buff]
 	mov [eax-20], ecx
@@ -104,7 +104,7 @@ __dmul:
 	fld  qword [buff]	; op2 = [buff]
 	
 	fmulp				; op1 *= op2
-	fst qword [buff]	; [buff] = op1
+	fstp qword [buff]	; [buff] = op1
 	
 	mov  ecx, [buff+4]	; high [op1] = high [buff]
 	mov [eax-20], ecx
@@ -137,7 +137,7 @@ __ddiv:
 	fld  qword [buff]	; op2 = [buff]
 	
 	fdivp				; op1 /= op2
-	fst qword [buff]	; [buff] = op1
+	fstp qword [buff]	; [buff] = op1
 	
 	mov  ecx, [buff+4]	; high [op1] = high [buff]
 	mov [eax-20], ecx
@@ -169,7 +169,7 @@ __opDrem:
 	fld  qword [buff]	; op1 = [buff]
 	
 	fprem				; op1 %= op2
-	fst qword [buff]	; [buff] = op1
+	fstp qword [buff]	; [buff] = op1
 	
 	mov  ecx, [buff+4]	; high [op1] = high [buff]
 	mov [eax-20], ecx

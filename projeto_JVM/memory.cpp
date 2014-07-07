@@ -101,7 +101,7 @@ u4 Memory::anewarray(int size, char *classname) {
 
 u4 Memory::multianewarray(int *size, char *a_type) {
 	u4 array;
-	int length = strlen(a_type+1);
+	int length = strlen(a_type) + 1;
 	char *type = (char *)calloc(length,sizeof(char));
 	char *temp = type;
 	
@@ -115,6 +115,7 @@ u4 Memory::multianewarray(int *size, char *a_type) {
 	} else {
 		*temp = *a_type;
 	}
+	
 	array = data->new_array(size, type);
 	return array;
 }

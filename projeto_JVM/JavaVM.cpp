@@ -36,17 +36,12 @@ int main(int argc, char **argv) {
 	}
 	if (strcmp(argv[1], "-c") == 0) {
 		classfile(argv[2]);
-	} else if(strcmp(argv[1], "-r") == 0) {
-		if(strcmp(argv[2], "-p") == 0) {
-			printEnable = 1;
-			run(argv[3]);
-		} else {
-			printEnable = 0;
-			run(argv[2]);
-		}
+	} else if(strcmp(argv[1], "-p") == 0) {
+		printEnable = 1;
+		run(argv[2]);
 	} else {
-		printHelp();
-		return 0;
+		printEnable = 0;
+		run(argv[1]);
 	}
 
 	return 0;
@@ -2794,10 +2789,8 @@ void print() {
 }
 
 void printHelp() {
-	printf("prog [modo] [imprime] arq_class\n");
-	printf("modo:\n");
+	printf("prog [opcao] arq_class\n");
+	printf("opcao:\n");
 	printf("  -c: mostrar classfile\n");
-	printf("  -r: executar JVM\n");
-	printf("imprime:\n");
 	printf("  -p: imprime estados no modo de executar JVM\n");
 }

@@ -884,6 +884,18 @@ double Frame::popDouble() {
 	return opStack->pop_d();
 }
 
+char Frame::popChar() {
+	return (char)opStack->pop_i();
+}
+
+int8_t Frame::popByte() {
+	return (int8_t)opStack->pop_i();
+}
+
+int16_t Frame::popShort() {
+	return (int16_t)opStack->pop_i();
+}
+
 void Frame::print() {
 	printf(">>Current frame\n");
 	printf("  method: %s.", classref->get_cp_this_class());

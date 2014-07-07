@@ -16,9 +16,9 @@ void StackFrame::invokeprintln(char *descriptor) {
 		if (*descriptor == TYPE_INT) {
 			printf("%d", current->popInt());
 		} else if(*descriptor == TYPE_CHAR) {
-			printf("%c", (char)current->popInt());
+			printf("%c", current->popChar());
 		} else if(*descriptor == TYPE_BYTE) {
-			printf("%d", (int8_t)current->popInt() );
+			printf("%d", current->popByte() );
 		} else if(*descriptor == TYPE_BOOL) {
 			u1 b = (u1)current->popInt();
 			if(b)
@@ -26,7 +26,7 @@ void StackFrame::invokeprintln(char *descriptor) {
 			else
 				printf("false");
 		} else if(*descriptor == TYPE_SHORT) {
-			printf("%d", (short)current->popInt());
+			printf("%d", current->popShort());
 		} else if(*descriptor == TYPE_FLOAT) {
 			printf("%.4f", current->popFloat());
 		} else if(*descriptor == TYPE_LONG) {

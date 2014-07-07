@@ -235,6 +235,9 @@ public:
 	int64_t popLong();
 	float popFloat();
 	double popDouble();
+	char popChar();
+	int8_t popByte();
+	int16_t popShort();
 
 	void print();
 	void printCode();

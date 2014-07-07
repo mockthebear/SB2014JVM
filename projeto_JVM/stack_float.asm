@@ -23,7 +23,7 @@ __fadd:
 	fld  dword [eax-4]	; op1 = [op1]
 	fld  dword [eax+4]	; op2 = [op2]
 	faddp				; op1 += op2
-	fst  dword [eax-4]	; [op1] = op1
+	fstp  dword [eax-4]	; [op1] = op1
 	
 	;mov  eax, [eax-4]
 	
@@ -41,7 +41,7 @@ __fsub:
 	fld  dword [eax-4]	; op1 = [op1]
 	fld  dword [eax+4]	; op2 = [op2]
 	fsubp				; op1 -= op2
-	fst  dword [eax-4]	; [op1] = op1
+	fstp  dword [eax-4]	; [op1] = op1
 	
 	;mov  eax, [eax-4]
 	
@@ -59,7 +59,7 @@ __fmul:
 	fld  dword [eax-4]	; op1 = [op1]
 	fld  dword [eax+4]	; op2 = [op2]
 	fmulp				; op1 *= op2
-	fst  dword [eax-4]	; [op1] = op1
+	fstp  dword [eax-4]	; [op1] = op1
 	
 	;mov  eax, [eax-4]
 	
@@ -77,7 +77,7 @@ __fdiv:
 	fld  dword [eax-4]	; op1 = [op1]
 	fld  dword [eax+4]	; op2 = [op2]
 	fdivp				; op1 /= op2
-	fst  dword [eax-4]	; [op1] = op1
+	fstp  dword [eax-4]	; [op1] = op1
 	
 	;mov  eax, [eax-4]
 	
@@ -94,7 +94,7 @@ __frem:
 	fld  dword [eax+4]	; op2 = [op2]
 	fld  dword [eax-4]	; op1 = [op1]
 	fprem				; op1 %= op2
-	fst  dword [eax-4]	; [op1] = op1
+	fstp  dword [eax-4]	; [op1] = op1
 	
 	;mov  eax, [eax-4]
 	
