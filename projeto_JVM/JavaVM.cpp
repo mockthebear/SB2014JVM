@@ -2239,7 +2239,19 @@ void invokespecial() {
 	char *className  = frames->current->get_method_class(cp_index);
 	char *methodName = frames->current->get_method_name(cp_index);
 	char *descriptor = frames->current->get_method_descriptor(cp_index);
-
+	
+	if(strcmp(className, "java/lang/String") == 0) {
+		u4 temp = frames->current->popOpStack();
+		frames->current->popParam(2);
+		frames->current->pushOpStack(TYPE_REF, temp);
+	
+		if(debugMode) {
+			frames->current->printCode();
+			printf("invokespecial");
+			printf("  #%d\n",cp_index);
+		}
+		return;
+	}
 	Class *classRef = memory->get_classref(className);
 	if(classRef == NULL) {
 		classRef = memory->new_class(className);
@@ -2353,7 +2365,16 @@ void op_new() {
 	u2 cp_index = get2byte();
 
 	char *classname = frames->current->get_class_name(cp_index);
-
+	if(strcmp(classname, "java/lang/String") == 0) {
+		frames->current->aconst_null();
+		if(debugMode) {
+			frames->current->printCode();
+			printf("new");
+			printf("  #%d\n",cp_index);
+		}
+		return;
+	}
+	
 	Class *classRef = memory->get_classref(classname);
 	if(classRef == NULL) {
 		classRef = memory->new_class(classname);

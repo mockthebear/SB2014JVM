@@ -24,8 +24,6 @@ public:
 	void bipush(u1);
 	void sipush(u2);
 
-
-
 	void iconst(int32_t i);
 	void fconst(float f);
 	void lconst(int64_t l);
@@ -39,7 +37,6 @@ public:
 	void dup2_x1();
 	void dup2_x2();
 	void swap();
-
 
 	int ifzero();
 	int ifgt();
@@ -109,9 +106,6 @@ public:
 	void dcmpl();
 	void lcmp();
 
-	/*
-	iinc
-	*/
 	void ishl();
 	void lshl();
 	void ishr();
@@ -124,7 +118,6 @@ public:
 	void lor();
 	void ixor();
 	void lxor();
-
 
 	void push(Operand);
 	Operand pop();
