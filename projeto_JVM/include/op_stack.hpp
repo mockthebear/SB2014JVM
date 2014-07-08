@@ -33,13 +33,12 @@ public:
 	void aconst_null();
 
 	void dup();
-	void dup2();
-	void swap();
-
 	void dup_x1();
-	void dup2_x1();
 	void dup_x2();
+	void dup2();
+	void dup2_x1();
 	void dup2_x2();
+	void swap();
 
 
 	int ifzero();
@@ -47,7 +46,6 @@ public:
 	int iflt();
     int ifle();
     int ifne();
-
 
     int if_icmpge();
 	int if_icmpgt();
@@ -57,9 +55,6 @@ public:
     int if_acmpeq();
     int if_acmpne();
     int if_icmpeq();
-
-
-
 
 	void iadd();
 	void isub();
@@ -107,7 +102,6 @@ public:
 	void d2i();
 	void d2l();
 	void d2f();
-
 
 	void fcmpg();
 	void fcmpl();

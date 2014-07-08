@@ -122,10 +122,54 @@ void OperandStack::dup() {
 		printf("Error  :op_stack.dup\n");
 		exit(0);
 	}
-	Operand temp;
+	Operand op;
 
-	temp = *(top);
-	push(temp);
+	op = *(top);
+	if( (op.type == TYPE_LONG) || (op.type == TYPE_DOUBLE) ) {
+		printf("Error wrong category: op_stack.dup\n");
+		exit(0);
+	}
+	push(op);
+}
+
+void OperandStack::dup_x1(){
+	if(size < 2) {
+		printf("Error  :op_stack.dup_x1\n");
+		exit(0);
+	}
+    Operand op1, op2;
+	
+    op1 = pop();
+    op2 = pop();
+	if( (op1.type == TYPE_LONG) || (op1.type == TYPE_DOUBLE) ||
+		(op2.type == TYPE_LONG) || (op2.type == TYPE_DOUBLE) ) 
+	{
+		printf("Error wrong category :op_stack.dup_x1\n");
+		exit(0);
+	}
+    push(op1);
+    push(op2);
+    push(op1);
+}
+
+void OperandStack::dup_x2(){
+	if(size < 3) {
+		printf("Error  :op_stack.dup_x2\n");
+		exit(0);
+	}
+    Operand op1, op2, op3;
+	
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    if( (op1.type == TYPE_LONG) || (op1.type == TYPE_DOUBLE) ) {
+		printf("Error wrong category :op_stack.dup_x2\n");
+		exit(0);
+	}
+	push(op1);
+	push(op3);
+	push(op2);
+	push(op1);
 }
 
 void OperandStack::dup2() {
@@ -133,13 +177,59 @@ void OperandStack::dup2() {
 		printf("Error  :op_stack.dup2\n");
 		exit(0);
 	}
-	Operand temp1;
-	Operand temp2;
+	Operand op1;
+	Operand op2;
 
-	temp1 = *(top-1);
-	temp2 = *(top);
-	push(temp1);
-	push(temp2);
+	op1 = *(top-1);
+	op2 = *(top);
+	if( ( (op1.type != TYPE_LONG) && (op1.type != TYPE_DOUBLE) ) &&
+		( (op2.type == TYPE_LONG) || (op2.type != TYPE_DOUBLE) ) ) 
+	{
+		printf("Error wrong category: op_stack.dup2\n");
+		exit(0);
+	}
+	push(op2);
+	push(op1);
+}
+
+void OperandStack::dup2_x1(){
+    Operand op1, op2, op3;
+	
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+	if( ( (op1.type != TYPE_LONG) && (op1.type != TYPE_DOUBLE) ) &&
+		( (op2.type == TYPE_LONG) || (op2.type != TYPE_DOUBLE) ) ) 
+	{
+		printf("Error wrong category: op_stack.dup2_x1\n");
+		exit(0);
+	}
+	push(op2);
+	push(op1);
+	push(op3);
+	push(op2);
+	push(op1);
+}
+
+void OperandStack::dup2_x2(){
+    Operand op1, op2, op3, op4;
+	
+    op1 = pop();
+    op2 = pop();
+    op3 = pop();
+    op4 = pop();
+	if( ( (op1.type != TYPE_LONG) && (op1.type != TYPE_DOUBLE) ) &&
+		( (op2.type == TYPE_LONG) || (op2.type != TYPE_DOUBLE) ) ) 
+	{
+		printf("Error wrong category: op_stack.dup2_x2\n");
+		exit(0);
+	}
+    push(op2);
+    push(op1);
+    push(op4);
+    push(op3);
+    push(op2);
+    push(op1);
 }
 
 void OperandStack::swap() {
@@ -912,104 +1002,6 @@ void OperandStack::d2f(){
     push(op);
 }
 
-/* OPERACAO GERAL */
-void OperandStack::push(Operand op) {
-	if(size == max) {
-		printf("Error stack over :op_stack.push\n");
-		exit(0);
-	}
-	top++;
-	*top = op;
-	size++;
-}
-
-Operand OperandStack::pop() {
-	if(size == 0) {
-		printf("Error stack empty :op_stack.pop\n");
-		exit(0);
-	}
-	Operand op;
-
-	op = *top;
-	top--;
-	size--;
-	return op;
-}
-
-Operand *OperandStack::pop_param(int count) {
-	Operand *op = NULL;
-	
-	if(count > 0) { 
-		if(size == 0) {
-			printf("Error stack empty :op_stack.pop_param\n");
-			exit(0);
-		}
-
-		top -= (count-1);
-		op = top;
-		top--;
-		size -= count;
-	}
-	return op;
-}
-
-void OperandStack::print() {
-	printf(">Operand Stack\n");
-	printf("  max: %d ", max);
-	printf("size: %d\n", size);
-	printf("  ");
-	for(u2 i=1; i<=size; i++) {
-		printf("[%d] ",i);
-		stack[i].print();
-	}
-	printf("\n");
-}
-
-void OperandStack::dup_x1(){
-    Operand op1, op2;
-    op1 = pop();
-    op2 = pop();
-    push(op1);
-    push(op2);
-    push(op1);
-}
-
-void OperandStack::dup2_x1(){
-    Operand op1, op2, op3;
-    op1 = pop();
-    op2 = pop();
-    op3 = pop();
-
-
-}
-
-void OperandStack::dup_x2(){
-    Operand op1, op2, op3;
-    op1 = pop();
-    op2 = pop();
-    op3 = pop();
-
-    push(op2);
-    push(op1);
-    push(op3);
-    push(op2);
-    push(op1);
-}
-
-void OperandStack::dup2_x2(){
-    Operand op1, op2, op3, op4;
-    op1 = pop();
-    op2 = pop();
-    op3 = pop();
-
-    push(op2);
-    push(op1);
-    push(op4);
-    push(op3);
-    push(op2);
-    push(op1);
-}
-
 void OperandStack::fcmpg(){
     Operand op1, op2;
 
@@ -1152,117 +1144,167 @@ void OperandStack::lcmp(){
 		
 }
 
+/* OPERACAO GERAL */
+void OperandStack::push(Operand op) {
+	if(size == max) {
+		printf("Error stack over :op_stack.push\n");
+		exit(0);
+	}
+	top++;
+	*top = op;
+	size++;
+}
+
+Operand OperandStack::pop() {
+	if(size == 0) {
+		printf("Error stack empty :op_stack.pop\n");
+		exit(0);
+	}
+	Operand op;
+
+	op = *top;
+	top--;
+	size--;
+	return op;
+}
+
+Operand *OperandStack::pop_param(int count) {
+	Operand *op = NULL;
+	
+	if(count > 0) { 
+		if(size == 0) {
+			printf("Error stack empty :op_stack.pop_param\n");
+			exit(0);
+		}
+
+		top -= (count-1);
+		op = top;
+		top--;
+		size -= count;
+	}
+	return op;
+}
+
+void OperandStack::print() {
+	printf(">Operand Stack\n");
+	printf("  max: %d ", max);
+	printf("size: %d\n", size);
+	printf("  ");
+	for(u2 i=1; i<=size; i++) {
+		printf("[%d] ",i);
+		stack[i].print();
+	}
+	printf("\n");
+}
+
 void OperandStack::ishl(){
-    Operand op1, op2, opReturn;
-    opReturn.type = TYPE_INT;
+    Operand op;
 
-    op1 = pop();
-    op2 = pop();
-
-    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
-        printf("Error type not int: :op_stack.ishl\n");
+    op = pop();
+    if((op.type != TYPE_INT) || (top->type != TYPE_INT)) {
+        printf("Error type not int: op_stack.ishl\n");
         exit(0);
     }
-
-    opReturn.bytes = (int32_t)op2.bytes << op1.bytes;
-
-    push(opReturn);
+	int32_t i = top->to_int();
+	op.bytes &= 0x1F;
+    i <<= op.bytes;
+	top->set_value(TYPE_INT, &i);
 }
-void OperandStack::lshl(){
-    Operand op1, opL, opH;
 
+void OperandStack::lshl(){
+    Operand op, opH, opL;
+
+    op = pop();
     opL = pop();
     opH = pop();
-    op1 = pop();
 
-    if((opL.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
-        printf("Error type not long or shift amount not an int: :op_stack.lshl\n");
+    if( (op.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opL.type != TYPE_LONG)) {
+        printf("Error type not long or shift amount not an int: op_stack.lshl\n");
         exit(0);
     }
 
-    int64_t resultado = (int64_t)to_long( op1.bytes, opH.bytes ) << opL.bytes;
-
-    opH.bytes = (u4)(resultado>>32);
-    opL.bytes = (u4)resultado;
+    int64_t l = to_long(opH.bytes, opL.bytes);
+	op.bytes &= 0x1F;
+	l <<= op.bytes;
+    opH.set_high(TYPE_LONG, &l);
+    opL.set_low(TYPE_LONG, &l);
 
     push(opH);
     push(opL);
 }
+
 void OperandStack::ishr(){
-    Operand op1, op2, opReturn;
-    opReturn.type = TYPE_INT;
+    Operand op;
 
-    op1 = pop();
-    op2 = pop();
-
-    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
-        printf("Error type not int: :op_stack.ishr\n");
+    op = pop();
+    if((op.type != TYPE_INT) || (top->type != TYPE_INT)) {
+        printf("Error type not int: op_stack.ishr\n");
         exit(0);
     }
-
-    opReturn.bytes = (int32_t)op2.bytes >> op1.bytes;
-
-    push(opReturn);
+	int32_t i = top->to_int();
+	op.bytes &= 0x1F;
+    i >>= op.bytes;
+	top->set_value(TYPE_INT, &i);
 }
 
 void OperandStack::lshr(){
-    Operand op1, opL, opH;
+    Operand op, opH, opL;
 
+    op = pop();
     opL = pop();
     opH = pop();
-    op1 = pop();
 
-    if((opL.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
-        printf("Error type not long or shift amount not an int: :op_stack.lshr\n");
+    if( (op.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opL.type != TYPE_LONG)) {
+        printf("Error type not long or shift amount not an int: op_stack.lshr\n");
         exit(0);
     }
 
-    int64_t resultado = (int64_t)to_long( op1.bytes, opH.bytes ) >> opL.bytes;
-
-    opH.bytes = (u4)(resultado>>32);
-    opL.bytes = (u4)resultado;
+    int64_t l = to_long(opH.bytes, opL.bytes);
+	op.bytes &= 0x1F;
+	l >>= op.bytes;
+    opH.set_high(TYPE_LONG, &l);
+    opL.set_low(TYPE_LONG, &l);
 
     push(opH);
     push(opL);
 }
 
 void OperandStack::iushr(){
-    Operand op1, op2, opReturn;
-    opReturn.type = TYPE_INT;
+    Operand op;
 
-    op1 = pop();
-    op2 = pop();
-
-    if((op1.type != TYPE_INT) || (op2.type != TYPE_INT)) {
-        printf("Error type not int: :op_stack.iushr\n");
+    op = pop();
+    if((op.type != TYPE_INT) || (top->type != TYPE_INT)) {
+        printf("Error type not int: op_stack.iushr\n");
         exit(0);
     }
-
-    opReturn.bytes = op2.bytes >> op1.bytes;
-
-    push(opReturn);
+	uint32_t i = top->to_int();
+	op.bytes &= 0x1F;
+    i >>= op.bytes;
+	top->set_value(TYPE_INT, &i);
 }
 
 void OperandStack::lushr(){
-    Operand op1, opL, opH;
+    Operand op, opH, opL;
 
+    op = pop();
     opL = pop();
     opH = pop();
-    op1 = pop();
 
-    if((opL.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opH.type != TYPE_LONG)) {
-        printf("Error type not long or shift amount not an int: :op_stack.lushr\n");
+    if( (op.type != TYPE_INT) || (opH.type != TYPE_LONG) || (opL.type != TYPE_LONG)) {
+        printf("Error type not long or shift amount not an int: op_stack.lushr\n");
         exit(0);
     }
 
-    uint64_t resultado = (uint64_t)to_long( op1.bytes, opH.bytes ) >> opL.bytes;
-
-    opH.bytes = (u4)(resultado>>32);
-    opL.bytes = (u4)resultado;
+    uint64_t l = to_long(opH.bytes, opL.bytes);
+	op.bytes &= 0x1F;
+	l >>= op.bytes;
+    opH.set_high(TYPE_LONG, &l);
+    opL.set_low(TYPE_LONG, &l);
 
     push(opH);
     push(opL);
 }
+
 void OperandStack::iand(){
     Operand op1, op2, opReturn;
     opReturn.type = TYPE_INT;
@@ -1279,6 +1321,7 @@ void OperandStack::iand(){
 
     push(opReturn);
 }
+
 void OperandStack::land(){
     Operand op1, op2, opL, opH;
 
@@ -1292,7 +1335,7 @@ void OperandStack::land(){
         exit(0);
     }
 
-    int64_t resultado = (int64_t)to_long( op2.bytes, op1.bytes ) & (int64_t)to_long(opH.bytes, opL.bytes);
+    int64_t resultado = to_long( op2.bytes, op1.bytes ) & to_long(opH.bytes, opL.bytes);
 
     opH.bytes = (u4)(resultado>>32);
     opL.bytes = (u4)resultado;
@@ -1300,6 +1343,7 @@ void OperandStack::land(){
     push(opH);
     push(opL);
 }
+
 void OperandStack::ior(){
     Operand op1, op2, opReturn;
     opReturn.type = TYPE_INT;
@@ -1337,6 +1381,7 @@ void OperandStack::lor(){
     push(opH);
     push(opL);
 }
+
 void OperandStack::ixor(){
     Operand op1, op2, opReturn;
     opReturn.type = TYPE_INT;
