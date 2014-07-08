@@ -26,10 +26,10 @@ static Memory     *memory;
 static int printEnable;
 
 int main(int argc, char **argv) {
-
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
 	char *fileName;
+
 	if(argc < 2) {
 		printHelp();
 		return 0;
