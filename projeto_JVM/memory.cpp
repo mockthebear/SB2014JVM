@@ -10,7 +10,7 @@ Memory::Memory(int c_array_size, int m_array_size) {
 }
 
 MemoryData *Memory::op_new_superInstance(char *supername, MemoryData *superInst) {
-	if(strcmp(supername, CLASS_OBJECT) == 0) {
+	if(supername == NULL) {
 		return superInst;
 	} else {
 		Class *superRef = get_classref(supername);

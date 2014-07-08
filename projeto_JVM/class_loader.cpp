@@ -64,6 +64,13 @@ Class *ClassLoader::load_class(char *name) {
 	temp->constant_pool = cp_loader(fp, temp->cp_count);
 	temp->access_flags = read_u2(fp);
 	temp->this_class = read_u2(fp);
+	char *thisclass = temp->get_cp_this_class();
+	if(strstr(thisclass, name) == NULL) {
+		printf("NoClassDefFoundError: %s (wrong name: %s)\n", name, thisclass);
+		delete temp;
+		fclose(fp);
+		exit(0);
+	}
 	temp->super_class = read_u2(fp);
 	temp->interfaces_count = read_u2(fp);
 	temp->interfaces = interface_loader(fp, temp->interfaces_count);

@@ -91,6 +91,7 @@ public:
 	char *get_cp_ref_class(u2);
 	char *get_cp_ref_name(u2);
 	char *get_cp_ref_descriptor(u2);
+	char *get_cp_string(u2);
 	char *get_cp_utf8(u2);
 	int get_cp_field_index(u2);
 	int get_cp_method_index(u2);
@@ -115,6 +116,7 @@ public:
 		
 	void print();
 	void print_cp();
+	void print_cp_utf8(u2);
 	void printField();
 	void printMethod();
 	void print_statics();

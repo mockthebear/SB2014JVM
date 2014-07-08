@@ -137,6 +137,12 @@ char *Class::get_cp_ref_descriptor(u2 cp_index) {
 	return get_cp_utf8(cp_index);
 }
 
+char *Class::get_cp_string(u2 cp_index) {
+	test_cp("get_cp_string", TAG_STRING, cp_index, this);
+	cp_index = constant_pool[cp_index].string_index;
+	return get_cp_utf8(cp_index);
+}
+
 char *Class::get_cp_utf8(u2 cp_index) {
 	test_cp("get_cp_utf8", TAG_UTF8, cp_index, this);
 	return constant_pool[cp_index].utf8;
@@ -353,6 +359,72 @@ void Class::print_cp() {
 	}
 }
 
+void Class::print_cp_utf8(u2 cp_index) {
+	cp_info cp = constant_pool[cp_index];
+	u2 tag = cp.tag;
+	switch (tag) {
+		case (TAG_CLASS):
+			printf("; //class \" %s \" ", get_cp_class_name(cp_index));
+			break;
+	 
+		case (TAG_FIELD):
+			printf("; //Field %s.", get_cp_ref_class(cp_index) );
+			printf("%s:", get_cp_ref_name(cp_index) );
+			printf("%s", get_cp_ref_descriptor(cp_index) );
+			break;
+			
+		case (TAG_METHOD):
+			printf("; //Method %s.", get_cp_ref_class(cp_index) );
+			printf("%s:", get_cp_ref_name(cp_index) );
+			printf("%s", get_cp_ref_descriptor(cp_index) );
+			break;
+			
+		case (TAG_IMETHOD):
+			printf("; //IMethod %s.", get_cp_ref_class(cp_index) );
+			printf("%s:", get_cp_ref_name(cp_index) );
+			printf("%s", get_cp_ref_descriptor(cp_index) );
+			break;
+		
+		case (TAG_STRING):
+			printf("; //String %s", get_cp_string(cp_index));
+			break;
+			
+		case (TAG_INTEGER):
+			int32_t *i;
+			i = (int32_t *)(&cp.bytes);
+			printf("; //int %d", *i);
+			break;
+			
+		case (TAG_LONG):
+			int64_t *l;
+			uint64_t x;
+			x = cp.bytes;
+			x <<= 32;
+			cp = constant_pool[cp_index+1];
+			x |= cp.bytes;
+			l = (int64_t *) &x;
+			printf("; //long %lldl", *l);
+			break;
+			
+		case (TAG_FLOAT):
+			float *f;
+			f = (float *)(&cp.bytes);
+			printf("; //float %.4ff", *f);
+			break;
+			
+		case (TAG_DOUBLE):
+			double *d;
+			uint64_t y;
+			y = cp.bytes;
+			y <<= 32;
+			cp = constant_pool[cp_index+1];
+			y |= cp.bytes;
+			d = (double *) &y;
+			printf("; //double %.4lfd", *d);
+			break;
+	}
+}
+
 void print_access(u2 flags) {
 	if(isPublic(flags))
 		printf("public ");
@@ -463,9 +535,11 @@ void Class::printMethod() {
 				(op==0x19) || (op==0x36) || (op==0x37) || (op==0x38) || (op==0x39) || 
 				(op==0x3A) || (op==0xA9) || (op==0xBC)
 			) {
-				printf(" %d", c->code[++pc]);
-			} else if( (op==0x12) ) {
-				printf("\t #%d", c->code[++pc]);
+				printf(" %d", (int8_t)c->code[++pc]);
+			} else if( (op==0x12) ) {		// ldc
+				u2 t = c->code[++pc];
+				printf(" #%d", t);
+				print_cp_utf8(t);
 			} else if(
 				(op==0x13) || (op==0x14) || (op==0xB2) || (op==0xB3) || (op==0xB4) || 
 				(op==0xB5) || (op==0xB6) || (op==0xB7) || (op==0xB8) || (op==0xBB) || 
@@ -475,6 +549,7 @@ void Class::printMethod() {
 				t <<= 8;
 				t |= c->code[++pc];
 				printf(" #%d", t);
+				print_cp_utf8(t);
 			} else if(
 				(op==0x99) || (op==0x9A) || (op==0x9B) || (op==0x9C) || (op==0x9D) || 
 				(op==0x9E) || (op==0x9F) || (op==0xA0) || (op==0xA1) || (op==0xA2) || 
@@ -484,6 +559,7 @@ void Class::printMethod() {
 				u2 t = c->code[++pc];
 				t <<= 8;
 				t |= c->code[++pc];
+				t = (pc-2) + t;
 				printf(" %d", t);
 			} else if( (op==0x11) ) {		// sipush
 				u2 t = c->code[++pc];
@@ -491,21 +567,23 @@ void Class::printMethod() {
 				t |= c->code[++pc];
 				printf(" %d", (int16_t)t);
 			} else if( (op==0x84) ) {		// iinc
-				printf(" %d", c->code[++pc]);
+				printf(" %d,", c->code[++pc]);
 				printf(" %d", c->code[++pc]);
 			} else if( (op==0xC5) ) {		// multianewarray
 				u2 t = c->code[++pc];
 				t <<= 8;
 				t |= c->code[++pc];
-				printf(" #%d", t);
+				printf(" #%d,", t);
 				printf(" %d", c->code[++pc]);
+				print_cp_utf8(t);
 			} else if( (op==0xB9) ) { 		// invokeinterface
 				u2 t = c->code[++pc];
 				t <<= 8;
 				t |= c->code[++pc];
-				printf(" #%d", t);
+				printf(" #%d,", t);
+				printf(" %d,", c->code[++pc]);
 				printf(" %d", c->code[++pc]);
-				printf(" %d", c->code[++pc]);
+				print_cp_utf8(t);
 			} else if( (op==0xC8) || (op==0xC9) ) {	// goto_w, jsr_w
 				u4 t = c->code[++pc];
 				t <<= 8;
@@ -515,6 +593,7 @@ void Class::printMethod() {
 				t <<= 8;
 				t |= c->code[++pc];
 				printf(" #%d", t);
+				print_cp_utf8(t);
 			} else if( (op==0xC4) ) {		// wide
 				printf("\n");
 				op = c->code[++pc];
@@ -524,12 +603,13 @@ void Class::printMethod() {
 					t <<= 8;
 					t |= c->code[++pc];
 					printf(" #%d", t);
+					print_cp_utf8(t);
 				} else {		// iinc
 					printf("%d: %s\t", pc, op_nameTable[op]);
 					u2 t = c->code[++pc];
 					t <<= 8;
 					t |= c->code[++pc];
-					printf(" %d", t);
+					printf(" %d,", t);
 					t = c->code[++pc];
 					t <<= 8;
 					t |= c->code[++pc];

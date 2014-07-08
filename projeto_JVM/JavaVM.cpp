@@ -2361,7 +2361,7 @@ void op_new() {
 	}
 	char *supername = classRef->get_cp_super_class();
 	
-	while(strcmp(supername, CLASS_OBJECT) != 0) {
+	while(supername != NULL) {
 		Class *superRef = memory->get_classref(supername);
 		if(superRef == NULL) {
 			superRef = memory->new_class(supername);
@@ -2810,7 +2810,6 @@ char *getPath(char *argv) {
 		strcpy(fileName, aux);
 		*aux = '\0';
 	} else {
-		
 		fileName = new char[strlen(argv)];
 		strcpy(fileName, argv);
 		*argv = '\0';
