@@ -620,7 +620,6 @@ void OperandStack::dadd(){
 	__dadd(top);
 	top-=2;
 	size-=2;
-	printf("dadd %lf\n", to_double((top-1)->bytes, top->bytes));
 }
 
 void OperandStack::dsub(){

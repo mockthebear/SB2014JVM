@@ -1,6 +1,6 @@
-class T2 {
+class T3 {
 	public static void main(String[] args) {
-		longTest();
+		intTest();
 	}
 	
 	static void intTest() {
@@ -14,6 +14,5 @@ class T2 {
 		System.out.println((byte)a);
 		System.out.println((char)a);
 		System.out.println((short)a);
-	}
 	}
 }
