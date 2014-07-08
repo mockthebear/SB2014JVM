@@ -1114,7 +1114,7 @@ void OperandStack::dcmpl(){
 	val2 = to_double(op2H.bytes, op2L.bytes);
 	
 	if(isnan(val1) || isnan(val2)) {
-		iconst(1);
+		iconst(-1);
 		return;
 	}
 	
