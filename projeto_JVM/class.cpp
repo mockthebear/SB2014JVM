@@ -277,22 +277,21 @@ bool Class::isInterface(char *interface) {
 
 /* Print */
 void Class::print() {
+	printf("magic number: 0x%X\n", magic);
+	printf("major ver: 0x%02X (%d)\n", major_version, major_version);
+	printf("minor ver: 0x%02X (%d)\n", minor_version, minor_version);
+	printf("access flags: 0x%04X (%d)\n", access_flags, access_flags);
 	printf("class name: %s\n", get_cp_this_class());
 	printf("super name: %s\n", get_cp_super_class());
+	printf("\n");
+	printf("cp count: %d\n", cp_count);
+	print_cp();
+	printf("\n");
 	printf("fields count: %d\n", fields_count);
-	for(int i=0;i<fields_count; i++) {
-		printf("   [%d]", i);
-		printf("\tname: %s", get_field_name(i));
-		printf("\ttype: %s", get_field_type(i));
-		printf("\n");
-	}
+	printField();
+	printf("\n");
 	printf("methods count: %d\n", methods_count);
-	for(int i=0;i<methods_count; i++) {
-		printf("   [%d]", i);
-		printf("\tname: %s", get_method_name(i));
-		printf("\tdescr: %s", get_method_descriptor(i));
-		printf("\n");
-	}
+	printMethod();
 }
 
 void Class::print_cp() {
@@ -351,6 +350,195 @@ void Class::print_cp() {
 		} else {
 			printf("tag invalido: %d\n", tag);
 		}
+	}
+}
+
+void print_access(u2 flags) {
+	if(isPublic(flags))
+		printf("public ");
+	if(isPrivate(flags))
+		printf("private ");
+	if(isProtected(flags))
+		printf("protected ");
+	if(isFinal(flags))
+		printf("final ");
+	if(isAbstract(flags))
+		printf("abstract ");
+	if(isStatic(flags))
+		printf("static ");
+}
+
+void Class::printField() {
+	for(int i=0;i<fields_count; i++) {
+		printf("[%d] ", i);
+		print_access(get_field_flags(i));
+		printf("%s:", get_field_name(i));
+		printf("%s\n", get_field_type(i));
+	}
+}
+
+void Class::printMethod() {
+	const char * op_nameTable[256]={
+		//Primeira familia de instrucoes 0x0Xh
+		"nop", "aconst_null", "iconst_m1", "iconst_0", "iconst_1", "iconst_2", "iconst3", "iconst_4",
+		"iconst_5", "lconst_0", "lconst_1", "fconst_0", "fconst_1", "fconst_2", "dconst_0", "dconst_1",
+		
+		//Segunda familia de instrucoes 0x1Xh
+		"bipush", "sipush", "ldc", "ldc_w", "ldc2_w", "iload", "lload", "fload",
+		"dload", "aload", "iload_0", "iload_1", "iload_2", "iload_3", "lload_0", "lload_1",
+		
+		//Terceira familia de instrucoes 0x2Xh
+		"lload_2", "lload_3", "fload_0", "fload_1", "fload_2", "fload_3", "dload_0", "dload_1",
+		"dload_2", "dload_3", "aload_0", "aload_1", "aload_2", "aload_3", "iaload", "laload",
+		
+		//Quarta familia de instrucoes 0x3Xh
+		"faload", "daload", "aaload", "baload", "caload", "saload", "istore", "lstore",
+		"fstore", "dstore", "astore", "istore_0", "istore_1", "istore_2", "istore_3", "lstore_0",
+		
+		//Quinta familia de instrucoes 0x4Xh
+		"lstore_1", "lstore_2", "lstore_3", "fstore_0", "fstore_1", "fstore_2", "fstore_3", "dstore_0",
+		"dstore_1", "dstore_2", "dstore_3", "astore_0", "astore_1", "astore_2", "astore_3", "iastore",
+		
+		//Sexta familia de instrucoes 0x5Xh
+		"lastore", "fastore", "dastore", "aastore", "bastore", "castore", "sastore", "pop",
+		"pop2", "_dup", "dup_x1", "dup_x2", "_dup2", "dup2_x1", "dup2_x2", "swap",
+		
+		//Setima familia de instrucoes 0x6Xh
+		"iadd", "ladd", "fadd", "dadd", "isub", "lsub", "fsub", "dsub",
+		"imul", "lmul", "fmul", "dmul", "idiv", "_ldiv", "fdiv", "ddiv",
+		
+		//Oitava familia de instrucoes 0x7Xh
+		"irem", "lrem", "frem", "_drem", "ineg", "lneg", "fneg", "dneg",
+		"ishl", "lshl", "ishr", "lshr", "iushr", "lushr", "iand", "land",
+		
+		//Nona familia de instrucoes 0x8Xh
+		"ior", "lor", "ixor", "lxor", "iinc", "i2l", "i2f", "i2d",
+		"l2i", "l2f", "l2d", "f2i", "f2l", "f2d", "d2i", "d2l",
+		
+		//Decima familia de instrucoes 0x9Xh
+		"d2f", "i2b", "i2c", "i2s", "lcmp", "fcmpl", "fcmpg", "dcmpl",
+		"dcmpg", "ifeq", "ifne", "iflt", "ifge", "ifgt", "ifle", "if_icmpeq",
+		
+		//Decima primeira familia de instrucoes 0xAXh
+		"if_icmpne", "if_icmplt", "if_icmpge", "if_icmpgt", "if_icmple", "if_acmpeg", "if_acmpne", "_goto",
+		"jsr", "ret", "table_switch", "lookup_switch", "ireturn", "lreturn", "freturn", "dreturn",
+		
+		//Decima segunda familia de instrucoes 0xBXh
+		"areturn", "return", "getstatic", "putstatic", "getfield", "putfield", "invokevirtual", "invokespecial",
+		"invokestatic", "invokeInterface", NULL, "new", "newArray", "anewArray", "arrayLength", "athrow",
+		
+		//Decima terceira familia de instrucoes 0xCXh
+		"checkCast", "instanceOf", "monitorEnter", "monitorExit", "wide", "multiNewArray", "ifNull", "ifNonNull",
+		"goto_w", "jsr_w", "breakPoint",NULL, NULL, NULL, NULL, NULL,
+		
+		//Decima quarta familia de instrucoes 0xDXh
+		NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+		
+		//Decima quinta familia de instrucoes 0xEXh
+		NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+		
+		//Decima sexta familia de instrucoes 0xFXh
+		NULL, NULL, NULL, NULL,NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL,NULL, NULL, "impdep1", "impdep2"
+	};
+	
+	for(int i=0;i<256; i++) {
+		//printf("[%02X] %s\n",i,op_nameTable[i]);
+	}
+	for(int i=0;i<methods_count; i++) {
+		printf("[%d] ", i);
+		print_access(get_method_flags(i));
+		printf("%s: ", get_method_name(i));
+		printf("%s\n", get_method_descriptor(i));
+		Code *c = get_method_code(i);
+		printf("  stack=%d, locals=%d\n", c->max_stack, c->max_locals);
+		for(u2 pc = 0; pc<c->code_length; pc++) {
+			u1 op = c->code[pc];
+			//printf("  %2d:[%02X] %s\t", pc, op, op_nameTable[op]);
+			printf("  %2d:  %s\t", pc, op_nameTable[op]);
+			if( 
+				(op==0x10) || (op==0x15) || (op==0x16) || (op==0x17) || 
+				(op==0x18) || (op==0x19) || (op==0x36) || (op==0x37) || (op==0x38) || 
+				(op==0x39) || (op==0x3A) || (op==0xA9) || (op==0xBC)
+			) {
+				printf(" %d", c->code[++pc]);
+			} else if( (op==0x12) ) {
+				printf("\t #%d", c->code[++pc]);
+			} else if(
+				(op==0x13) || (op==0x14) || (op==0xB2) || (op==0xB3) || (op==0xB4) || 
+				(op==0xB5) || (op==0xB6) || (op==0xB7) || (op==0xB8) || (op==0xBB) || 
+				(op==0xBD) || (op==0xC0) || (op==0xC1)		// constant pool index
+			) {
+				u2 t = c->code[++pc];
+				t <<= 8;
+				t |= c->code[++pc];
+				printf(" #%d", t);
+			} else if(
+				(op==0x99) || (op==0x9A) || (op==0x9B) || (op==0x9C) || (op==0x9D) || 
+				(op==0x9E) || (op==0x9F) || (op==0xA0) || (op==0xA1) || (op==0xA2) || 
+				(op==0xA3) || (op==0xA4) || (op==0xA5) || (op==0xA6) || (op==0xA7) || 
+				(op==0xA8) || (op==0xC6) || (op==0xC7)		// branch bytes
+			) {
+				u2 t = c->code[++pc];
+				t <<= 8;
+				t |= c->code[++pc];
+				printf(" %d", t);
+			} else if( (op==0x11) ) {		// sipush
+				u2 t = c->code[++pc];
+				t <<= 8;
+				t |= c->code[++pc];
+				printf(" %d", (int16_t)t);
+			} else if( (op==0x84) ) {		// iinc
+				printf(" %d", c->code[++pc]);
+				printf(" %d", c->code[++pc]);
+			} else if( (op==0xC5) ) {		// multianewarray
+				u2 t = c->code[++pc];
+				t <<= 8;
+				t |= c->code[++pc];
+				printf(" #%d", t);
+				printf(" %d", c->code[++pc]);
+			} else if( (op==0xB9) ) { 		// invokeinterface
+				u2 t = c->code[++pc];
+				t <<= 8;
+				t |= c->code[++pc];
+				printf(" #%d", t);
+				printf(" %d", c->code[++pc]);
+				printf(" %d", c->code[++pc]);
+			} else if( (op==0xC8) || (op==0xC9) ) {	// goto_w, jsr_w
+				u4 t = c->code[++pc];
+				t <<= 8;
+				t |= c->code[++pc];
+				t <<= 8;
+				t |= c->code[++pc];
+				t <<= 8;
+				t |= c->code[++pc];
+				printf(" #%d", t);
+			} else if( (op==0xC4) ) {		// wide
+				printf("\n");
+				op = c->code[++pc];
+				if(op!=0x84) {	// <t>load, <t>store
+					printf("%d: %s\t", pc, op_nameTable[op]);
+					u2 t = c->code[++pc];
+					t <<= 8;
+					t |= c->code[++pc];
+					printf(" #%d", t);
+				} else {		// iinc
+					printf("%d: %s\t", pc, op_nameTable[op]);
+					u2 t = c->code[++pc];
+					t <<= 8;
+					t |= c->code[++pc];
+					printf(" %d", t);
+					t = c->code[++pc];
+					t <<= 8;
+					t |= c->code[++pc];
+					printf(" %d", t);
+				}
+			}
+			printf("\n");
+		}
+		printf("\n");
 	}
 }
 

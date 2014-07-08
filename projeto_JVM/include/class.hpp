@@ -7,6 +7,7 @@
 
 #include "definition.hpp"
 #include "attribute.hpp"
+#include "access_flag.hpp"
 
 
 typedef struct {
@@ -114,6 +115,8 @@ public:
 		
 	void print();
 	void print_cp();
+	void printField();
+	void printMethod();
 	void print_statics();
 };
 

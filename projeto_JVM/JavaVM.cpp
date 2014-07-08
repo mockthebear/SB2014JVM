@@ -71,7 +71,7 @@ void run(char *className) {
 void classfile(char *className) {
 	Class *classRef;
 	classRef = memory->new_class(className);
-	classRef->print_cp();
+	classRef->print();
 }
 
 void loadMain(char *classname) {

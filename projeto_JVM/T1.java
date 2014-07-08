@@ -1,4 +1,6 @@
 class T1 {
+	private int i1;
+
 	public static void main(String[] args) {
 		doubleTest();
 	}
