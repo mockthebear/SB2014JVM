@@ -459,9 +459,9 @@ void Class::printMethod() {
 			//printf("  %2d:[%02X] %s\t", pc, op, op_nameTable[op]);
 			printf("  %2d:  %s\t", pc, op_nameTable[op]);
 			if( 
-				(op==0x10) || (op==0x15) || (op==0x16) || (op==0x17) || 
-				(op==0x18) || (op==0x19) || (op==0x36) || (op==0x37) || (op==0x38) || 
-				(op==0x39) || (op==0x3A) || (op==0xA9) || (op==0xBC)
+				(op==0x10) || (op==0x15) || (op==0x16) || (op==0x17) || (op==0x18) || 
+				(op==0x19) || (op==0x36) || (op==0x37) || (op==0x38) || (op==0x39) || 
+				(op==0x3A) || (op==0xA9) || (op==0xBC)
 			) {
 				printf(" %d", c->code[++pc]);
 			} else if( (op==0x12) ) {
