@@ -26,6 +26,7 @@ public:
 	Class *get_classref(char *);
 	Class *new_class(char *);
 	int get_index(char *);
+	void setPath(char *);
 	
 	void print();
 };

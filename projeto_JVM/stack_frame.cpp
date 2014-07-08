@@ -46,6 +46,8 @@ void StackFrame::invokeprintln(char *descriptor) {
 		descriptor++;
 	}
 	printf("\n");
+	(void)current->popOpStack();
+	
 	return;	
 }
 

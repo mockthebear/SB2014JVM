@@ -52,6 +52,8 @@ public:
 	
 	Class *get_classref(char *name);
 	Class *new_class(char *name);
+	
+	void setPath(char *);
 
 	void print();
 };

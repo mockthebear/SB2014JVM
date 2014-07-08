@@ -10,11 +10,15 @@
 class ClassLoader {
 public:
 	Class *temp;
+	char *filepath;
+
 	
 	Class *load_class(char *);
 	Field *field_loader(FILE *, u2);
 	Method *method_loader(FILE *, u2);
 	Attribute *attribute_loader(FILE *, u2);
+	
+	void setPath(char *);
 };
 
 #endif

@@ -18,10 +18,14 @@ u1 *read_n(FILE *, u4);
 
 Class *ClassLoader::load_class(char *name) {
 	FILE *fp;
-	char name_buff[100];
-	temp = NULL;
+	char name_buff[300];
 
-	strcpy(name_buff, (char *)name);
+	if(strstr(name, "java/lang/") == NULL) {
+		strcpy(name_buff, filepath);
+		strcat(name_buff, name);
+	} else {
+		strcpy(name_buff, name);
+	}
 	strcat(name_buff, ".class");
 
 	if( (fp = fopen(name_buff, "rb")) == NULL) {
@@ -254,6 +258,10 @@ Attribute *ClassLoader::attribute_loader(FILE *fp, u2 n) {
 		}
 	}
 	return a;
+}
+
+void ClassLoader::setPath(char *path) {
+	filepath = path;
 }
 
 u1 read_u1(FILE* fp) {

@@ -401,14 +401,14 @@ void Class::printMethod() {
 		
 		//Sexta familia de instrucoes 0x5Xh
 		"lastore", "fastore", "dastore", "aastore", "bastore", "castore", "sastore", "pop",
-		"pop2", "_dup", "dup_x1", "dup_x2", "_dup2", "dup2_x1", "dup2_x2", "swap",
+		"pop2", "dup", "dup_x1", "dup_x2", "dup2", "dup2_x1", "dup2_x2", "swap",
 		
 		//Setima familia de instrucoes 0x6Xh
 		"iadd", "ladd", "fadd", "dadd", "isub", "lsub", "fsub", "dsub",
-		"imul", "lmul", "fmul", "dmul", "idiv", "_ldiv", "fdiv", "ddiv",
+		"imul", "lmul", "fmul", "dmul", "idiv", "ldiv", "fdiv", "ddiv",
 		
 		//Oitava familia de instrucoes 0x7Xh
-		"irem", "lrem", "frem", "_drem", "ineg", "lneg", "fneg", "dneg",
+		"irem", "lrem", "frem", "drem", "ineg", "lneg", "fneg", "dneg",
 		"ishl", "lshl", "ishr", "lshr", "iushr", "lushr", "iand", "land",
 		
 		//Nona familia de instrucoes 0x8Xh
@@ -420,7 +420,7 @@ void Class::printMethod() {
 		"dcmpg", "ifeq", "ifne", "iflt", "ifge", "ifgt", "ifle", "if_icmpeq",
 		
 		//Decima primeira familia de instrucoes 0xAXh
-		"if_icmpne", "if_icmplt", "if_icmpge", "if_icmpgt", "if_icmple", "if_acmpeg", "if_acmpne", "_goto",
+		"if_icmpne", "if_icmplt", "if_icmpge", "if_icmpgt", "if_icmple", "if_acmpeg", "if_acmpne", "goto",
 		"jsr", "ret", "table_switch", "lookup_switch", "ireturn", "lreturn", "freturn", "dreturn",
 		
 		//Decima segunda familia de instrucoes 0xBXh

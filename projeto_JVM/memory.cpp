@@ -313,6 +313,10 @@ Class *Memory::new_class(char *name) {
 	return classes->new_class(name);
 }
 
+void Memory::setPath(char *path) {
+	classes->setPath(path);
+}
+
 void Memory::print() {
 	printf(">>Memory\n");
 	classes->print();

@@ -7,6 +7,7 @@ ClassArray::ClassArray(int m) {
 	size = 0;
 	classes = (Class **)calloc(max,sizeof(Class *));
 	loader.temp = NULL;
+	loader.filepath = NULL;
 }
 
 void ClassArray::putstatic(Class *ref, int index , char *type, u4 *value) {
@@ -81,6 +82,10 @@ int ClassArray::get_index(char *name) {
 		}
 	}
 	return index;
+}
+
+void ClassArray::setPath(char *path) {
+	loader.setPath(path);
 }
 
 void ClassArray::print() {

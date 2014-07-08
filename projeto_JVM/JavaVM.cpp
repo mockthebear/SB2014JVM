@@ -16,6 +16,7 @@ int isPrimitive(char *type);
 u1 get1byte();
 u2 get2byte();
 u4 get4byte();
+char *getPath(char *);
 void print();
 void printHelp();
 
@@ -24,24 +25,34 @@ static Memory     *memory;
 
 static int printEnable;
 
-
 int main(int argc, char **argv) {
 
 	frames = new StackFrame(STACK_SIZE);
 	memory = new Memory(MEMORY_SIZE, MEMORY_SIZE);
-	
+	char *fileName;
 	if(argc < 2) {
 		printHelp();
 		return 0;
 	}
 	if (strcmp(argv[1], "-c") == 0) {
-		classfile(argv[2]);
-	} else if(strcmp(argv[1], "-p") == 0) {
+		fileName = getPath(argv[2]);
+		memory->setPath(argv[2]);
+		
+		classfile(fileName);
+	} else if(strcmp(argv[1], "-d") == 0) {
+		fileName = getPath(argv[2]);
+		memory->setPath(argv[2]);
 		printEnable = 1;
-		run(argv[2]);
-	} else {
+		
+		run(fileName);
+	} else if(argv[1][0] != '-') {
+		fileName = getPath(argv[1]);
+		memory->setPath(argv[1]);
 		printEnable = 0;
-		run(argv[1]);
+		
+		run(fileName);
+	} else {
+		printHelp();
 	}
 
 	return 0;
@@ -2041,6 +2052,7 @@ void getstatic() {
 	char *fieldType = frames->current->get_field_type(cp_index);
 	
 	if( (strcmp(fieldName, "out") == 0) && (strcmp(fieldType, "Ljava/io/PrintStream;") == 0)) {
+		frames->current->aconst_null();
 		if(printEnable)
 			printf("get out:java/io/PrintStream\n");
 		return;
@@ -2781,6 +2793,32 @@ u4 get4byte() {
 	return bytes;
 }
 
+char *getPath(char *argv) {
+	char *temp = argv;
+	char *aux;
+	char *fileName;
+	
+	if( (temp = strchr(argv, '\\')) != NULL ) {	
+		aux = temp;
+		*temp = '/';
+		while( (temp = strchr(argv, '\\')) != NULL ) {
+			aux = temp;
+			*temp = '/';
+		}
+		fileName = new char[strlen(aux)];
+		aux++;
+		strcpy(fileName, aux);
+		*aux = '\0';
+	} else {
+		
+		fileName = new char[strlen(argv)];
+		strcpy(fileName, argv);
+		*argv = '\0';
+	}
+	
+	return fileName;
+}
+
 void print() {
 	frames->print();
 		printf("\n");
@@ -2791,6 +2829,7 @@ void print() {
 void printHelp() {
 	printf("prog [opcao] arq_class\n");
 	printf("opcao:\n");
+	printf("  N/A: executar arquivo\n");
 	printf("  -c: mostrar classfile\n");
-	printf("  -p: imprime estados no modo de executar JVM\n");
+	printf("  -d: modo debug\n");
 }
