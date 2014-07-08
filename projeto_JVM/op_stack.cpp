@@ -180,7 +180,7 @@ int OperandStack::ifgt() {
 	int32_t itest = op.to_int();
 	if(itest > 0)
 		result = 1;
-	return 0;
+	return result;
 }
 
 int OperandStack::iflt() {
@@ -195,7 +195,7 @@ int OperandStack::iflt() {
 	int32_t itest = op.to_int();
 	if(itest < 0)
 		result = 1;
-	return 0;
+	return result;
 }
 
 int OperandStack::ifle() {
@@ -210,7 +210,7 @@ int OperandStack::ifle() {
     int32_t itest = op.to_int();
     if(itest <= 0)
         result = 1;
-    return 0;
+    return result;
 }
 
 int OperandStack::ifne() {
@@ -225,7 +225,7 @@ int OperandStack::ifne() {
     int32_t itest = op.to_int();
     if(itest != 0)
         result = 1;
-    return 0;
+    return result;
 }
 
 int OperandStack::if_icmpeq() {
@@ -1011,154 +1011,146 @@ void OperandStack::dup2_x2(){
 }
 
 void OperandStack::fcmpg(){
-    Operand op1, op2, opReturn;
-    opReturn.type = TYPE_INT;
+    Operand op1, op2;
 
-    op1 = pop();
     op2 = pop();
+    op1 = pop();
 
     if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
-        printf("Error type not double: :op_stack.fcmpg\n");
+        printf("Error type not float: :op_stack.fcmpg\n");
         exit(0);
     }
-
-    if(isnan(op2.bytes) || isnan(op1.bytes)){
-        opReturn.bytes =1;
-        push(opReturn);
-        return;
-    }
-
-    if((float)op2.bytes>(float)op1.bytes){
-        opReturn.bytes = 1;
-    }else if((float)op2.bytes<(float)op1.bytes){
-        opReturn.bytes = -1;
-    }else{
-        opReturn.bytes = 0;
-    }
-
-    push(opReturn);
-
+	float val1, val2;
+	
+	val1 = op1.to_float();
+	val2 = op2.to_float();
+	
+    if(isnan(val1) || isnan(val2)) {
+		iconst(1);
+		return;
+	}
+	
+	if(val1 == val2)
+		iconst(0);
+	else if(val1 > val2)
+		iconst(1);
+	else if(val1 < val2)
+		iconst(-1);
 }
 
 void OperandStack::fcmpl(){
-    Operand op1, op2, opReturn;
-    opReturn.type = TYPE_INT;
+    Operand op1, op2;
 
-    op1 = pop();
     op2 = pop();
+    op1 = pop();
 
     if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
-        printf("Error type not double: :op_stack.fcmpl\n");
+        printf("Error type not float: :op_stack.fcmpl\n");
         exit(0);
     }
-
-    if(isnan(op2.bytes) || isnan(op1.bytes)){
-        opReturn.bytes =-1;
-        push(opReturn);
-        return;
-    }
-
-    if((float)op2.bytes>(float)op1.bytes){
-        opReturn.bytes = 1;
-    }else if((float)op2.bytes<(float)op1.bytes){
-        opReturn.bytes = -1;
-    }else{
-        opReturn.bytes = 0;
-    }
-
-    push(opReturn);
+	float val1, val2;
+	
+	val1 = op1.to_float();
+	val2 = op2.to_float();
+	
+    if(isnan(val1) || isnan(val2)) {
+		iconst(-1);
+		return;
+	}
+	
+	if(val1 == val2)
+		iconst(0);
+	else if(val1 > val2)
+		iconst(1);
+	else if(val1 < val2)
+		iconst(-1);
 }
 
 void OperandStack::dcmpg(){
-    Operand op1, op2, op3, op4, opReturn;
-    opReturn.type = TYPE_INT;
-    opReturn.type = TYPE_INT;
-
-    op1 = pop();
-    op2 = pop();
-    op3 = pop();
-    op4 = pop();
-
-    if((op1.type != TYPE_DOUBLE) || (op2.type != TYPE_DOUBLE) || (op3.type != TYPE_DOUBLE) || (op4.type != TYPE_DOUBLE)) {
-        printf("Error type not double: :op_stack.dcmpg\n");
+    Operand op1H, op1L, op2H, op2L;
+	
+	op2L = pop();
+	op2H = pop();
+	op1L = pop();
+	op1H = pop();
+	
+	if( (op1H.type != TYPE_DOUBLE) || (op2H.type != TYPE_DOUBLE) ) {
+		printf("Error type not double: :op_stack.dcmpg\n");
         exit(0);
-    }
-
-    double d1 = (double)((uint64_t)op4.bytes<<32 &(uint32_t)op3.bytes);
-    double d2 = (double)((uint64_t)op2.bytes<<32 &(uint32_t)op1.bytes);
-
-    if(isnan(d1) || isnan(d2)){
-        opReturn.bytes = 1;
-    }
-
-    if(d1>d2){
-        opReturn.bytes = 1;
-    }else if(d1<d2){
-        opReturn.bytes = -1;
-    }else{
-        opReturn.bytes = 0;
-    }
+	}
+	double val1, val2;
+	
+	val1 = to_double(op1H.bytes, op1L.bytes);
+	val2 = to_double(op2H.bytes, op2L.bytes);
+	
+	if(isnan(val1) || isnan(val2)) {
+		iconst(1);
+		return;
+	}
+	
+	if(val1 == val2)
+		iconst(0);
+	else if(val1 > val2)
+		iconst(1);
+	else if(val1 < val2)
+		iconst(-1);
 }
 
 void OperandStack::dcmpl(){
-    Operand op1, op2, op3, op4, opReturn;
-    opReturn.type = TYPE_INT;
-    opReturn.type = TYPE_INT;
-
-    op1 = pop();
-    op2 = pop();
-    op3 = pop();
-    op4 = pop();
-
-    if((op1.type != TYPE_DOUBLE) || (op2.type != TYPE_DOUBLE) || (op3.type != TYPE_DOUBLE) || (op4.type != TYPE_DOUBLE)) {
-        printf("Error type not double: :op_stack.dcmpl\n");
+    Operand op1H, op1L, op2H, op2L;
+	
+	op2L = pop();
+	op2H = pop();
+	op1L = pop();
+	op1H = pop();
+	
+	if( (op1H.type != TYPE_DOUBLE) || (op2H.type != TYPE_DOUBLE) ) {
+		printf("Error type not double: :op_stack.dcmpl\n");
         exit(0);
-    }
-
-    double d1 = (double)((uint64_t)op4.bytes<<32 &(uint32_t)op3.bytes);
-    double d2 = (double)((uint64_t)op2.bytes<<32 &(uint32_t)op1.bytes);
-
-    if(isnan(d1) || isnan(d2)){
-        opReturn.bytes = -1;
-    }
-
-    if(d1>d2){
-        opReturn.bytes = 1;
-    }else if(d1<d2){
-        opReturn.bytes = -1;
-    }else{
-        opReturn.bytes = 0;
-    }
+	}
+	double val1, val2;
+	
+	val1 = to_double(op1H.bytes, op1L.bytes);
+	val2 = to_double(op2H.bytes, op2L.bytes);
+	
+	if(isnan(val1) || isnan(val2)) {
+		iconst(1);
+		return;
+	}
+	
+	if(val1 == val2)
+		iconst(0);
+	else if(val1 > val2)
+		iconst(1);
+	else if(val1 < val2)
+		iconst(-1);
 }
 
 void OperandStack::lcmp(){
-    Operand op1, op2, op3, op4, opReturn;
-    opReturn.type = TYPE_INT;
-    opReturn.type = TYPE_INT;
-
-    op1 = pop();
-    op2 = pop();
-    op3 = pop();
-    op4 = pop();
-
-    if((op1.type != TYPE_LONG) || (op2.type != TYPE_LONG) || (op3.type != TYPE_LONG) || (op4.type != TYPE_LONG)) {
-        printf("Error type not long: :op_stack.lcmp\n");
+    Operand op1H, op1L, op2H, op2L;
+	
+	op2L = pop();
+	op2H = pop();
+	op1L = pop();
+	op1H = pop();
+	
+	if( (op1H.type != TYPE_LONG) || (op2H.type != TYPE_LONG) ) {
+		printf("Error type not long: :op_stack.lcmp\n");
         exit(0);
-    }
-
-    int64_t d1 = (int64_t)((uint64_t)op4.bytes<<32 &(uint32_t)op3.bytes);
-    int64_t d2 = (int64_t)((uint64_t)op2.bytes<<32 &(uint32_t)op1.bytes);
-
-
-    if(d1>d2){
-        opReturn.bytes = 1;
-    }else if(d1<d2){
-        opReturn.bytes = -1;
-    }else{
-        opReturn.bytes = 0;
-    }
+	}
+	int64_t val1, val2;
+	
+	val1 = to_long(op1H.bytes, op1L.bytes);
+	val2 = to_long(op2H.bytes, op2L.bytes);
+	
+	if(val1 == val2)
+		iconst(0);
+	else if(val1 > val2)
+		iconst(1);
+	else if(val1 < val2)
+		iconst(-1);
+		
 }
-//iinc
 
 void OperandStack::ishl(){
     Operand op1, op2, opReturn;
