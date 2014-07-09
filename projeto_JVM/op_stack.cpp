@@ -133,10 +133,10 @@ void OperandStack::dup() {
 }
 
 void OperandStack::dup_x1(){
-	if(size < 2) {
+	/*if(size < 2) {
 		printf("Error  :op_stack.dup_x1\n");
 		exit(0);
-	}
+	}*/
     Operand op1, op2;
 	
     op1 = pop();
@@ -659,17 +659,55 @@ void OperandStack::fsub(){
 }
 
 void OperandStack::fmul(){
-     if(size < 2) {
+    Operand op1, op2;
+    
+    op2 = pop();
+    op1 = pop();
+    
+    if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
+        printf("Error type not float: :op_stack.fmul\n");
+        exit(0);
+    }
+    float val1, val2;
+    
+    val1 = op1.to_float();
+    val2 = op2.to_float();
+    
+    float val3 = val1 * val2;
+    
+    op1.bytes = (uint32_t)val3;
+    push(op1);
+    
+    /*if(size < 2) {
 		printf("Error  :op_stack.fmul\n");
 		exit(0);
 	}
 	__fmul(top);
 	top--;
-	size--;
+	size--;*/
 }
 
 void OperandStack::fdiv(){
-    if(size < 2) {
+    Operand op1, op2;
+    
+    op2 = pop();
+    op1 = pop();
+    
+    if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
+        printf("Error type not float: :op_stack.fmul\n");
+        exit(0);
+    }
+    float val1, val2;
+    
+    val1 = op1.to_float();
+    val2 = op2.to_float();
+    
+    float val3 = val1 / val2;
+    
+    op1.bytes = (uint32_t)val3;
+    push(op1);
+    
+    /*if(size < 2) {
 		printf("Error  :op_stack.fdiv\n");
 		exit(0);
 	}
@@ -678,11 +716,30 @@ void OperandStack::fdiv(){
 	}
 	__fdiv(top);
 	top--;
-	size--;
+	size--;*/
 }
 
 void OperandStack::frem(){
-    if(size < 2) {
+    Operand op1, op2;
+    
+    op2 = pop();
+    op1 = pop();
+    
+    if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
+        printf("Error type not float: :op_stack.fmul\n");
+        exit(0);
+    }
+    float val1, val2;
+    
+    val1 = op1.to_float();
+    val2 = op2.to_float();
+    
+    float val3 = val1 - (val2 * (val1/val2));
+    
+    op1.bytes = (uint32_t)val3;
+    push(op1);
+    
+    /*if(size < 2) {
 		printf("Error  :op_stack.frem\n");
 		exit(0);
 	}
@@ -691,7 +748,7 @@ void OperandStack::frem(){
 	}
 	__frem(top);
 	top--;
-	size--;
+	size--;*/
 }
 
 void OperandStack::fneg(){
@@ -723,17 +780,63 @@ void OperandStack::dsub(){
 }
 
 void OperandStack::dmul(){
-    if(size < 4) {
+    Operand op1H, op1L, op2H, op2L;
+    
+    op2L = pop();
+    op2H = pop();
+    op1L = pop();
+    op1H = pop();
+    
+    if( (op1H.type != TYPE_DOUBLE) || (op2H.type != TYPE_DOUBLE) ||
+       (op1H.type != TYPE_DOUBLE) || (op2H.type != TYPE_DOUBLE)    ) {
+        printf("Error type not double: :op_stack.drem\n");
+        exit(0);
+    }
+    double val1, val2, val3;
+    
+    val1 = to_double(op1H.bytes, op1L.bytes);
+    val2 = to_double(op2H.bytes, op2L.bytes);
+    val3 = val1 * val2;
+    
+    op1H.set_high(TYPE_DOUBLE, &val3);
+    op1L.set_low(TYPE_DOUBLE, &val3);
+    push(op1H);
+    push(op1L);
+    
+    /*if(size < 4) {
 		printf("Error  :op_stack.dmul\n");
 		exit(0);
 	}
 	__dmul(top);
 	top-=2;
-	size-=2;
+	size-=2;*/
 }
 
 void OperandStack::ddiv(){
-    if(size < 4) {
+    Operand op1H, op1L, op2H, op2L;
+    
+    op2L = pop();
+    op2H = pop();
+    op1L = pop();
+    op1H = pop();
+    
+    if( (op1H.type != TYPE_DOUBLE) || (op2H.type != TYPE_DOUBLE) ||
+       (op1H.type != TYPE_DOUBLE) || (op2H.type != TYPE_DOUBLE)    ) {
+        printf("Error type not double: :op_stack.ddiv\n");
+        exit(0);
+    }
+    double val1, val2, val3;
+    
+    val1 = to_double(op1H.bytes, op1L.bytes);
+    val2 = to_double(op2H.bytes, op2L.bytes);
+    val3 = val1 / val2;
+    
+    op1H.set_high(TYPE_DOUBLE, &val3);
+    op1L.set_low(TYPE_DOUBLE, &val3);
+    push(op1H);
+    push(op1L);
+    
+    /*if(size < 4) {
 		printf("Error  :op_stack.ddiv\n");
 		exit(0);
 	}
@@ -742,11 +845,34 @@ void OperandStack::ddiv(){
 	}
 	__ddiv(top);
 	top-=2;
-	size-=2;
+	size-=2;*/
 }
 
 void OperandStack::drem(){
-    if(size < 4) {
+    Operand op1H, op1L, op2H, op2L;
+    
+    op2L = pop();
+    op2H = pop();
+    op1L = pop();
+    op1H = pop();
+    
+    if( (op1H.type != TYPE_DOUBLE) || (op2H.type != TYPE_DOUBLE) ||
+        (op1H.type != TYPE_DOUBLE) || (op2H.type != TYPE_DOUBLE)    ) {
+        printf("Error type not double: :op_stack.drem\n");
+        exit(0);
+    }
+    double val1, val2, val3;
+    
+    val1 = to_double(op1H.bytes, op1L.bytes);
+    val2 = to_double(op2H.bytes, op2L.bytes);
+    val3 = val1 - (val2 * (val1/val2));
+    
+    op1H.set_high(TYPE_DOUBLE, &val3);
+    op1L.set_low(TYPE_DOUBLE, &val3);
+    push(op1H);
+    push(op1L);
+    
+    /*if(size < 4) {
 		printf("Error  :op_stack.drem\n");
 		exit(0);
 	}
@@ -755,7 +881,7 @@ void OperandStack::drem(){
 	}
 	__opDrem(top);
 	top-=2;
-	size-=2;
+	size-=2;*/
 }
 
 void OperandStack::dneg(){

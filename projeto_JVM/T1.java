@@ -22,10 +22,10 @@ class T1 {private int i1;
 		System.out.println(a/b);
 		System.out.println(a%b);
 		System.out.println(-a);
-		System.out.println();
 		System.out.println(a&b);
 		System.out.println(a|b);
 		System.out.println(a^b);
+		System.out.println();
 	}
 	static void shortTest() {
 		short a = 1111;
@@ -36,10 +36,10 @@ class T1 {private int i1;
 		System.out.println(a/b);
 		System.out.println(a%b);
 		System.out.println(-a);
-		System.out.println();
 		System.out.println(a&b);
 		System.out.println(a|b);
 		System.out.println(a^b);
+		System.out.println();
 	}
 	static void byteTest() {
 		short a = 18;
@@ -50,10 +50,10 @@ class T1 {private int i1;
 		System.out.println(a/b);
 		System.out.println(a%b);
 		System.out.println(-a);
-		System.out.println();
 		System.out.println(a&b);
 		System.out.println(a|b);
 		System.out.println(a^b);
+        System.out.println();
 	}
 	static void longTest() {
 		long a = 121L;
@@ -64,10 +64,10 @@ class T1 {private int i1;
 		System.out.println(a/b);
 		System.out.println(a%b);
 		System.out.println(-a);
-		System.out.println();
 		System.out.println(a&b);
 		System.out.println(a|b);
 		System.out.println(a^b);
+        System.out.println();
 	}
 	static void floatTest() {
 		float a = 32.45F;
@@ -78,6 +78,7 @@ class T1 {private int i1;
 		System.out.println(a/b);
 		System.out.println(a%b);
 		System.out.println(-a);
+        System.out.println();
 	}
 	static void doubleTest() {
 		double a = 3233.405D;
@@ -88,6 +89,7 @@ class T1 {private int i1;
 		System.out.println(a/b);
 		System.out.println(a%b);
 		System.out.println(-a);
+        System.out.println();
 	}
     static void intArrayTest(){
         int[] array = new int [300];
@@ -95,6 +97,7 @@ class T1 {private int i1;
             array[i] = i;
             System.out.println(array[i]);
         }
+        System.out.println();
     }
     static void intTableTest(){
         int[][] table = new int [100][100];
@@ -106,6 +109,7 @@ class T1 {private int i1;
                 System.out.println(table[i][j]);
             }
         }
+        System.out.println();
     }
     static void lookupSwitchTest(){
         int i =0;
@@ -133,6 +137,7 @@ class T1 {private int i1;
                 break;
         }
         System.out.println(i);
+        System.out.println();
     }
     static void tableSwitchTest(){
         int i =0;
@@ -160,11 +165,14 @@ class T1 {private int i1;
                 break;
         }
         System.out.println(i);
+        System.out.println();
     }
+    
     static void objectTest(){
         String obj = "primeiro objeto";
         String obj2 = obj;
         obj = "segundo objeto";
         System.out.println("Mesmo objeto?"+obj==obj2+" e mesmo conteúdo"+obj.equals(obj2));
+        System.out.println();
     }
 }
