@@ -668,14 +668,15 @@ void OperandStack::fmul(){
         printf("Error type not float: :op_stack.fmul\n");
         exit(0);
     }
-    float val1, val2;
     
-    val1 = op1.to_float();
-    val2 = op2.to_float();
+    union { float f; uint32_t i;} val1, val2, val3;
     
-    float val3 = val1 * val2;
+    val1.i = op1.bytes;
+    val2.i = op2.bytes;
     
-    op1.bytes = (uint32_t)val3;
+    val3.f = val1.f * val2.f;
+    
+    op1.bytes = val3.i;
     push(op1);
     
     /*if(size < 2) {
@@ -694,17 +695,17 @@ void OperandStack::fdiv(){
     op1 = pop();
     
     if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
-        printf("Error type not float: :op_stack.fmul\n");
+        printf("Error type not float: :op_stack.fdiv\n");
         exit(0);
     }
-    float val1, val2;
+    union { float f; uint32_t i;} val1, val2, val3;
     
-    val1 = op1.to_float();
-    val2 = op2.to_float();
+    val1.i = op1.bytes;
+    val2.i = op2.bytes;
     
-    float val3 = val1 / val2;
+    val3.f = val1.f / val2.f;
     
-    op1.bytes = (uint32_t)val3;
+    op1.bytes = val3.i;
     push(op1);
     
     /*if(size < 2) {
@@ -726,17 +727,17 @@ void OperandStack::frem(){
     op1 = pop();
     
     if((op1.type != TYPE_FLOAT) || (op2.type != TYPE_FLOAT)) {
-        printf("Error type not float: :op_stack.fmul\n");
+        printf("Error type not float: :op_stack.frem\n");
         exit(0);
     }
-    float val1, val2;
+    union { float f; uint32_t i;} val1, val2, val3;
     
-    val1 = op1.to_float();
-    val2 = op2.to_float();
+    val1.i = op1.bytes;
+    val2.i = op2.bytes;
     
-    float val3 = val1 - (val2 * (val1/val2));
+    val3.f = fmod(val1.f,val2.f);
     
-    op1.bytes = (uint32_t)val3;
+    op1.bytes = val3.i;
     push(op1);
     
     /*if(size < 2) {
@@ -865,7 +866,7 @@ void OperandStack::drem(){
     
     val1 = to_double(op1H.bytes, op1L.bytes);
     val2 = to_double(op2H.bytes, op2L.bytes);
-    val3 = val1 - (val2 * (val1/val2));
+    val3 = remainder(val1, val2);
     
     op1H.set_high(TYPE_DOUBLE, &val3);
     op1L.set_low(TYPE_DOUBLE, &val3);

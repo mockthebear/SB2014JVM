@@ -502,7 +502,7 @@ void Frame::aconst_null() {
 }
 
 void Frame::checkcast(u2 index){
-
+    return;
 }
 void Frame::iload(u2 index) {
 	Operand op;

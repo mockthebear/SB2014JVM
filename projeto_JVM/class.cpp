@@ -536,7 +536,7 @@ void Class::printMethod() {
 				(op==0x3A) || (op==0xA9) || (op==0xBC)	// 1 byte value
 			) {
 				printf(" %d", (int8_t)c->code[++pc]);
-			} else if( (op==0x12) ) {		// ldc
+			} else if( op==0x12 ) {		// ldc
 				u2 t = c->code[++pc];
 				printf(" #%d", t);
 				print_cp_utf8(t);
@@ -561,22 +561,22 @@ void Class::printMethod() {
 				t |= c->code[++pc];
 				t = (pc-2) + t;
 				printf(" %d", t);
-			} else if( (op==0x11) ) {		// sipush
+			} else if( op==0x11 ) {		// sipush
 				u2 t = c->code[++pc];
 				t <<= 8;
 				t |= c->code[++pc];
 				printf(" %d", (int16_t)t);
-			} else if( (op==0x84) ) {		// iinc
+			} else if( op==0x84 ) {		// iinc
 				printf(" %d,", c->code[++pc]);
 				printf(" %d", c->code[++pc]);
-			} else if( (op==0xC5) ) {		// multianewarray
+			} else if( op==0xC5 ) {		// multianewarray
 				u2 t = c->code[++pc];
 				t <<= 8;
 				t |= c->code[++pc];
 				printf(" #%d,", t);
 				printf(" %d", c->code[++pc]);
 				print_cp_utf8(t);
-			} else if( (op==0xB9) ) { 		// invokeinterface
+			} else if( op==0xB9 ) { 		// invokeinterface
 				u2 t = c->code[++pc];
 				t <<= 8;
 				t |= c->code[++pc];
@@ -594,7 +594,7 @@ void Class::printMethod() {
 				t |= c->code[++pc];
 				printf(" #%d", t);
 				print_cp_utf8(t);
-			} else if( (op==0xC4) ) {		// wide
+			} else if( op==0xC4 ) {		// wide
 				printf("\n");
 				op = c->code[++pc];
 				if(op!=0x84) {	// <t>load, <t>store

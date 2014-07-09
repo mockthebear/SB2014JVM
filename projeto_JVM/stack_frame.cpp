@@ -26,7 +26,7 @@ void StackFrame::invokeprintln(char *descriptor) {
 			else
 				printf("false");
 		} else if(*descriptor == TYPE_SHORT) {
-			printf("%s", current->popShort());
+			printf("%hd", current->popShort());
 		} else if(*descriptor == TYPE_FLOAT) {
 			printf("%.4f", current->popFloat());
 		} else if(*descriptor == TYPE_LONG) {
